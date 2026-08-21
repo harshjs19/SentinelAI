@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# Linting
+.ruff_cache/
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Machine learning artifacts
+models/*
+!models/.gitkeep
+
+datasets/*
+!datasets/.gitkeep
+
+artifacts/
+checkpoints/
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# Local databases
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db

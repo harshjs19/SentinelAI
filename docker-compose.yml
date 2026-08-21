@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: sentinelai-postgres
+    environment:
+      POSTGRES_DB: sentinelai
+      POSTGRES_USER: sentinelai
+      POSTGRES_PASSWORD: sentinelai
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: sentinelai-redis
+    ports:
+      - "6379:6379"
