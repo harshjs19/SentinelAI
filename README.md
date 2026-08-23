@@ -17,3 +17,15 @@ SentinelAI follows a layered architecture:
 ## Architecture
 
 High-level flow:
+
+## Local database
+
+Start PostgreSQL and Redis, then apply the database migrations:
+
+```shell
+docker compose up -d
+uv run alembic upgrade head
+```
+
+The default values in `.env.example` match the local PostgreSQL service in
+`docker-compose.yml`.

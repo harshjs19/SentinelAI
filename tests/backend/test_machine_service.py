@@ -17,7 +17,7 @@ class InMemoryMachineRepository:
         return self.machines.get(machine_id)
 
     async def list_all(self) -> list[Machine]:
-        return list(self.machines.values())
+        return sorted(self.machines.values(), key=lambda machine: (machine.name, machine.id))
 
 
 @pytest.fixture
@@ -86,4 +86,4 @@ async def test_lists_machines(service: MachineService) -> None:
 
     machines = await service.list_machines()
 
-    assert machines == [first, second]
+    assert machines == [second, first]
