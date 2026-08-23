@@ -29,3 +29,8 @@ uv run alembic upgrade head
 
 The default values in `.env.example` match the local PostgreSQL service in
 `docker-compose.yml`.
+
+## Time-series baseline
+
+Dataset setup, training, evaluation, and inference commands are documented in
+[docs/timeseries_baseline.md](docs/timeseries_baseline.md).
