@@ -1,0 +1,426 @@
+{
+  "candidates": {
+    "cosine_knn": {
+      "parameters": {
+        "aggregation": "mean_k_nearest_distances",
+        "distance": "cosine",
+        "neighbors": 5,
+        "reference_normalization": "L2"
+      },
+      "validation": {
+        "average_precision": 0.5118372326678781,
+        "balanced_accuracy": 0.51,
+        "confusion_matrix": [
+          [
+            99,
+            1
+          ],
+          [
+            97,
+            3
+          ]
+        ],
+        "f1": 0.057692307692307696,
+        "partial_auc_max_fpr_0_1": 0.5094736842105263,
+        "precision": 0.75,
+        "recall": 0.03,
+        "roc_auc": 0.4918,
+        "selection_score": 0.494800246370237,
+        "source_roc_auc": 0.4492,
+        "target_roc_auc": 0.5336,
+        "threshold": 0.1520384762035718
+      }
+    },
+    "shrinkage_mahalanobis": {
+      "parameters": {
+        "covariance": "LedoitWolf",
+        "pca_components_cap": 128,
+        "pca_components_rule": "min(configured_128, detector_fit_count_minus_1, embedding_dimension)",
+        "pca_solver": "randomized",
+        "random_state": 42,
+        "scaler": "StandardScaler"
+      },
+      "validation": {
+        "average_precision": 0.5348708494246699,
+        "balanced_accuracy": 0.49,
+        "confusion_matrix": [
+          [
+            97,
+            3
+          ],
+          [
+            99,
+            1
+          ]
+        ],
+        "f1": 0.019230769230769232,
+        "partial_auc_max_fpr_0_1": 0.5057894736842106,
+        "precision": 0.25,
+        "recall": 0.01,
+        "roc_auc": 0.5306000000000001,
+        "selection_score": 0.5157682925029387,
+        "source_roc_auc": 0.46959999999999996,
+        "target_roc_auc": 0.5848,
+        "threshold": 29.606240919675432
+      }
+    }
+  },
+  "dataset": {
+    "archive": "bearing.zip",
+    "checksum": "md5:6381a00f9efc0ced779c8ad847e4ff59",
+    "counts": [
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "00",
+        "split": "train"
+      },
+      {
+        "count": 10,
+        "domain": "target",
+        "label": "normal",
+        "section": "00",
+        "split": "train"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "01",
+        "split": "train"
+      },
+      {
+        "count": 9,
+        "domain": "target",
+        "label": "normal",
+        "section": "01",
+        "split": "train"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "02",
+        "split": "train"
+      },
+      {
+        "count": 10,
+        "domain": "target",
+        "label": "normal",
+        "section": "02",
+        "split": "train"
+      }
+    ],
+    "doi": "10.5281/zenodo.6529888",
+    "license": "CC BY 4.0",
+    "machine_subset": "bearing",
+    "source": "https://zenodo.org/records/6529888",
+    "total_clips": 3599
+  },
+  "delta_vs_v1": {
+    "average_precision": 0.002868338247287272,
+    "balanced_accuracy": 0.0,
+    "f1": -0.18170914542728633,
+    "partial_auc_max_fpr_0_1": -0.0031578947368421373,
+    "roc_auc": -0.007400000000000073,
+    "source_roc_auc": 0.013600000000000056,
+    "target_roc_auc": -0.023600000000000065
+  },
+  "embedding": {
+    "cache_format_version": 1,
+    "cache_hit": false,
+    "cache_path": "datasets\\derived\\mimii_dg_bearing_ast\\embeddings.npz",
+    "cached_clip_count": 3599,
+    "excluded_metadata": [
+      "filename",
+      "filesystem_path",
+      "section",
+      "domain",
+      "split",
+      "normal_anomaly_label",
+      "operating_attributes"
+    ],
+    "extraction_seconds": 3660.661015299993
+  },
+  "encoder": {
+    "checkpoint_format": "safetensors",
+    "classification_logits_used": false,
+    "dimension": 768,
+    "frozen": true,
+    "license": "BSD-3-Clause",
+    "local_prepared_bytes": 346432008,
+    "model_id": "MIT/ast-finetuned-audioset-10-10-0.4593",
+    "prepared_files": {
+      "config.json": {
+        "bytes": 26763,
+        "sha256": "a93d525511d77e8ecc933d09674b85099815bbbb417c228a4edd655e252fb9ff"
+      },
+      "model.safetensors": {
+        "bytes": 346404948,
+        "sha256": "ae0c1e2ad4e1381d851fa9bf298ba13ebc9c5a914cdee2dbe427a6583869924d"
+      },
+      "preprocessor_config.json": {
+        "bytes": 297,
+        "sha256": "8d04ba5a9c6fca5d39d0de2b1fd05ecf79deb589fbba279728bbebac39934231"
+      }
+    },
+    "preprocessing_config": {
+      "do_normalize": true,
+      "max_length": 1024,
+      "mean": -4.2677393,
+      "num_mel_bins": 128,
+      "return_attention_mask": false,
+      "sampling_rate": 16000,
+      "std": 4.5689974
+    },
+    "preprocessing_identity": "transformers.ASTFeatureExtractor:preprocessor_config.json:v1",
+    "representation": "mean_cls_distillation_tokens_last_hidden_state",
+    "revision": "f826b80d28226b62986cc218e5cec390b1096902"
+  },
+  "experiment": {
+    "hypothesis": "V1's main limitation is representation quality rather than only the classical detector family",
+    "name": "SentinelAI Audio Intelligence V2",
+    "normal_only_anomaly_detection": true
+  },
+  "limitations": [
+    "bearing reference distribution only",
+    "Section 02 is post-baseline and not a pristine Audio V2 holdout",
+    "frozen AST may not generalize to industrial domain shifts",
+    "raw empirical evidence is not a calibrated probability",
+    "Audio and time-series confidence are not cross-modally calibrated",
+    "no multimodal fusion, health score, risk score, or fault diagnosis",
+    "86M-parameter AST is intended for backend/server inference, not Raspberry Pi 4"
+  ],
+  "normal_fit_calibration_protocol": {
+    "anomalies_used_for_fitting": 0,
+    "benchmark_section": "02",
+    "benchmark_status": "locked post-baseline Section 02 benchmark",
+    "calibration_stride": 5,
+    "candidate_calibration_normal_count": 200,
+    "candidate_fit_normal_count": 800,
+    "candidate_training_section": "00",
+    "final_calibration_normal_count": 400,
+    "final_fit_normal_count": 1599,
+    "final_training_sections": [
+      "00",
+      "01"
+    ],
+    "random_seed": 42,
+    "validation_section": "01"
+  },
+  "promotion_decision": {
+    "basis": "Section 01 validation selection score only",
+    "promoted": false,
+    "runtime_artifact": "models\\audio_bearing_anomaly_detector.joblib",
+    "v1_reference_score": 0.5801603837048501,
+    "v2_selected_score": 0.5157682925029387
+  },
+  "runtime": {
+    "device": "cpu",
+    "server_side_inference": true,
+    "single_clip_encoder_seconds": 1.072115599992685,
+    "v2_artifact": "models\\audio_ast_bearing_anomaly_detector.joblib",
+    "v2_artifact_bytes": 1084739
+  },
+  "section_02_benchmark": {
+    "average_precision": 0.5277403459568061,
+    "balanced_accuracy": 0.495,
+    "confusion_matrix": [
+      [
+        92,
+        8
+      ],
+      [
+        93,
+        7
+      ]
+    ],
+    "f1": 0.12173913043478261,
+    "partial_auc_max_fpr_0_1": 0.5036842105263157,
+    "precision": 0.4666666666666667,
+    "recall": 0.07,
+    "roc_auc": 0.5139,
+    "selection_score": 0.5104244832424228,
+    "source_roc_auc": 0.5224,
+    "target_roc_auc": 0.5055999999999999,
+    "threshold": 26.887555095994728
+  },
+  "selected_candidate": "shrinkage_mahalanobis",
+  "selection_metric": {
+    "formula": "3 / (1/source_roc_auc + 1/target_roc_auc + 1/pauc_at_0_1)",
+    "name": "harmonic_mean(source_roc_auc,target_roc_auc,partial_auc_max_fpr_0_1)",
+    "section": "01"
+  },
+  "threshold": {
+    "normal_calibration_count": 400,
+    "percentile": 0.99,
+    "policy": "linear 99.0% percentile of held-out normal scores",
+    "score_summary": {
+      "maximum": 40.329402393940725,
+      "median": 8.87994293869282,
+      "minimum": 4.584379992917653,
+      "p90": 17.03516630915978,
+      "p95": 20.351479749260463,
+      "p99": 26.887555095994728
+    },
+    "value": 26.887555095994728
+  },
+  "v1_reference": {
+    "evaluation_file": "evaluation/audio_baseline_results.json",
+    "section_02": {
+      "average_precision": 0.5248720077095188,
+      "balanced_accuracy": 0.495,
+      "confusion_matrix": [
+        [
+          77,
+          23
+        ],
+        [
+          78,
+          22
+        ]
+      ],
+      "f1": 0.30344827586206896,
+      "partial_auc_max_fpr_0_1": 0.5068421052631579,
+      "precision": 0.4888888888888889,
+      "recall": 0.22,
+      "roc_auc": 0.5213000000000001,
+      "selection_score": 0.5147515270401963,
+      "source_roc_auc": 0.5087999999999999,
+      "target_roc_auc": 0.5292,
+      "threshold": 0.4605192170917355
+    },
+    "selected_detector": "pca_reconstruction",
+    "validation": {
+      "average_precision": 0.622360877292526,
+      "balanced_accuracy": 0.53,
+      "confusion_matrix": [
+        [
+          13,
+          87
+        ],
+        [
+          7,
+          93
+        ]
+      ],
+      "f1": 0.6642857142857143,
+      "partial_auc_max_fpr_0_1": 0.5736842105263158,
+      "precision": 0.5166666666666667,
+      "recall": 0.93,
+      "roc_auc": 0.5823,
+      "selection_score": 0.5801603837048501,
+      "source_roc_auc": 0.5196000000000001,
+      "target_roc_auc": 0.6652,
+      "threshold": 0.3862505487375499
+    }
+  },
+  "validation": {
+    "average_precision": 0.5348708494246699,
+    "balanced_accuracy": 0.49,
+    "confusion_matrix": [
+      [
+        97,
+        3
+      ],
+      [
+        99,
+        1
+      ]
+    ],
+    "f1": 0.019230769230769232,
+    "partial_auc_max_fpr_0_1": 0.5057894736842106,
+    "precision": 0.25,
+    "recall": 0.01,
+    "roc_auc": 0.5306000000000001,
+    "selection_score": 0.5157682925029387,
+    "source_roc_auc": 0.46959999999999996,
+    "target_roc_auc": 0.5848,
+    "threshold": 29.606240919675432
+  }
+}

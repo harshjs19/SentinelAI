@@ -76,10 +76,15 @@ def get_timeseries_inference_service() -> TimeseriesInferenceService:
 
 @lru_cache
 def get_audio_predictor() -> AudioPredictor:
-    artifact_path = get_settings().audio_model_path
+    settings = get_settings()
+    artifact_path = settings.audio_model_path
     if not artifact_path.is_file():
         raise FileNotFoundError(f"Audio model artifact not found: {artifact_path}")
-    return AudioPredictor(artifact_path)
+    return AudioPredictor(
+        artifact_path,
+        encoder_path=settings.audio_encoder_path,
+        device=settings.audio_encoder_device,
+    )
 
 
 @lru_cache
