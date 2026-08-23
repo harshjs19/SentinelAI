@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -12,6 +13,8 @@ class Settings(BaseSettings):
     postgres_db: str = "sentinelai"
     postgres_user: str = "sentinelai"
     postgres_password: str = "sentinelai"
+
+    timeseries_model_path: Path = Path("models/timeseries_fault_classifier.joblib")
 
     model_config = SettingsConfigDict(
         env_file=".env",

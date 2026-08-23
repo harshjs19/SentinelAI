@@ -127,6 +127,50 @@ approximately `0.9951` for that sample window.
 Probability calibration is intentionally deferred to SentinelAI's later Decision Engine
 layer.
 
+## Runtime HTTP inference
+
+Start the API after the database migration and model training steps are complete:
+
+```shell
+uv run uvicorn backend.app.main:app --reload
+```
+
+Send one raw measurement window to a known machine:
+
+```http
+POST /machines/{machine_id}/predictions/timeseries
+Content-Type: application/json
+
+{
+  "samples": [
+    {
+      "ch1_bias": -11.982,
+      "ch1_derivedPk": 0.239,
+      "ch1_direct": 0.742,
+      "ch1_directRMS": 0.169,
+      "ch1_velocityPk": 0.062,
+      "ch1_velocityRMS": 0.018
+    },
+    {
+      "ch1_bias": -11.982,
+      "ch1_derivedPk": 0.131,
+      "ch1_direct": 0.718,
+      "ch1_directRMS": 0.092,
+      "ch1_velocityPk": 0.064,
+      "ch1_velocityRMS": 0.014
+    }
+  ]
+}
+```
+
+The response contains `machine_id`, `modality`, `label`, and `confidence`. The model is
+loaded once per application process from `TIMESERIES_MODEL_PATH`, which defaults to
+`models/timeseries_fault_classifier.joblib`.
+
+This endpoint performs fault diagnosis only. Confidence remains the classifier's raw
+probability; confidence calibration, health scoring, and risk classification belong to
+the future Decision Engine.
+
 ## Limitations
 
 - Data comes from one laboratory test bed with short, steady-state sessions.
