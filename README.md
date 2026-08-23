@@ -39,3 +39,8 @@ Dataset setup, training, evaluation, and inference commands are documented in
 
 Decision Engine V1 semantics and evidence limitations are documented in
 [docs/decision_engine.md](docs/decision_engine.md).
+
+## Audio baseline
+
+MIMII DG bearing-subset setup, evaluation, confidence semantics, and runtime APIs are
+documented in [docs/audio_baseline.md](docs/audio_baseline.md).

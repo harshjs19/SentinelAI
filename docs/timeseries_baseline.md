@@ -124,8 +124,9 @@ The pinned dataset produces a `bearing_fault` time-series `Prediction` with conf
 approximately `0.9951` for that sample window.
 
 `Prediction.confidence` currently contains the classifier's raw `predict_proba` output.
-Probability calibration is intentionally deferred to SentinelAI's later Decision Engine
-layer.
+It is specific to the time-series model and is not directly comparable to Audio ASD's
+empirical normal-score evidence. Cross-modal calibration belongs to a later Decision
+Engine layer.
 
 ## Runtime HTTP inference
 
@@ -168,8 +169,8 @@ loaded once per application process from `TIMESERIES_MODEL_PATH`, which defaults
 `models/timeseries_fault_classifier.joblib`.
 
 This endpoint performs fault diagnosis only. Confidence remains the classifier's raw
-probability; confidence calibration, health scoring, and risk classification belong to
-the future Decision Engine.
+selected-class probability; cross-modal confidence calibration, health scoring, and
+risk classification are not implemented by Decision Engine V1.
 
 ## Limitations
 

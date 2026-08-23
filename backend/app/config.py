@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     postgres_password: str = "sentinelai"
 
     timeseries_model_path: Path = Path("models/timeseries_fault_classifier.joblib")
+    audio_model_path: Path = Path("models/audio_bearing_anomaly_detector.joblib")
 
     model_config = SettingsConfigDict(
         env_file=".env",

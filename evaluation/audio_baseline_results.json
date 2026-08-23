@@ -1,0 +1,426 @@
+{
+  "artifact": "models\\audio_bearing_anomaly_detector.joblib",
+  "candidates": {
+    "isolation_forest": {
+      "parameters": {
+        "contamination": "auto",
+        "n_estimators": 300,
+        "random_state": 42,
+        "scaler": "StandardScaler"
+      },
+      "validation": {
+        "average_precision": 0.5405893714044305,
+        "balanced_accuracy": 0.515,
+        "confusion_matrix": [
+          [
+            98,
+            2
+          ],
+          [
+            95,
+            5
+          ]
+        ],
+        "f1": 0.09345794392523364,
+        "partial_auc_max_fpr_0_1": 0.5336842105263158,
+        "precision": 0.7142857142857143,
+        "recall": 0.05,
+        "roc_auc": 0.4853,
+        "selection_score": 0.4995485100658014,
+        "source_roc_auc": 0.45399999999999996,
+        "target_roc_auc": 0.5184,
+        "threshold": 0.589280292287159
+      }
+    },
+    "pca_reconstruction": {
+      "parameters": {
+        "scaler": "StandardScaler",
+        "svd_solver": "full",
+        "variance_retained": 0.95
+      },
+      "validation": {
+        "average_precision": 0.622360877292526,
+        "balanced_accuracy": 0.53,
+        "confusion_matrix": [
+          [
+            13,
+            87
+          ],
+          [
+            7,
+            93
+          ]
+        ],
+        "f1": 0.6642857142857143,
+        "partial_auc_max_fpr_0_1": 0.5736842105263158,
+        "precision": 0.5166666666666667,
+        "recall": 0.93,
+        "roc_auc": 0.5823,
+        "selection_score": 0.5801603837048501,
+        "source_roc_auc": 0.5196000000000001,
+        "target_roc_auc": 0.6652,
+        "threshold": 0.3862505487375499
+      }
+    }
+  },
+  "dataset": {
+    "archive": "bearing.zip",
+    "audio": {
+      "channels": 1,
+      "duration_seconds": 10.0,
+      "sample_rate": 16000
+    },
+    "checksum": "md5:6381a00f9efc0ced779c8ad847e4ff59",
+    "counts": [
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "00",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "00",
+        "split": "train"
+      },
+      {
+        "count": 10,
+        "domain": "target",
+        "label": "normal",
+        "section": "00",
+        "split": "train"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "01",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "01",
+        "split": "train"
+      },
+      {
+        "count": 9,
+        "domain": "target",
+        "label": "normal",
+        "section": "01",
+        "split": "train"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "anomaly",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "source",
+        "label": "normal",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "anomaly",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 50,
+        "domain": "target",
+        "label": "normal",
+        "section": "02",
+        "split": "test"
+      },
+      {
+        "count": 990,
+        "domain": "source",
+        "label": "normal",
+        "section": "02",
+        "split": "train"
+      },
+      {
+        "count": 10,
+        "domain": "target",
+        "label": "normal",
+        "section": "02",
+        "split": "train"
+      }
+    ],
+    "doi": "10.5281/zenodo.6529888",
+    "license": "CC BY 4.0",
+    "machine_subset": "bearing",
+    "source": "https://zenodo.org/records/6529888",
+    "total_clips": 3599
+  },
+  "features": {
+    "config": {
+      "center": false,
+      "fmax": 8000.0,
+      "fmin": 20.0,
+      "hop_length": 512,
+      "n_fft": 1024,
+      "n_mels": 64,
+      "power": 2.0,
+      "representation": "log_mel_db_summary",
+      "sample_rate": 16000,
+      "statistics": [
+        "mean",
+        "std"
+      ]
+    },
+    "dimension": 128,
+    "excluded_metadata": [
+      "filename",
+      "filesystem_path",
+      "section",
+      "domain",
+      "split",
+      "normal_anomaly_label",
+      "operating_attributes"
+    ],
+    "names": [
+      "mel_00_mean",
+      "mel_00_std",
+      "mel_01_mean",
+      "mel_01_std",
+      "mel_02_mean",
+      "mel_02_std",
+      "mel_03_mean",
+      "mel_03_std",
+      "mel_04_mean",
+      "mel_04_std",
+      "mel_05_mean",
+      "mel_05_std",
+      "mel_06_mean",
+      "mel_06_std",
+      "mel_07_mean",
+      "mel_07_std",
+      "mel_08_mean",
+      "mel_08_std",
+      "mel_09_mean",
+      "mel_09_std",
+      "mel_10_mean",
+      "mel_10_std",
+      "mel_11_mean",
+      "mel_11_std",
+      "mel_12_mean",
+      "mel_12_std",
+      "mel_13_mean",
+      "mel_13_std",
+      "mel_14_mean",
+      "mel_14_std",
+      "mel_15_mean",
+      "mel_15_std",
+      "mel_16_mean",
+      "mel_16_std",
+      "mel_17_mean",
+      "mel_17_std",
+      "mel_18_mean",
+      "mel_18_std",
+      "mel_19_mean",
+      "mel_19_std",
+      "mel_20_mean",
+      "mel_20_std",
+      "mel_21_mean",
+      "mel_21_std",
+      "mel_22_mean",
+      "mel_22_std",
+      "mel_23_mean",
+      "mel_23_std",
+      "mel_24_mean",
+      "mel_24_std",
+      "mel_25_mean",
+      "mel_25_std",
+      "mel_26_mean",
+      "mel_26_std",
+      "mel_27_mean",
+      "mel_27_std",
+      "mel_28_mean",
+      "mel_28_std",
+      "mel_29_mean",
+      "mel_29_std",
+      "mel_30_mean",
+      "mel_30_std",
+      "mel_31_mean",
+      "mel_31_std",
+      "mel_32_mean",
+      "mel_32_std",
+      "mel_33_mean",
+      "mel_33_std",
+      "mel_34_mean",
+      "mel_34_std",
+      "mel_35_mean",
+      "mel_35_std",
+      "mel_36_mean",
+      "mel_36_std",
+      "mel_37_mean",
+      "mel_37_std",
+      "mel_38_mean",
+      "mel_38_std",
+      "mel_39_mean",
+      "mel_39_std",
+      "mel_40_mean",
+      "mel_40_std",
+      "mel_41_mean",
+      "mel_41_std",
+      "mel_42_mean",
+      "mel_42_std",
+      "mel_43_mean",
+      "mel_43_std",
+      "mel_44_mean",
+      "mel_44_std",
+      "mel_45_mean",
+      "mel_45_std",
+      "mel_46_mean",
+      "mel_46_std",
+      "mel_47_mean",
+      "mel_47_std",
+      "mel_48_mean",
+      "mel_48_std",
+      "mel_49_mean",
+      "mel_49_std",
+      "mel_50_mean",
+      "mel_50_std",
+      "mel_51_mean",
+      "mel_51_std",
+      "mel_52_mean",
+      "mel_52_std",
+      "mel_53_mean",
+      "mel_53_std",
+      "mel_54_mean",
+      "mel_54_std",
+      "mel_55_mean",
+      "mel_55_std",
+      "mel_56_mean",
+      "mel_56_std",
+      "mel_57_mean",
+      "mel_57_std",
+      "mel_58_mean",
+      "mel_58_std",
+      "mel_59_mean",
+      "mel_59_std",
+      "mel_60_mean",
+      "mel_60_std",
+      "mel_61_mean",
+      "mel_61_std",
+      "mel_62_mean",
+      "mel_62_std",
+      "mel_63_mean",
+      "mel_63_std"
+    ]
+  },
+  "known_limitations": [
+    "bearing subset only",
+    "classical log-mel summary baseline",
+    "raw empirical evidence is not a calibrated probability",
+    "held-out section evaluation is not an official DCASE score",
+    "no multimodal fusion"
+  ],
+  "protocol": {
+    "calibration_stride": 5,
+    "candidate_calibration_clips": 200,
+    "candidate_fit_clips": 800,
+    "candidate_training_section": "00",
+    "final_calibration_clips": 400,
+    "final_fit_clips": 1599,
+    "final_training_sections": [
+      "00",
+      "01"
+    ],
+    "held_out_test_section": "02",
+    "normal_only_training": true,
+    "validation_section": "01"
+  },
+  "selected_detector": "pca_reconstruction",
+  "selection_metric": "harmonic_mean(source_roc_auc,target_roc_auc,partial_auc_max_fpr_0_1)",
+  "test": {
+    "average_precision": 0.5248720077095188,
+    "balanced_accuracy": 0.495,
+    "confusion_matrix": [
+      [
+        77,
+        23
+      ],
+      [
+        78,
+        22
+      ]
+    ],
+    "f1": 0.30344827586206896,
+    "partial_auc_max_fpr_0_1": 0.5068421052631579,
+    "precision": 0.4888888888888889,
+    "recall": 0.22,
+    "roc_auc": 0.5213000000000001,
+    "selection_score": 0.5147515270401963,
+    "source_roc_auc": 0.5087999999999999,
+    "target_roc_auc": 0.5292,
+    "threshold": 0.4605192170917355
+  },
+  "threshold": {
+    "normal_calibration_count": 400,
+    "percentile": 0.99,
+    "policy": "linear 99.0% percentile of held-out normal scores",
+    "score_summary": {
+      "maximum": 1.055580982577792,
+      "median": 0.04130437710700617,
+      "minimum": 0.012476342999720405,
+      "p90": 0.12753726102822596,
+      "p95": 0.18984362060640267,
+      "p99": 0.4605192170917355
+    },
+    "value": 0.4605192170917355
+  }
+}

@@ -3,13 +3,16 @@
 Decision Engine V1 converts supported model predictions into provisional diagnostic
 findings. It preserves a strict separation between four different concepts:
 
-- classifier confidence describes the model's probability for its predicted class;
+- model confidence describes a bounded, model-reported confidence or evidence value;
 - fault severity describes the physical extent of a fault;
 - machine health summarizes evidence about overall asset condition;
 - operational risk combines failure likelihood with consequence or asset criticality.
 
-SentinelAI currently has only the first kind of evidence. A high classifier confidence
-is not a severity measurement, health score, probability of failure, or risk level.
+Its raw interpretation is modality-specific. The time-series classifier reports
+selected-class `predict_proba`; Audio ASD reports bounded empirical evidence derived
+from normal calibration scores. Neither is a severity measurement, health score,
+probability of failure, or risk level, and the two raw values are not assumed to be
+calibrated or directly comparable.
 
 ## V1 behavior
 
@@ -29,7 +32,7 @@ be assigned.
 
 Analyses identify applicable limitations in deterministic order:
 
-- `uncalibrated_confidence` for raw classifier output;
+- `uncalibrated_confidence` for raw model confidence or evidence;
 - `fault_severity_unavailable` when an abnormal finding exists;
 - `risk_context_unavailable` when evidence exists;
 - `single_modality_evidence` when exactly one modality contributes.
@@ -46,6 +49,10 @@ Zero-evidence analyses do not claim limitations that imply a prediction existed.
 | `bent_shaft` | `bent_shaft` | `abnormal` |
 | `eccentric_rotor` | `eccentric_rotor` | `abnormal` |
 | `imbalance` | `imbalance` | `abnormal` |
+
+Audio maps `healthy` to a normal `healthy` finding and `acoustic_anomaly` to an
+abnormal `acoustic_anomaly` finding. It does not infer a bearing fault or another
+physical fault type from anomalous sound alone.
 
 Unknown labels and unsupported modalities fail explicitly. Multiple predictions from
 the same modality are rejected because V1 has no aggregation policy and must not

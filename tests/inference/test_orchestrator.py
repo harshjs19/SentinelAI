@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+import numpy as np
 import pytest
 
 from domain.entities.prediction import Prediction
@@ -12,6 +13,7 @@ from inference.orchestrator import (
     PredictorInputTypeError,
     PredictorNotRegisteredError,
 )
+from modules.audio.input import AudioInput
 
 
 class FakePredictor:
@@ -73,3 +75,17 @@ async def test_wrong_input_type_is_rejected() -> None:
 
     with pytest.raises(PredictorInputTypeError, match="requires dict"):
         await orchestrator.predict(uuid4(), Modality.TIMESERIES, [1.0])
+
+
+@pytest.mark.asyncio
+async def test_invokes_audio_predictor_with_distinct_input_type() -> None:
+    orchestrator = InferenceOrchestrator(EventBus())
+    prediction = Prediction(Modality.AUDIO, "acoustic_anomaly", 0.73)
+    predictor = FakePredictor(prediction)
+    orchestrator.register(Modality.AUDIO, predictor, input_type=AudioInput)
+    audio = AudioInput(np.zeros(1_600, dtype=np.float32), 16_000)
+
+    result = await orchestrator.predict(uuid4(), Modality.AUDIO, audio)
+
+    assert result is prediction
+    assert predictor.inputs == [audio]

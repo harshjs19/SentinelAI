@@ -1,4 +1,5 @@
 from backend.app.schemas.analysis import AnalysisResponse, FindingResponse
+from backend.app.schemas.audio import AudioPredictionResponse
 from backend.app.schemas.machine import MachineCreate, MachineResponse
 from backend.app.schemas.timeseries import (
     TimeseriesPredictionRequest,
@@ -8,6 +9,7 @@ from backend.app.schemas.timeseries import (
 
 __all__ = [
     "AnalysisResponse",
+    "AudioPredictionResponse",
     "FindingResponse",
     "MachineCreate",
     "MachineResponse",

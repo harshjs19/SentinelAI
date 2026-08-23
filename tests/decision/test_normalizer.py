@@ -44,6 +44,30 @@ def test_rejects_unknown_timeseries_label() -> None:
         normalize_prediction(Prediction(Modality.TIMESERIES, "unknown_fault", 0.7))
 
 
-def test_rejects_unsupported_modality() -> None:
-    with pytest.raises(UnsupportedPredictionModalityError, match="audio"):
+@pytest.mark.parametrize(
+    ("label", "condition"),
+    [
+        ("healthy", ConditionState.NORMAL),
+        ("acoustic_anomaly", ConditionState.ABNORMAL),
+    ],
+)
+def test_normalizes_audio_evidence_without_inventing_fault_type(
+    label: str,
+    condition: ConditionState,
+) -> None:
+    finding = normalize_prediction(Prediction(Modality.AUDIO, label, 0.88))
+
+    assert finding.code == label
+    assert finding.condition is condition
+    assert finding.confidence == 0.88
+    assert finding.confidence_kind is ConfidenceKind.RAW
+
+
+def test_rejects_unknown_audio_label() -> None:
+    with pytest.raises(UnsupportedPredictionLabelError, match="bearing_fault"):
         normalize_prediction(Prediction(Modality.AUDIO, "bearing_fault", 0.7))
+
+
+def test_rejects_unsupported_modality() -> None:
+    with pytest.raises(UnsupportedPredictionModalityError, match="vision"):
+        normalize_prediction(Prediction(Modality.VISION, "anomaly", 0.7))

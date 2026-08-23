@@ -17,15 +17,24 @@ _TIMESERIES_CONDITIONS = {
     "imbalance": ConditionState.ABNORMAL,
 }
 
+_AUDIO_CONDITIONS = {
+    "healthy": ConditionState.NORMAL,
+    "acoustic_anomaly": ConditionState.ABNORMAL,
+}
+
 
 def normalize_prediction(prediction: Prediction) -> Finding:
-    if prediction.modality is not Modality.TIMESERIES:
+    conditions = {
+        Modality.TIMESERIES: _TIMESERIES_CONDITIONS,
+        Modality.AUDIO: _AUDIO_CONDITIONS,
+    }.get(prediction.modality)
+    if conditions is None:
         raise UnsupportedPredictionModalityError(
             f"Unsupported prediction modality: {prediction.modality.value}"
         )
 
     try:
-        condition = _TIMESERIES_CONDITIONS[prediction.label]
+        condition = conditions[prediction.label]
     except KeyError as error:
         raise UnsupportedPredictionLabelError(
             f"Unsupported {prediction.modality.value} prediction label: {prediction.label}"
