@@ -1,5 +1,5 @@
 from inference.event_bus import EventBus
-from inference.events import PredictionProduced
+from inference.events import AnalysisProduced, PredictionProduced
 from inference.orchestrator import (
     InferenceOrchestrator,
     PredictionModalityMismatchError,
@@ -8,6 +8,7 @@ from inference.orchestrator import (
 )
 
 __all__ = [
+    "AnalysisProduced",
     "EventBus",
     "InferenceOrchestrator",
     "PredictionModalityMismatchError",

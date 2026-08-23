@@ -10,11 +10,13 @@ from backend.app.db.session import get_session
 from backend.app.repositories.sqlalchemy_machine_repository import (
     SQLAlchemyMachineRepository,
 )
+from backend.app.services.decision_service import DecisionService
 from backend.app.services.machine_service import MachineService
 from backend.app.services.timeseries_inference_service import TimeseriesInferenceService
 from domain.enums.modality import Modality
 from inference.event_bus import EventBus
 from inference.orchestrator import InferenceOrchestrator
+from modules.decision.engine import DecisionEngine
 from modules.timeseries.predictor import TimeseriesPredictor
 
 SessionDependency = Annotated[AsyncSession, Depends(get_session, scope="function")]
@@ -27,6 +29,16 @@ def get_machine_service(session: SessionDependency) -> MachineService:
 @lru_cache
 def get_event_bus() -> EventBus:
     return EventBus()
+
+
+@lru_cache
+def get_decision_engine() -> DecisionEngine:
+    return DecisionEngine()
+
+
+@lru_cache
+def get_decision_service() -> DecisionService:
+    return DecisionService(get_decision_engine(), get_event_bus())
 
 
 @lru_cache

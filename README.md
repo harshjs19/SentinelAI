@@ -34,3 +34,8 @@ The default values in `.env.example` match the local PostgreSQL service in
 
 Dataset setup, training, evaluation, and inference commands are documented in
 [docs/timeseries_baseline.md](docs/timeseries_baseline.md).
+
+## Decision Engine
+
+Decision Engine V1 semantics and evidence limitations are documented in
+[docs/decision_engine.md](docs/decision_engine.md).
