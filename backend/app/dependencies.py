@@ -14,6 +14,7 @@ from backend.app.services.audio_inference_service import AudioInferenceService
 from backend.app.services.decision_service import DecisionService
 from backend.app.services.machine_service import MachineService
 from backend.app.services.timeseries_inference_service import TimeseriesInferenceService
+from backend.app.services.vision_inference_service import VisionInferenceService
 from domain.enums.modality import Modality
 from inference.event_bus import EventBus
 from inference.orchestrator import InferenceOrchestrator
@@ -21,6 +22,8 @@ from modules.audio.input import AudioInput
 from modules.audio.predictor import AudioPredictor
 from modules.decision.engine import DecisionEngine
 from modules.timeseries.predictor import TimeseriesPredictor
+from modules.vision.input import VisionInput
+from modules.vision.predictor import VisionPredictor
 
 SessionDependency = Annotated[AsyncSession, Depends(get_session, scope="function")]
 
@@ -98,4 +101,31 @@ def get_audio_inference_service() -> AudioInferenceService:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Audio model is not available",
+        ) from None
+
+
+@lru_cache
+def get_vision_predictor() -> VisionPredictor:
+    settings = get_settings()
+    artifact_path = settings.vision_model_path
+    if not artifact_path.is_file():
+        raise FileNotFoundError(f"Vision model artifact not found: {artifact_path}")
+    return VisionPredictor(
+        artifact_path,
+        encoder_path=settings.vision_encoder_path,
+        device=settings.vision_device,
+    )
+
+
+@lru_cache
+def get_vision_inference_service() -> VisionInferenceService:
+    try:
+        predictor = get_vision_predictor()
+        orchestrator = get_inference_orchestrator()
+        orchestrator.register(Modality.VISION, predictor, input_type=VisionInput)
+        return VisionInferenceService(orchestrator, predictor.supported_asset_types)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Vision model is not available",
         ) from None

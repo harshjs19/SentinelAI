@@ -14,6 +14,7 @@ from inference.orchestrator import (
     PredictorNotRegisteredError,
 )
 from modules.audio.input import AudioInput
+from modules.vision.input import VisionInput
 
 
 class FakePredictor:
@@ -89,3 +90,17 @@ async def test_invokes_audio_predictor_with_distinct_input_type() -> None:
 
     assert result is prediction
     assert predictor.inputs == [audio]
+
+
+@pytest.mark.asyncio
+async def test_invokes_vision_predictor_with_distinct_input_type() -> None:
+    orchestrator = InferenceOrchestrator(EventBus())
+    prediction = Prediction(Modality.VISION, "visual_anomaly", 0.79)
+    predictor = FakePredictor(prediction)
+    orchestrator.register(Modality.VISION, predictor, input_type=VisionInput)
+    image = VisionInput(np.zeros((8, 8, 3), dtype=np.uint8))
+
+    result = await orchestrator.predict(uuid4(), Modality.VISION, image)
+
+    assert result is prediction
+    assert predictor.inputs == [image]

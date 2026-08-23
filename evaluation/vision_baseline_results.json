@@ -1,0 +1,338 @@
+{
+  "artifact": {
+    "bytes": 7684980,
+    "encoder_stored_inside_artifact": false,
+    "format_version": 1,
+    "path": "models\\vision_pcb1_anomaly_detector.joblib"
+  },
+  "confidence": {
+    "cross_modally_comparable": false,
+    "definition": "bounded RAW empirical anomaly/normal evidence relative to held-out normal calibration image scores; not probability, severity, health, or risk",
+    "kind": "raw"
+  },
+  "dataset": {
+    "annotation": {
+      "anomaly_class_columns": {},
+      "anomaly_classes": [
+        "bent",
+        "melt",
+        "missing",
+        "scratch"
+      ],
+      "anomaly_label_combinations": [
+        "bent",
+        "bent,melt",
+        "melt",
+        "melt,missing",
+        "melt,scratch",
+        "melt,scratch,missing",
+        "missing",
+        "scratch",
+        "scratch,missing"
+      ],
+      "columns": [
+        "image",
+        "label",
+        "mask"
+      ],
+      "file": "pcb1/image_anno.csv",
+      "rows": 1104
+    },
+    "anomaly_images": 100,
+    "archive_bytes": 1929840640,
+    "archive_sha256": "2eb8690c803ab37de0324772964100169ec8ba1fa3f7e94291c9ca673f40f362",
+    "archive_url": "https://amazon-visual-anomaly.s3.us-west-2.amazonaws.com/VisA_20220922.tar",
+    "exact_duplicate_groups_crossing_official_split": [],
+    "exact_duplicate_image_groups": [],
+    "image_formats": {
+      "JPEG": 1104
+    },
+    "image_resolution_distribution": [
+      {
+        "count": 100,
+        "height": 1070,
+        "label": "anomaly",
+        "split": "test",
+        "width": 1404
+      },
+      {
+        "count": 100,
+        "height": 1070,
+        "label": "normal",
+        "split": "test",
+        "width": 1404
+      },
+      {
+        "count": 904,
+        "height": 1070,
+        "label": "normal",
+        "split": "train",
+        "width": 1404
+      }
+    ],
+    "label_leakage_observation": "directory names and official CSV reveal Normal/Anomaly and are used only for loading, splitting, and evaluation",
+    "license": "CC BY 4.0",
+    "mask_count": 100,
+    "name": "Visual Anomaly (VisA)",
+    "near_duplicate_cross_split_pairs_dhash_hamming_le_1": 53,
+    "normal_images": 1004,
+    "predictive_metadata_excluded": [
+      "filesystem path",
+      "filename",
+      "directory label",
+      "split",
+      "normal/anomaly label",
+      "anomaly class",
+      "mask",
+      "image metadata"
+    ],
+    "sequence_similarity_audit": {
+      "fit_calibration_mitigation": "numeric filename acquisition blocks of ten are assigned wholly to fit or calibration",
+      "method": "32x24 grayscale mean absolute difference",
+      "random_pair_median": 0.04730136692523956,
+      "sequential_median": 0.032950371503829956
+    },
+    "source": "https://github.com/amazon-science/spot-diff",
+    "subset": "PCB1",
+    "total_images": 1104
+  },
+  "encoder": {
+    "classification_logits_used": false,
+    "classifier_logits_used": false,
+    "device": "cpu",
+    "frozen": true,
+    "global_dimension": 512,
+    "global_layer": "layer4_adaptive_average_pool",
+    "model_id": "torchvision.models.resnet18",
+    "patch_dimension": 384,
+    "patch_grid": [
+      16,
+      16
+    ],
+    "patch_layers": [
+      "layer2",
+      "layer3"
+    ],
+    "preprocessing": {
+      "canvas_size": 256,
+      "imagenet_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "imagenet_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "mask_interpolation": "nearest",
+      "padding": "symmetric_imagenet_mean",
+      "resize_interpolation": "bilinear"
+    },
+    "torchvision_version": "0.28.0+cpu",
+    "weights_bytes": 46830571,
+    "weights_filename": "resnet18-f37072fd.pth",
+    "weights_id": "ResNet18_Weights.IMAGENET1K_V1",
+    "weights_sha256": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec"
+  },
+  "experiment": {
+    "name": "SentinelAI Vision Intelligence V1",
+    "normal_only_detector_fitting": true,
+    "primary_runtime_method_predeclared": "patch_nearest_neighbor",
+    "test_set_evaluations": 1
+  },
+  "feature_cache": {
+    "cache_hit": false,
+    "extraction_seconds": 43.175262899982044,
+    "image_count": 1104,
+    "path": "datasets\\derived\\visa_pcb1_resnet18\\features.npz"
+  },
+  "global_mahalanobis_comparison": {
+    "image_metrics": {
+      "average_precision": 0.928570280978911,
+      "balanced_accuracy": 0.72,
+      "confusion_matrix": [
+        [
+          98,
+          2
+        ],
+        [
+          54,
+          46
+        ]
+      ],
+      "f1": 0.6216216216216216,
+      "partial_auc_max_fpr_0_1": 0.7721052631578948,
+      "precision": 0.9583333333333334,
+      "recall": 0.46,
+      "roc_auc": 0.9315,
+      "threshold": 40.401280026055964
+    },
+    "model": "StandardScaler then LedoitWolf Mahalanobis distance",
+    "role": "comparison only; not eligible to replace predeclared runtime method",
+    "threshold": {
+      "policy": "p99 held-out normal calibration image scores",
+      "summary": {
+        "maximum": 40.51322829617924,
+        "median": 25.06521786316062,
+        "minimum": 20.041181962447443,
+        "p90": 32.958238895548185,
+        "p95": 36.84426113152804,
+        "p99": 40.401280026055964
+      },
+      "value": 40.401280026055964
+    }
+  },
+  "limitations": [
+    "PCB1 reference distribution only",
+    "visual_anomaly is not a precise mechanical fault diagnosis",
+    "raw Vision confidence is not probability, severity, health, or operational risk",
+    "no confidence calibration or multimodal fusion",
+    "ImageNet features can shift under new cameras, lighting, views, or PCB variants",
+    "localization is coarse at a 16x16 feature grid and is offline-only",
+    "ResNet-18 deployment has not been measured on Raspberry Pi 4"
+  ],
+  "patch_nearest_neighbor": {
+    "distance_metric": "cosine distance to nearest normal reference patch",
+    "image_metrics": {
+      "average_precision": 0.8620171841054962,
+      "balanced_accuracy": 0.535,
+      "confusion_matrix": [
+        [
+          99,
+          1
+        ],
+        [
+          92,
+          8
+        ]
+      ],
+      "f1": 0.14678899082568808,
+      "partial_auc_max_fpr_0_1": 0.6805263157894736,
+      "precision": 0.8888888888888888,
+      "recall": 0.08,
+      "roc_auc": 0.8964,
+      "threshold": 0.23996011454135593
+    },
+    "image_score_rule": "linear p99 patch distance",
+    "image_threshold": {
+      "normal_calibration_count": 178,
+      "policy": "linear p99 of held-out normal calibration image scores",
+      "summary": {
+        "maximum": 0.2690760388331359,
+        "median": 0.113509102754932,
+        "minimum": 0.09072768341792042,
+        "p90": 0.15445358663223613,
+        "p95": 0.15899531678208315,
+        "p99": 0.23996011454135593
+      },
+      "value": 0.23996011454135593
+    },
+    "localization_metrics": {
+      "average_precision": 0.42974033107664544,
+      "dice": 0.4063276836158192,
+      "intersection_over_union": 0.25496313102665913,
+      "roc_auc": 0.9834033786464113,
+      "threshold": 0.16166124296188444
+    },
+    "memory_bank": {
+      "maximum_size": 5000,
+      "policy": "fixed-seed uniform sampling without replacement",
+      "random_seed": 42,
+      "source": "detector-fit normal PCB1 patches only"
+    },
+    "memory_bank_size": 5000,
+    "patch_normalization": "per-patch L2 normalization",
+    "pixel_threshold": {
+      "policy": "linear p99.9 of held-out normal calibration anomaly-map pixels",
+      "value": 0.16166124296188444
+    },
+    "representative_examples": {
+      "false_negative": {
+        "ground_truth_anomaly_pixels": 48,
+        "image": "pcb1/Data/Images/Anomaly/000.JPG",
+        "image_score": 0.1714947442524436,
+        "intersection_over_union": 0.044096728307254626,
+        "intersection_pixels": 31,
+        "peak_map_score": 0.29844415187835693,
+        "predicted_anomaly_pixels": 686
+      },
+      "false_positive": {
+        "ground_truth_anomaly_pixels": 0,
+        "image": "pcb1/Data/Images/Normal/0730.JPG",
+        "image_score": 0.2774707086230621,
+        "intersection_over_union": 0.0,
+        "intersection_pixels": 0,
+        "peak_map_score": 0.3910594582557678,
+        "predicted_anomaly_pixels": 1688
+      },
+      "true_positive": {
+        "ground_truth_anomaly_pixels": 56,
+        "image": "pcb1/Data/Images/Anomaly/003.JPG",
+        "image_score": 0.24079194575609192,
+        "intersection_over_union": 0.03927068723702665,
+        "intersection_pixels": 56,
+        "peak_map_score": 0.33042335510253906,
+        "predicted_anomaly_pixels": 1426
+      }
+    },
+    "role": "predeclared runtime method"
+  },
+  "runtime": {
+    "device": "cpu",
+    "http_postgresql_smoke": {
+      "analysis": {
+        "condition": "abnormal",
+        "confidence": 0.01574143543171517,
+        "event_order": [
+          "PredictionProduced",
+          "AnalysisProduced"
+        ],
+        "health_score": null,
+        "latency_seconds": 0.14310799998929724,
+        "risk_level": null,
+        "status": "provisional"
+      },
+      "machine_asset_type": "pcb1",
+      "machine_id": "b10e723b-4ee1-4384-9721-1e94f58ca4d6",
+      "prediction": {
+        "confidence": 0.01574143543171517,
+        "event_order": [
+          "PredictionProduced"
+        ],
+        "label": "visual_anomaly",
+        "latency_seconds_cold_model_load": 3.8254496000008658,
+        "modality": "vision"
+      },
+      "transport": "HTTP multipart upload to uvicorn with PostgreSQL machine lookup"
+    },
+    "real_sample": {
+      "complete_inference_seconds": 0.17653120000613853,
+      "feature_extraction_seconds": 0.037397799984319136,
+      "image": "pcb1/Data/Images/Anomaly/003.JPG",
+      "image_anomaly_score": 0.24079193005586547,
+      "prediction": {
+        "confidence": 0.01574143543171517,
+        "label": "visual_anomaly",
+        "modality": "vision"
+      }
+    },
+    "patch_memory_bank_bytes": 7680000,
+    "resnet_weights_bytes": 46830571,
+    "tracemalloc_peak_bytes": 2300789096
+  },
+  "split": {
+    "anomalies_used_for_fitting_or_thresholds": 0,
+    "calibration_normal_count": 178,
+    "detector_fit_normal_count": 726,
+    "fit_calibration_group_policy": "numeric filename ID // 10 acquisition block",
+    "fit_fraction": 0.8,
+    "masks_used_for_fitting_or_thresholds": 0,
+    "official_file": "split_csv/1cls.csv",
+    "official_file_sha256": "a48557e6033318cb90556f706196bc9d247a776a23ea51aecee5a80dd0332995",
+    "official_training_normal_count": 904,
+    "random_seed": 42,
+    "test_anomaly_count": 100,
+    "test_normal_count": 100
+  }
+}

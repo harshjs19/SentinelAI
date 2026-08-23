@@ -22,11 +22,17 @@ _AUDIO_CONDITIONS = {
     "acoustic_anomaly": ConditionState.ABNORMAL,
 }
 
+_VISION_CONDITIONS = {
+    "healthy": ConditionState.NORMAL,
+    "visual_anomaly": ConditionState.ABNORMAL,
+}
+
 
 def normalize_prediction(prediction: Prediction) -> Finding:
     conditions = {
         Modality.TIMESERIES: _TIMESERIES_CONDITIONS,
         Modality.AUDIO: _AUDIO_CONDITIONS,
+        Modality.VISION: _VISION_CONDITIONS,
     }.get(prediction.modality)
     if conditions is None:
         raise UnsupportedPredictionModalityError(

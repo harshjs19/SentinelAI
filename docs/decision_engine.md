@@ -9,10 +9,10 @@ findings. It preserves a strict separation between four different concepts:
 - operational risk combines failure likelihood with consequence or asset criticality.
 
 Its raw interpretation is modality-specific. The time-series classifier reports
-selected-class `predict_proba`; Audio ASD reports bounded empirical evidence derived
-from normal calibration scores. Neither is a severity measurement, health score,
-probability of failure, or risk level, and the two raw values are not assumed to be
-calibrated or directly comparable.
+selected-class `predict_proba`; Audio ASD and Vision anomaly detection report bounded
+empirical evidence derived from their own normal calibration scores. None is a severity
+measurement, health score, probability of failure, or risk level, and the three raw
+values are not assumed to be calibrated or directly comparable.
 
 ## V1 behavior
 
@@ -53,6 +53,10 @@ Zero-evidence analyses do not claim limitations that imply a prediction existed.
 Audio maps `healthy` to a normal `healthy` finding and `acoustic_anomaly` to an
 abnormal `acoustic_anomaly` finding. It does not infer a bearing fault or another
 physical fault type from anomalous sound alone.
+
+Vision maps `healthy` to a normal `healthy` finding and `visual_anomaly` to an abnormal
+`visual_anomaly` finding. It does not infer a physical fault or defect class from an
+anomalous image alone.
 
 Unknown labels and unsupported modalities fail explicitly. Multiple predictions from
 the same modality are rejected because V1 has no aggregation policy and must not

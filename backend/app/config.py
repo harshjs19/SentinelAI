@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     audio_model_path: Path = Path("models/audio_bearing_anomaly_detector.joblib")
     audio_encoder_path: Path = Path("models/pretrained/ast-audioset")
     audio_encoder_device: str = "cpu"
+    vision_model_path: Path = Path("models/vision_pcb1_anomaly_detector.joblib")
+    vision_encoder_path: Path = Path("models/pretrained/resnet18")
+    vision_device: str = "cpu"
 
     model_config = SettingsConfigDict(
         env_file=".env",

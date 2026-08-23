@@ -47,3 +47,9 @@ documented in [docs/audio_baseline.md](docs/audio_baseline.md).
 
 The frozen-AST Audio Intelligence V2 representation experiment and promotion protocol
 are documented in [docs/audio_v2.md](docs/audio_v2.md).
+
+## Vision baseline
+
+The normal-only VisA PCB1 detector, offline localization evaluation, confidence
+semantics, and runtime APIs are documented in
+[docs/vision_baseline.md](docs/vision_baseline.md).
