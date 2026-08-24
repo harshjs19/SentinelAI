@@ -2,11 +2,12 @@ from collections.abc import Mapping
 from functools import lru_cache
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.config import get_settings
 from backend.app.db.session import get_session
+from backend.app.errors import model_unavailable_error
 from backend.app.repositories.sqlalchemy_machine_repository import (
     SQLAlchemyMachineRepository,
 )
@@ -74,10 +75,7 @@ def get_timeseries_inference_service() -> TimeseriesInferenceService:
         )
         return TimeseriesInferenceService(orchestrator)
     except FileNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Time-series model is not available",
-        ) from None
+        raise model_unavailable_error("Time-series") from None
 
 
 @lru_cache
@@ -101,10 +99,7 @@ def get_audio_inference_service() -> AudioInferenceService:
         orchestrator.register(Modality.AUDIO, predictor, input_type=AudioInput)
         return AudioInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Audio model is not available",
-        ) from None
+        raise model_unavailable_error("Audio") from None
 
 
 @lru_cache
@@ -128,10 +123,7 @@ def get_vision_inference_service() -> VisionInferenceService:
         orchestrator.register(Modality.VISION, predictor, input_type=VisionInput)
         return VisionInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Vision model is not available",
-        ) from None
+        raise model_unavailable_error("Vision") from None
 
 
 @lru_cache
@@ -155,7 +147,4 @@ def get_thermal_inference_service() -> ThermalInferenceService:
         orchestrator.register(Modality.THERMAL, predictor, input_type=ThermalInput)
         return ThermalInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Thermal model is not available",
-        ) from None
+        raise model_unavailable_error("Thermal") from None

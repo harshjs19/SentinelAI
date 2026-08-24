@@ -59,3 +59,10 @@ semantics, and runtime APIs are documented in
 The CORA speed-held-out thermal condition classifier, dataset preparation, evaluation,
 confidence semantics, and runtime APIs are documented in
 [docs/thermal_baseline.md](docs/thermal_baseline.md).
+
+## Model and runtime contracts
+
+Current model lifecycle declarations and their scientific evidence are documented in
+[docs/model_capabilities.md](docs/model_capabilities.md). The in-process EventBus and
+multi-worker deployment boundaries are documented in
+[docs/runtime_architecture.md](docs/runtime_architecture.md).

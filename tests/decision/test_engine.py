@@ -58,6 +58,24 @@ def test_high_confidence_fault_does_not_fabricate_health_or_risk() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("modality", "label"),
+    [
+        (Modality.AUDIO, "acoustic_anomaly"),
+        (Modality.VISION, "visual_anomaly"),
+    ],
+)
+def test_high_confidence_anomaly_does_not_fabricate_health_or_risk(
+    modality: Modality,
+    label: str,
+) -> None:
+    analysis = DecisionEngine().evaluate(uuid4(), [Prediction(modality, label, 0.99)])
+
+    assert analysis.condition is ConditionState.ABNORMAL
+    assert analysis.health_score is None
+    assert analysis.risk_level is None
+
+
 def test_no_predictions_produces_insufficient_indeterminate_analysis() -> None:
     analysis = DecisionEngine().evaluate(uuid4(), [])
 
@@ -99,7 +117,9 @@ def test_top_findings_rank_deterministically_and_return_at_most_three() -> None:
     analysis = Analysis(
         id=uuid4(),
         machine_id=uuid4(),
-        predictions=(),
+        predictions=tuple(
+            Prediction(finding.modality, finding.code, finding.confidence) for finding in findings
+        ),
         findings=findings,
         condition=ConditionState.ABNORMAL,
         status=AnalysisStatus.PROVISIONAL,

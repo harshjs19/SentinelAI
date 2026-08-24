@@ -1,8 +1,9 @@
-from collections.abc import Iterator
+from collections.abc import AsyncIterator
 from uuid import UUID
 
+import httpx
 import pytest
-from fastapi.testclient import TestClient
+import pytest_asyncio
 
 from backend.app.dependencies import get_machine_service
 from backend.app.main import app
@@ -29,16 +30,18 @@ def repository() -> InMemoryMachineRepository:
     return InMemoryMachineRepository()
 
 
-@pytest.fixture
-def client(repository: InMemoryMachineRepository) -> Iterator[TestClient]:
+@pytest_asyncio.fixture
+async def client(repository: InMemoryMachineRepository) -> AsyncIterator[httpx.AsyncClient]:
     app.dependency_overrides[get_machine_service] = lambda: MachineService(repository)
-    with TestClient(app) as test_client:
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as test_client:
         yield test_client
-    app.dependency_overrides.clear()
+    app.dependency_overrides.pop(get_machine_service, None)
 
 
-def test_creates_machine(client: TestClient) -> None:
-    response = client.post(
+@pytest.mark.asyncio
+async def test_creates_machine(client: httpx.AsyncClient) -> None:
+    response = await client.post(
         "/machines",
         json={"name": "Pump-101", "asset_type": "centrifugal_pump"},
     )
@@ -49,27 +52,30 @@ def test_creates_machine(client: TestClient) -> None:
     assert response.json()["asset_type"] == "centrifugal_pump"
 
 
-def test_lists_machines(client: TestClient) -> None:
-    first = client.post("/machines", json={"name": "Pump-101", "asset_type": "pump"})
-    second = client.post("/machines", json={"name": "Motor-12", "asset_type": "motor"})
+@pytest.mark.asyncio
+async def test_lists_machines(client: httpx.AsyncClient) -> None:
+    first = await client.post("/machines", json={"name": "Pump-101", "asset_type": "pump"})
+    second = await client.post("/machines", json={"name": "Motor-12", "asset_type": "motor"})
 
-    response = client.get("/machines")
+    response = await client.get("/machines")
 
     assert response.status_code == 200
     assert response.json() == [second.json(), first.json()]
 
 
-def test_gets_machine(client: TestClient) -> None:
-    created = client.post("/machines", json={"name": "Motor-12", "asset_type": "motor"})
+@pytest.mark.asyncio
+async def test_gets_machine(client: httpx.AsyncClient) -> None:
+    created = await client.post("/machines", json={"name": "Motor-12", "asset_type": "motor"})
 
-    response = client.get(f"/machines/{created.json()['id']}")
+    response = await client.get(f"/machines/{created.json()['id']}")
 
     assert response.status_code == 200
     assert response.json() == created.json()
 
 
-def test_returns_not_found_for_unknown_machine(client: TestClient) -> None:
-    response = client.get("/machines/84c69b6d-3bd9-4a85-b86c-d9db01ebc321")
+@pytest.mark.asyncio
+async def test_returns_not_found_for_unknown_machine(client: httpx.AsyncClient) -> None:
+    response = await client.get("/machines/84c69b6d-3bd9-4a85-b86c-d9db01ebc321")
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Machine not found"}

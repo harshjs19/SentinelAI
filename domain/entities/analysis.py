@@ -33,6 +33,23 @@ class Analysis:
     def __post_init__(self) -> None:
         if self.created_at.tzinfo is None or self.created_at.utcoffset() != timedelta(0):
             raise ValueError("Analysis created_at must be timezone-aware UTC")
+        if not self.predictions:
+            if self.status is not AnalysisStatus.INSUFFICIENT_EVIDENCE:
+                raise ValueError(
+                    "Analysis without predictions must have insufficient-evidence status"
+                )
+            if self.condition is not ConditionState.INDETERMINATE:
+                raise ValueError("Analysis without predictions must have indeterminate condition")
+            if self.findings:
+                raise ValueError("Analysis without predictions cannot contain findings")
+            if self.health_score is not None:
+                raise ValueError("Analysis without predictions cannot contain a health score")
+            if self.risk_level is not None:
+                raise ValueError("Analysis without predictions cannot contain a risk level")
+            if self.limitations:
+                raise ValueError("Analysis without predictions cannot contain limitations")
+        elif self.status is AnalysisStatus.INSUFFICIENT_EVIDENCE:
+            raise ValueError("Analysis with predictions cannot have insufficient-evidence status")
 
     @property
     def top_findings(self) -> tuple[Finding, ...]:

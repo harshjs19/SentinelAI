@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from backend.app.services.asset_compatibility import ensure_supported_asset_type
 from domain.entities.prediction import Prediction
 from domain.enums.modality import Modality
 from inference.orchestrator import InferenceOrchestrator
@@ -20,11 +21,12 @@ class VisionInferenceService:
         self._supported_asset_types = supported_asset_types
 
     def validate_asset_type(self, asset_type: str) -> None:
-        if asset_type.strip().lower() not in self._supported_asset_types:
-            supported = ", ".join(self._supported_asset_types)
-            raise UnsupportedVisionAssetTypeError(
-                f"Vision model supports these asset types: {supported}"
-            )
+        ensure_supported_asset_type(
+            asset_type,
+            self._supported_asset_types,
+            "Vision",
+            UnsupportedVisionAssetTypeError,
+        )
 
     async def predict(self, machine_id: UUID, content: bytes) -> Prediction:
         image = decode_image(content)
