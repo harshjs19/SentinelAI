@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     vision_model_path: Path = Path("models/vision_pcb1_anomaly_detector.joblib")
     vision_encoder_path: Path = Path("models/pretrained/resnet18")
     vision_device: str = "cpu"
+    thermal_model_path: Path = Path("models/thermal_condition_classifier.joblib")
+    thermal_encoder_path: Path = Path("models/pretrained/resnet18")
+    thermal_device: str = "cpu"
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -6,10 +6,12 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from backend.app.dependencies import (
     get_audio_inference_service,
     get_machine_service,
+    get_thermal_inference_service,
     get_timeseries_inference_service,
     get_vision_inference_service,
 )
 from backend.app.schemas.audio import AudioPredictionResponse
+from backend.app.schemas.thermal import ThermalPredictionResponse
 from backend.app.schemas.timeseries import (
     TimeseriesPredictionRequest,
     TimeseriesPredictionResponse,
@@ -20,6 +22,10 @@ from backend.app.services.audio_inference_service import (
     UnsupportedAudioAssetTypeError,
 )
 from backend.app.services.machine_service import MachineService
+from backend.app.services.thermal_inference_service import (
+    ThermalInferenceService,
+    UnsupportedThermalAssetTypeError,
+)
 from backend.app.services.timeseries_inference_service import TimeseriesInferenceService
 from backend.app.services.vision_inference_service import (
     UnsupportedVisionAssetTypeError,
@@ -34,6 +40,10 @@ TimeseriesInferenceDependency = Annotated[
 ]
 AudioInferenceDependency = Annotated[AudioInferenceService, Depends(get_audio_inference_service)]
 VisionInferenceDependency = Annotated[VisionInferenceService, Depends(get_vision_inference_service)]
+ThermalInferenceDependency = Annotated[
+    ThermalInferenceService,
+    Depends(get_thermal_inference_service),
+]
 
 
 @router.post(
@@ -121,6 +131,38 @@ async def predict_vision(
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from None
     return VisionPredictionResponse(
+        machine_id=machine_id,
+        modality=prediction.modality,
+        label=prediction.label,
+        confidence=prediction.confidence,
+    )
+
+
+@router.post(
+    "/{machine_id}/predictions/thermal",
+    response_model=ThermalPredictionResponse,
+)
+async def predict_thermal(
+    machine_id: UUID,
+    file: Annotated[UploadFile, File(description="JPEG or PNG thermographic image")],
+    machine_service: MachineServiceDependency,
+    inference_service: ThermalInferenceDependency,
+) -> ThermalPredictionResponse:
+    machine = await machine_service.get_machine(machine_id)
+    if machine is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Machine not found")
+    try:
+        inference_service.validate_asset_type(machine.asset_type)
+    except UnsupportedThermalAssetTypeError as error:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=str(error),
+        ) from None
+    try:
+        prediction = await inference_service.predict(machine_id, await file.read())
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from None
+    return ThermalPredictionResponse(
         machine_id=machine_id,
         modality=prediction.modality,
         label=prediction.label,

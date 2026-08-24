@@ -27,12 +27,25 @@ _VISION_CONDITIONS = {
     "visual_anomaly": ConditionState.ABNORMAL,
 }
 
+_THERMAL_CONDITIONS = {
+    "healthy": ConditionState.NORMAL,
+    "bearing_fault": ConditionState.ABNORMAL,
+    "half_broken_rotor_bar": ConditionState.ABNORMAL,
+    "broken_rotor_bar": ConditionState.ABNORMAL,
+    "imbalance": ConditionState.ABNORMAL,
+    "misalignment": ConditionState.ABNORMAL,
+    "gear_wear_25": ConditionState.ABNORMAL,
+    "gear_wear_50": ConditionState.ABNORMAL,
+    "gear_wear_75": ConditionState.ABNORMAL,
+}
+
 
 def normalize_prediction(prediction: Prediction) -> Finding:
     conditions = {
         Modality.TIMESERIES: _TIMESERIES_CONDITIONS,
         Modality.AUDIO: _AUDIO_CONDITIONS,
         Modality.VISION: _VISION_CONDITIONS,
+        Modality.THERMAL: _THERMAL_CONDITIONS,
     }.get(prediction.modality)
     if conditions is None:
         raise UnsupportedPredictionModalityError(

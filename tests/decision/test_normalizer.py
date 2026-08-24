@@ -4,10 +4,7 @@ from domain.entities.prediction import Prediction
 from domain.enums.condition_state import ConditionState
 from domain.enums.confidence_kind import ConfidenceKind
 from domain.enums.modality import Modality
-from modules.decision.exceptions import (
-    UnsupportedPredictionLabelError,
-    UnsupportedPredictionModalityError,
-)
+from modules.decision.exceptions import UnsupportedPredictionLabelError
 from modules.decision.normalizer import normalize_prediction
 
 
@@ -89,8 +86,3 @@ def test_normalizes_vision_evidence_without_inventing_fault_type(
 def test_rejects_unknown_vision_label() -> None:
     with pytest.raises(UnsupportedPredictionLabelError, match="scratch"):
         normalize_prediction(Prediction(Modality.VISION, "scratch", 0.7))
-
-
-def test_rejects_unsupported_modality() -> None:
-    with pytest.raises(UnsupportedPredictionModalityError, match="thermal"):
-        normalize_prediction(Prediction(Modality.THERMAL, "anomaly", 0.7))

@@ -1,0 +1,1 @@
+"""Thermal condition-classification modality."""

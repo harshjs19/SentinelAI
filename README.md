@@ -53,3 +53,9 @@ are documented in [docs/audio_v2.md](docs/audio_v2.md).
 The normal-only VisA PCB1 detector, offline localization evaluation, confidence
 semantics, and runtime APIs are documented in
 [docs/vision_baseline.md](docs/vision_baseline.md).
+
+## Thermal baseline
+
+The CORA speed-held-out thermal condition classifier, dataset preparation, evaluation,
+confidence semantics, and runtime APIs are documented in
+[docs/thermal_baseline.md](docs/thermal_baseline.md).

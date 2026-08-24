@@ -14,6 +14,7 @@ from inference.orchestrator import (
     PredictorNotRegisteredError,
 )
 from modules.audio.input import AudioInput
+from modules.thermal.input import ThermalInput
 from modules.vision.input import VisionInput
 
 
@@ -104,3 +105,17 @@ async def test_invokes_vision_predictor_with_distinct_input_type() -> None:
 
     assert result is prediction
     assert predictor.inputs == [image]
+
+
+@pytest.mark.asyncio
+async def test_invokes_thermal_predictor_with_distinct_input_type() -> None:
+    orchestrator = InferenceOrchestrator(EventBus())
+    prediction = Prediction(Modality.THERMAL, "bearing_fault", 0.74)
+    predictor = FakePredictor(prediction)
+    orchestrator.register(Modality.THERMAL, predictor, input_type=ThermalInput)
+    thermogram = ThermalInput(np.zeros((8, 8, 3), dtype=np.uint8))
+
+    result = await orchestrator.predict(uuid4(), Modality.THERMAL, thermogram)
+
+    assert result is prediction
+    assert predictor.inputs == [thermogram]

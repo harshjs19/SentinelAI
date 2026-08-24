@@ -1,0 +1,1853 @@
+{
+  "artifact": {
+    "bytes": 21055540,
+    "encoder_stored_inside_artifact": false,
+    "format_version": 1,
+    "metadata_path": "models\\thermal_condition_classifier.metadata.json",
+    "path": "models\\thermal_condition_classifier.joblib"
+  },
+  "candidate_models": {
+    "logistic_regression": {
+      "max_iter": 2000,
+      "pipeline": [
+        "StandardScaler",
+        "LogisticRegression"
+      ],
+      "random_state": 42,
+      "solver": "lbfgs"
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "n_jobs": -1,
+      "pipeline": [
+        "RandomForestClassifier"
+      ],
+      "random_state": 42
+    }
+  },
+  "conditions": {
+    "BD": "bearing_fault",
+    "H": "healthy",
+    "HB": "half_broken_rotor_bar",
+    "M": "misalignment",
+    "OB": "broken_rotor_bar",
+    "U": "imbalance",
+    "W25": "gear_wear_25",
+    "W50": "gear_wear_50",
+    "W75": "gear_wear_75"
+  },
+  "confidence": {
+    "cross_modally_comparable": false,
+    "definition": "raw selected-class classifier predict_proba output; not calibrated severity, failure probability, health, or operational risk",
+    "kind": "raw"
+  },
+  "counts": {
+    "corrupt_frames": 0,
+    "experiments": 36,
+    "frames": 16200,
+    "missing_frames": 0,
+    "per_class": {
+      "bearing_fault": 1800,
+      "broken_rotor_bar": 1800,
+      "gear_wear_25": 1800,
+      "gear_wear_50": 1800,
+      "gear_wear_75": 1800,
+      "half_broken_rotor_bar": 1800,
+      "healthy": 1800,
+      "imbalance": 1800,
+      "misalignment": 1800
+    },
+    "per_speed": {
+      "F15": 4050,
+      "F5": 4050,
+      "F50": 4050,
+      "F60": 4050
+    },
+    "test_frames": 4050,
+    "train_frames": 8100,
+    "validation_frames": 4050
+  },
+  "dataset": {
+    "data_representation": "240x320x3 uint8 RGB arrays with replicated grayscale channels; non-radiometric thermographic appearance",
+    "doi": "doi:10.34810/DATA2500",
+    "downloaded_files": [
+      {
+        "checksum": "de197bf1881570c4ead8a7cf9c70fbd7",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334986,
+        "file_size": 20385070,
+        "filename": "BD_F15_S.mat"
+      },
+      {
+        "checksum": "8c2b56f22e153a30e69bca324f93f19c",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334934,
+        "file_size": 23558647,
+        "filename": "BD_F50_S.mat"
+      },
+      {
+        "checksum": "a67a54403673dcf7c271b637d3d8a736",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334903,
+        "file_size": 14354542,
+        "filename": "BD_F5_S.mat"
+      },
+      {
+        "checksum": "23ace1e1df6c8f926bb81153615dd843",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334939,
+        "file_size": 30278851,
+        "filename": "BD_F60_S.mat"
+      },
+      {
+        "checksum": "7d69a103ac8f8a6f984d545dae0aa710",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334964,
+        "file_size": 36954093,
+        "filename": "H_F15_S.mat"
+      },
+      {
+        "checksum": "8f007d385920e44534a78669b787a070",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334886,
+        "file_size": 17101981,
+        "filename": "H_F50_S.mat"
+      },
+      {
+        "checksum": "18b4bf748275343a220cca7d4f854d60",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334968,
+        "file_size": 34149881,
+        "filename": "H_F5_S.mat"
+      },
+      {
+        "checksum": "5eae0d62eda1614cb4b147678b96c675",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334901,
+        "file_size": 29959433,
+        "filename": "H_F60_S.mat"
+      },
+      {
+        "checksum": "0e2ff87d128f6da31b25c991831efe35",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334895,
+        "file_size": 18621990,
+        "filename": "HB_F15_S.mat"
+      },
+      {
+        "checksum": "c842dc83ccee6a61811f398ec1362933",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334933,
+        "file_size": 28740479,
+        "filename": "HB_F50_S.mat"
+      },
+      {
+        "checksum": "7b45c67f666a870aa563ec93ace213d7",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334951,
+        "file_size": 15084827,
+        "filename": "HB_F5_S.mat"
+      },
+      {
+        "checksum": "6294749ce6e1d244e47ee33544dcd63a",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334947,
+        "file_size": 27227964,
+        "filename": "HB_F60_S.mat"
+      },
+      {
+        "checksum": "08d3ee2dc1607371802c879c8d709da9",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 335497,
+        "file_size": 206832,
+        "filename": "Information_about_database_files.txt"
+      },
+      {
+        "checksum": "8e55471eb0859b5f031632941c458775",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 335498,
+        "file_size": 25326,
+        "filename": "Information_environmental_conditions.txt"
+      },
+      {
+        "checksum": "a57280e7e3caf7fee5bb7ca8b7c3745e",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334935,
+        "file_size": 19258746,
+        "filename": "M_F15_S.mat"
+      },
+      {
+        "checksum": "0e29b3f286faea28645d13355fe3eed1",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334915,
+        "file_size": 27878286,
+        "filename": "M_F50_S.mat"
+      },
+      {
+        "checksum": "948aed478f80fbecf6efe82ceae1fd49",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334974,
+        "file_size": 12711576,
+        "filename": "M_F5_S.mat"
+      },
+      {
+        "checksum": "6d9c864a6e6cc9a426f75ba95d79c9e2",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334961,
+        "file_size": 30204185,
+        "filename": "M_F60_S.mat"
+      },
+      {
+        "checksum": "0b753c46c9305c8d4fd3e493eaa4f951",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334955,
+        "file_size": 14529153,
+        "filename": "OB_F15_S.mat"
+      },
+      {
+        "checksum": "5c48c30f51addec6377554fe9e746941",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334983,
+        "file_size": 27532985,
+        "filename": "OB_F50_S.mat"
+      },
+      {
+        "checksum": "a67776cf4261e3b64231e063d5402e83",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334987,
+        "file_size": 20840932,
+        "filename": "OB_F5_S.mat"
+      },
+      {
+        "checksum": "1504ac9b4b028b1da9476766856b119b",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334908,
+        "file_size": 29139968,
+        "filename": "OB_F60_S.mat"
+      },
+      {
+        "checksum": "bd2995d85681e8d0a023343953c162ca",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 500929,
+        "file_size": 273841,
+        "filename": "Readme.txt"
+      },
+      {
+        "checksum": "548d3109e71195df85e7592b531b66c8",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 335499,
+        "file_size": 436,
+        "filename": "Sampling_frequency_and_units.txt"
+      },
+      {
+        "checksum": "aac0ea78921239e400cae643f0504ccc",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334953,
+        "file_size": 20064343,
+        "filename": "U_F15_S.mat"
+      },
+      {
+        "checksum": "f40860b67574fb97d31a251e533d17d0",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334975,
+        "file_size": 29546944,
+        "filename": "U_F50_S.mat"
+      },
+      {
+        "checksum": "c008855036e5a9ebf217947975e6ff49",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334925,
+        "file_size": 16025524,
+        "filename": "U_F5_S.mat"
+      },
+      {
+        "checksum": "908b5cc3532a487f625a3dca9a3c7b2a",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334924,
+        "file_size": 25336431,
+        "filename": "U_F60_S.mat"
+      },
+      {
+        "checksum": "cb1120703cd116a32737e7c3acf9bcf8",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334958,
+        "file_size": 38176425,
+        "filename": "W25_F15_S.mat"
+      },
+      {
+        "checksum": "081152c5871948f340cb8d5a8ac8d2da",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334909,
+        "file_size": 28770612,
+        "filename": "W25_F50_S.mat"
+      },
+      {
+        "checksum": "fff96928f9d20d6d4c96c00f74be8285",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334980,
+        "file_size": 15697869,
+        "filename": "W25_F5_S.mat"
+      },
+      {
+        "checksum": "7eed0e45feb686798ccf02e378f057cd",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334991,
+        "file_size": 31502966,
+        "filename": "W25_F60_S.mat"
+      },
+      {
+        "checksum": "de126977decff247f04583fcf135d027",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334982,
+        "file_size": 14530944,
+        "filename": "W50_F15_S.mat"
+      },
+      {
+        "checksum": "48e86d758cf3ba76427d2f9bde601adb",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334950,
+        "file_size": 13053951,
+        "filename": "W50_F50_S.mat"
+      },
+      {
+        "checksum": "99dabb3a4639356e6172aa0a6073e63f",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334971,
+        "file_size": 15483611,
+        "filename": "W50_F5_S.mat"
+      },
+      {
+        "checksum": "e874e986ea430307c534bc98f0a98e53",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334937,
+        "file_size": 28778157,
+        "filename": "W50_F60_S.mat"
+      },
+      {
+        "checksum": "7aff430d543172bb877382b467c66850",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334977,
+        "file_size": 9090306,
+        "filename": "W75_F15_S.mat"
+      },
+      {
+        "checksum": "8a1e5d96afe9d33f36755fa75c2e76d4",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334993,
+        "file_size": 23110536,
+        "filename": "W75_F50_S.mat"
+      },
+      {
+        "checksum": "d04abee2b6cd1edeafefd789e4be058b",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334949,
+        "file_size": 24564913,
+        "filename": "W75_F5_S.mat"
+      },
+      {
+        "checksum": "7fb8030050bbfeff6afd27d6c43a34a1",
+        "checksum_algorithm": "MD5",
+        "dataverse_file_id": 334918,
+        "file_size": 29602038,
+        "filename": "W75_F60_S.mat"
+      }
+    ],
+    "license": "CC BY 4.0",
+    "mat_structure": {
+      "channels": "three identical grayscale channels stored as RGB",
+      "dtype": "uint8",
+      "format": "MATLAB 5.0",
+      "frame_shape": [
+        240,
+        320,
+        3
+      ],
+      "radiometric_temperature": false,
+      "variable": "imagenes_celda",
+      "variable_shape": [
+        1,
+        450
+      ],
+      "variable_type": "cell"
+    },
+    "selected_bytes": 842355594,
+    "source": "https://doi.org/10.34810/DATA2500",
+    "title": "Rotating electromechanical system dataset for condition monitoring",
+    "version": "2.1"
+  },
+  "embedding_cache": {
+    "bytes": 36694246,
+    "cache_hit": false,
+    "extraction_seconds": 356.293825700006,
+    "frame_count": 16200,
+    "path": "datasets\\derived\\thermal_resnet18\\embeddings.npz"
+  },
+  "encoder": {
+    "classification_logits_used": false,
+    "classifier_logits_used": false,
+    "device": "cpu",
+    "frozen": true,
+    "global_dimension": 512,
+    "global_layer": "layer4_adaptive_average_pool",
+    "model_id": "torchvision.models.resnet18",
+    "patch_dimension": 384,
+    "patch_grid": [
+      16,
+      16
+    ],
+    "patch_layers": [
+      "layer2",
+      "layer3"
+    ],
+    "preprocessing": {
+      "canvas_size": 256,
+      "imagenet_mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "imagenet_std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "mask_interpolation": "nearest",
+      "padding": "symmetric_imagenet_mean",
+      "resize_interpolation": "bilinear"
+    },
+    "torchvision_version": "0.28.0+cpu",
+    "weights_bytes": 46830571,
+    "weights_filename": "resnet18-f37072fd.pth",
+    "weights_id": "ResNet18_Weights.IMAGENET1K_V1",
+    "weights_sha256": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec"
+  },
+  "experiment_level_metrics": {
+    "accuracy": 0.1111111111111111,
+    "experiment_count": 9,
+    "experiments": [
+      {
+        "experiment_id": "BD_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.0595185185185184,
+          "broken_rotor_bar": 0.04265925925925926,
+          "gear_wear_25": 0.10241481481481486,
+          "gear_wear_50": 0.021903703703703686,
+          "gear_wear_75": 0.005755555555555558,
+          "half_broken_rotor_bar": 0.48343703703703766,
+          "healthy": 0.04063703703703702,
+          "imbalance": 0.1056370370370371,
+          "misalignment": 0.13803703703703693
+        },
+        "predicted_condition": "half_broken_rotor_bar",
+        "predicted_probability": 0.48343703703703766,
+        "top_2": [
+          {
+            "condition": "half_broken_rotor_bar",
+            "mean_probability": 0.48343703703703766
+          },
+          {
+            "condition": "misalignment",
+            "mean_probability": 0.13803703703703693
+          }
+        ],
+        "true_condition": "bearing_fault"
+      },
+      {
+        "experiment_id": "HB_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.0621185185185185,
+          "broken_rotor_bar": 0.5311629629629626,
+          "gear_wear_25": 0.04941481481481484,
+          "gear_wear_50": 0.06665185185185184,
+          "gear_wear_75": 0.012666666666666658,
+          "half_broken_rotor_bar": 0.10100740740740732,
+          "healthy": 0.023237037037037053,
+          "imbalance": 0.07983703703703705,
+          "misalignment": 0.0739037037037037
+        },
+        "predicted_condition": "broken_rotor_bar",
+        "predicted_probability": 0.5311629629629626,
+        "top_2": [
+          {
+            "condition": "broken_rotor_bar",
+            "mean_probability": 0.5311629629629626
+          },
+          {
+            "condition": "half_broken_rotor_bar",
+            "mean_probability": 0.10100740740740732
+          }
+        ],
+        "true_condition": "half_broken_rotor_bar"
+      },
+      {
+        "experiment_id": "H_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.043755555555555575,
+          "broken_rotor_bar": 0.3795407407407407,
+          "gear_wear_25": 0.07127407407407407,
+          "gear_wear_50": 0.07069629629629624,
+          "gear_wear_75": 0.05032592592592593,
+          "half_broken_rotor_bar": 0.07049629629629632,
+          "healthy": 0.07886666666666674,
+          "imbalance": 0.18508148148148146,
+          "misalignment": 0.04996296296296297
+        },
+        "predicted_condition": "broken_rotor_bar",
+        "predicted_probability": 0.3795407407407407,
+        "top_2": [
+          {
+            "condition": "broken_rotor_bar",
+            "mean_probability": 0.3795407407407407
+          },
+          {
+            "condition": "imbalance",
+            "mean_probability": 0.18508148148148146
+          }
+        ],
+        "true_condition": "healthy"
+      },
+      {
+        "experiment_id": "M_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.028770370370370384,
+          "broken_rotor_bar": 0.07613333333333334,
+          "gear_wear_25": 0.10949629629629631,
+          "gear_wear_50": 0.017466666666666644,
+          "gear_wear_75": 0.01764444444444441,
+          "half_broken_rotor_bar": 0.3365407407407403,
+          "healthy": 0.019385185185185172,
+          "imbalance": 0.1811185185185185,
+          "misalignment": 0.2134444444444445
+        },
+        "predicted_condition": "half_broken_rotor_bar",
+        "predicted_probability": 0.3365407407407403,
+        "top_2": [
+          {
+            "condition": "half_broken_rotor_bar",
+            "mean_probability": 0.3365407407407403
+          },
+          {
+            "condition": "misalignment",
+            "mean_probability": 0.2134444444444445
+          }
+        ],
+        "true_condition": "misalignment"
+      },
+      {
+        "experiment_id": "OB_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.050725925925925924,
+          "broken_rotor_bar": 0.1328444444444444,
+          "gear_wear_25": 0.05157037037037036,
+          "gear_wear_50": 0.04994074074074078,
+          "gear_wear_75": 0.013007407407407384,
+          "half_broken_rotor_bar": 0.25419259259259264,
+          "healthy": 0.016681481481481464,
+          "imbalance": 0.08334814814814813,
+          "misalignment": 0.3476888888888891
+        },
+        "predicted_condition": "misalignment",
+        "predicted_probability": 0.3476888888888891,
+        "top_2": [
+          {
+            "condition": "misalignment",
+            "mean_probability": 0.3476888888888891
+          },
+          {
+            "condition": "half_broken_rotor_bar",
+            "mean_probability": 0.25419259259259264
+          }
+        ],
+        "true_condition": "broken_rotor_bar"
+      },
+      {
+        "experiment_id": "U_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.48156296296296286,
+          "broken_rotor_bar": 0.10652592592592583,
+          "gear_wear_25": 0.007985185185185179,
+          "gear_wear_50": 0.09479259259259265,
+          "gear_wear_75": 0.0610148148148148,
+          "half_broken_rotor_bar": 0.0053555555555555604,
+          "healthy": 0.2136814814814814,
+          "imbalance": 0.022444444444444423,
+          "misalignment": 0.006637037037037038
+        },
+        "predicted_condition": "bearing_fault",
+        "predicted_probability": 0.48156296296296286,
+        "top_2": [
+          {
+            "condition": "bearing_fault",
+            "mean_probability": 0.48156296296296286
+          },
+          {
+            "condition": "healthy",
+            "mean_probability": 0.2136814814814814
+          }
+        ],
+        "true_condition": "imbalance"
+      },
+      {
+        "experiment_id": "W25_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.06074074074074082,
+          "broken_rotor_bar": 0.15317777777777764,
+          "gear_wear_25": 0.13928888888888877,
+          "gear_wear_50": 0.04997777777777778,
+          "gear_wear_75": 0.038525925925925894,
+          "half_broken_rotor_bar": 0.21705925925925895,
+          "healthy": 0.04861481481481477,
+          "imbalance": 0.19436296296296277,
+          "misalignment": 0.09825185185185191
+        },
+        "predicted_condition": "half_broken_rotor_bar",
+        "predicted_probability": 0.21705925925925895,
+        "top_2": [
+          {
+            "condition": "half_broken_rotor_bar",
+            "mean_probability": 0.21705925925925895
+          },
+          {
+            "condition": "imbalance",
+            "mean_probability": 0.19436296296296277
+          }
+        ],
+        "true_condition": "gear_wear_25"
+      },
+      {
+        "experiment_id": "W50_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.1710296296296295,
+          "broken_rotor_bar": 0.30654814814814796,
+          "gear_wear_25": 0.018637037037037018,
+          "gear_wear_50": 0.16485185185185183,
+          "gear_wear_75": 0.10125185185185183,
+          "half_broken_rotor_bar": 0.0337481481481481,
+          "healthy": 0.10052592592592591,
+          "imbalance": 0.044548148148148135,
+          "misalignment": 0.05885925925925928
+        },
+        "predicted_condition": "broken_rotor_bar",
+        "predicted_probability": 0.30654814814814796,
+        "top_2": [
+          {
+            "condition": "broken_rotor_bar",
+            "mean_probability": 0.30654814814814796
+          },
+          {
+            "condition": "bearing_fault",
+            "mean_probability": 0.1710296296296295
+          }
+        ],
+        "true_condition": "gear_wear_50"
+      },
+      {
+        "experiment_id": "W75_F60_S",
+        "frame_count": 450,
+        "mean_probabilities": {
+          "bearing_fault": 0.08554814814814816,
+          "broken_rotor_bar": 0.19515555555555558,
+          "gear_wear_25": 0.08209629629629626,
+          "gear_wear_50": 0.05871851851851854,
+          "gear_wear_75": 0.28300000000000014,
+          "half_broken_rotor_bar": 0.031222222222222196,
+          "healthy": 0.11080740740740751,
+          "imbalance": 0.10517037037037041,
+          "misalignment": 0.048281481481481474
+        },
+        "predicted_condition": "gear_wear_75",
+        "predicted_probability": 0.28300000000000014,
+        "top_2": [
+          {
+            "condition": "gear_wear_75",
+            "mean_probability": 0.28300000000000014
+          },
+          {
+            "condition": "broken_rotor_bar",
+            "mean_probability": 0.19515555555555558
+          }
+        ],
+        "true_condition": "gear_wear_75"
+      }
+    ],
+    "macro_f1": 0.1111111111111111
+  },
+  "final_fit": {
+    "frame_count": 12150,
+    "fresh_instance": true,
+    "speeds": [
+      "F5",
+      "F15",
+      "F50"
+    ]
+  },
+  "final_test_metrics": {
+    "accuracy": 0.11950617283950617,
+    "balanced_accuracy": 0.11950617283950618,
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        450,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        450,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        446,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        100,
+        0,
+        0,
+        350,
+        0,
+        0,
+        0
+      ],
+      [
+        7,
+        443,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        356,
+        0,
+        14,
+        79,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        217,
+        2,
+        201,
+        0,
+        4,
+        0,
+        26
+      ],
+      [
+        0,
+        1,
+        0,
+        402,
+        0,
+        0,
+        0,
+        25,
+        22
+      ],
+      [
+        0,
+        0,
+        0,
+        74,
+        0,
+        0,
+        0,
+        0,
+        376
+      ]
+    ],
+    "labels": [
+      "healthy",
+      "bearing_fault",
+      "half_broken_rotor_bar",
+      "broken_rotor_bar",
+      "imbalance",
+      "misalignment",
+      "gear_wear_25",
+      "gear_wear_50",
+      "gear_wear_75"
+    ],
+    "macro_f1": 0.12911806558707228,
+    "macro_precision": 0.3409838962780139,
+    "macro_recall": 0.11950617283950618,
+    "per_class": {
+      "bearing_fault": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 450
+      },
+      "broken_rotor_bar": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 450
+      },
+      "gear_wear_25": {
+        "f1": 0.01762114537444934,
+        "precision": 1.0,
+        "recall": 0.008888888888888889,
+        "support": 450
+      },
+      "gear_wear_50": {
+        "f1": 0.10526315789473684,
+        "precision": 1.0,
+        "recall": 0.05555555555555555,
+        "support": 450
+      },
+      "gear_wear_75": {
+        "f1": 0.8594285714285714,
+        "precision": 0.8847058823529412,
+        "recall": 0.8355555555555556,
+        "support": 450
+      },
+      "half_broken_rotor_bar": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 450
+      },
+      "healthy": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 450
+      },
+      "imbalance": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 450
+      },
+      "misalignment": {
+        "f1": 0.17974971558589306,
+        "precision": 0.18414918414918416,
+        "recall": 0.17555555555555555,
+        "support": 450
+      }
+    },
+    "weighted_f1": 0.12911806558707228
+  },
+  "leakage_audit": {
+    "adjacent_near_duplicate_pairs": 13107,
+    "adjacent_near_duplicate_threshold": "mean absolute uint8 difference <= 1.0",
+    "adjacent_pair_count": 16164,
+    "corrupt_frames": 0,
+    "duplicate_groups_spanning_conditions": 0,
+    "duplicate_groups_spanning_experiments": 0,
+    "duplicate_groups_spanning_speeds": 0,
+    "exact_duplicate_frame_occurrences": 0,
+    "exact_duplicate_groups": 0,
+    "expected_frames_per_experiment": 450,
+    "file_reports": [
+      {
+        "actual_frames": 450,
+        "condition": "bearing_fault",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "BD_F15_S",
+        "filename": "BD_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "BD",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "bearing_fault",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "BD_F50_S",
+        "filename": "BD_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "BD",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "bearing_fault",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "BD_F5_S",
+        "filename": "BD_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "BD",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "bearing_fault",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "BD_F60_S",
+        "filename": "BD_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "BD",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "healthy",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "H_F15_S",
+        "filename": "H_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "H",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "healthy",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "H_F50_S",
+        "filename": "H_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "H",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "healthy",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "H_F5_S",
+        "filename": "H_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "H",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "healthy",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "H_F60_S",
+        "filename": "H_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "H",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "half_broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "HB_F15_S",
+        "filename": "HB_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "HB",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "half_broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "HB_F50_S",
+        "filename": "HB_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "HB",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "half_broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "HB_F5_S",
+        "filename": "HB_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "HB",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "half_broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "HB_F60_S",
+        "filename": "HB_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "HB",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "misalignment",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "M_F15_S",
+        "filename": "M_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "M",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "misalignment",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "M_F50_S",
+        "filename": "M_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "M",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "misalignment",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "M_F5_S",
+        "filename": "M_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "M",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "misalignment",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "M_F60_S",
+        "filename": "M_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "M",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "OB_F15_S",
+        "filename": "OB_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "OB",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "OB_F50_S",
+        "filename": "OB_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "OB",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "OB_F5_S",
+        "filename": "OB_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "OB",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "broken_rotor_bar",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "OB_F60_S",
+        "filename": "OB_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "OB",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "imbalance",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "U_F15_S",
+        "filename": "U_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "U",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "imbalance",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "U_F50_S",
+        "filename": "U_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "U",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "imbalance",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "U_F5_S",
+        "filename": "U_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "U",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "imbalance",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "U_F60_S",
+        "filename": "U_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "U",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_25",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W25_F15_S",
+        "filename": "W25_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W25",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_25",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W25_F50_S",
+        "filename": "W25_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W25",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_25",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W25_F5_S",
+        "filename": "W25_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W25",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_25",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W25_F60_S",
+        "filename": "W25_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W25",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_50",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W50_F15_S",
+        "filename": "W50_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W50",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_50",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W50_F50_S",
+        "filename": "W50_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W50",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_50",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W50_F5_S",
+        "filename": "W50_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W50",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_50",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W50_F60_S",
+        "filename": "W50_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W50",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_75",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W75_F15_S",
+        "filename": "W75_F15_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W75",
+        "rpm": 900,
+        "speed": "F15",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_75",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W75_F50_S",
+        "filename": "W75_F50_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W75",
+        "rpm": 3000,
+        "speed": "F50",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_75",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W75_F5_S",
+        "filename": "W75_F5_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W75",
+        "rpm": 300,
+        "speed": "F5",
+        "within_experiment_duplicate_occurrences": 0
+      },
+      {
+        "actual_frames": 450,
+        "condition": "gear_wear_75",
+        "corrupt_frames": 0,
+        "cross_experiment_duplicate_frames": 0,
+        "exact_duplicate_frames": 0,
+        "expected_frames": 450,
+        "experiment_id": "W75_F60_S",
+        "filename": "W75_F60_S.mat",
+        "missing_frames": 0,
+        "raw_condition": "W75",
+        "rpm": 3600,
+        "speed": "F60",
+        "within_experiment_duplicate_occurrences": 0
+      }
+    ],
+    "missing_frames": 0,
+    "predictive_metadata": "pixels only; filenames, condition codes, and speed excluded",
+    "rendered_overlay_review": "Sampled real frames contain no filename, condition code, temperature scale, timestamp, or class-label overlay",
+    "replicated_grayscale_frames": 16200,
+    "total_frames": 16200,
+    "unique_frame_matrices": 16200
+  },
+  "limitations": [
+    "Frame metrics are temporally correlated and do not represent independent experiments",
+    "F60 contains nine independent condition-speed acquisitions, one per class",
+    "Speed holdout measures domain shift on the same test bench and fault configuration",
+    "No unseen-machine, unseen-camera, unseen-installation, or plant generalization is proven",
+    "Component disassembly and reassembly can confound condition-specific appearance",
+    "RGB values are thermographic appearance, not calibrated Celsius temperature",
+    "Raw classifier confidence is not severity, failure probability, health, or risk",
+    "No confidence calibration or multimodal fusion",
+    "Raspberry Pi 4 performance has not been measured"
+  ],
+  "preprocessing": {
+    "canvas_size": 256,
+    "imagenet_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "imagenet_std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "mask_interpolation": "nearest",
+    "padding": "symmetric_imagenet_mean",
+    "resize_interpolation": "bilinear"
+  },
+  "runtime": {
+    "cold_http_prediction_seconds": 3.899569,
+    "device": "cpu",
+    "feature_extraction_frames_per_second": 45.46809074833689,
+    "feature_extraction_seconds": 356.293825700006,
+    "predictor_initialization_seconds": 3.645763199980138,
+    "resnet_weights_bytes": 46830571,
+    "sample_prediction": {
+      "confidence": 0.32666666666666666,
+      "correct": true,
+      "frame_index": 225,
+      "label": "gear_wear_75",
+      "modality": "thermal",
+      "source_experiment": "W75_F60_S",
+      "true_condition": "gear_wear_75"
+    },
+    "warm_http_analysis_seconds": 0.090588,
+    "warm_http_prediction_seconds": 0.097365,
+    "warm_single_frame_prediction_repetitions": 5,
+    "warm_single_frame_prediction_seconds_mean": 0.0713953000085894
+  },
+  "selected_model": "random_forest",
+  "speeds_rpm": {
+    "F15": 900,
+    "F5": 300,
+    "F50": 3000,
+    "F60": 3600
+  },
+  "split": {
+    "candidate_selection": "F50 frame-level validation macro F1; balanced accuracy tie-break",
+    "final_refit": "fresh selected model fit on F5 + F15 + F50",
+    "locked_test_evaluation": "F60 evaluated exactly once after final refit",
+    "locked_test_speeds": [
+      "F60"
+    ],
+    "protocol": "predeclared operating-speed-held-out split; no random frame split",
+    "train_speeds": [
+      "F5",
+      "F15"
+    ],
+    "validation_speeds": [
+      "F50"
+    ]
+  },
+  "validation_metrics": {
+    "logistic_regression": {
+      "accuracy": 0.09382716049382717,
+      "balanced_accuracy": 0.09382716049382717,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          449
+        ],
+        [
+          0,
+          0,
+          0,
+          90,
+          0,
+          0,
+          0,
+          0,
+          360
+        ],
+        [
+          331,
+          0,
+          0,
+          117,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          371,
+          0,
+          0,
+          19,
+          0,
+          0,
+          0,
+          0,
+          60
+        ],
+        [
+          211,
+          0,
+          0,
+          239,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          254,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          346,
+          0,
+          0,
+          69,
+          25,
+          0,
+          10,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          450
+        ],
+        [
+          0,
+          0,
+          0,
+          99,
+          0,
+          0,
+          0,
+          0,
+          351
+        ]
+      ],
+      "labels": [
+        "healthy",
+        "bearing_fault",
+        "half_broken_rotor_bar",
+        "broken_rotor_bar",
+        "imbalance",
+        "misalignment",
+        "gear_wear_25",
+        "gear_wear_50",
+        "gear_wear_75"
+      ],
+      "macro_f1": 0.04490364780612173,
+      "macro_precision": 0.11849246153183514,
+      "macro_recall": 0.09382716049382717,
+      "per_class": {
+        "bearing_fault": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "broken_rotor_bar": {
+          "f1": 0.029710711493354185,
+          "precision": 0.022919179734620022,
+          "recall": 0.042222222222222223,
+          "support": 450
+        },
+        "gear_wear_25": {
+          "f1": 0.04329004329004329,
+          "precision": 0.8333333333333334,
+          "recall": 0.022222222222222223,
+          "support": 450
+        },
+        "gear_wear_50": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "gear_wear_75": {
+          "f1": 0.3311320754716981,
+          "precision": 0.21017964071856288,
+          "recall": 0.78,
+          "support": 450
+        },
+        "half_broken_rotor_bar": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "healthy": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "imbalance": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "misalignment": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        }
+      },
+      "weighted_f1": 0.04490364780612174
+    },
+    "random_forest": {
+      "accuracy": 0.17530864197530865,
+      "balanced_accuracy": 0.17530864197530865,
+      "confusion_matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          450
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0,
+          446
+        ],
+        [
+          211,
+          0,
+          0,
+          239,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          256,
+          0,
+          0,
+          0,
+          56,
+          126
+        ],
+        [
+          89,
+          0,
+          0,
+          355,
+          4,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          51,
+          0,
+          0,
+          390,
+          6,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          144,
+          0,
+          0,
+          266,
+          40,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          450
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          450
+        ]
+      ],
+      "labels": [
+        "healthy",
+        "bearing_fault",
+        "half_broken_rotor_bar",
+        "broken_rotor_bar",
+        "imbalance",
+        "misalignment",
+        "gear_wear_25",
+        "gear_wear_50",
+        "gear_wear_75"
+      ],
+      "macro_f1": 0.07296123710867147,
+      "macro_precision": 0.05374083747384187,
+      "macro_recall": 0.17530864197530863,
+      "per_class": {
+        "bearing_fault": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "broken_rotor_bar": {
+          "f1": 0.2612244897959184,
+          "precision": 0.1695364238410596,
+          "recall": 0.5688888888888889,
+          "support": 450
+        },
+        "gear_wear_25": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "gear_wear_50": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "gear_wear_75": {
+          "f1": 0.3794266441821248,
+          "precision": 0.23413111342351717,
+          "recall": 1.0,
+          "support": 450
+        },
+        "half_broken_rotor_bar": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "healthy": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        },
+        "imbalance": {
+          "f1": 0.016,
+          "precision": 0.08,
+          "recall": 0.008888888888888889,
+          "support": 450
+        },
+        "misalignment": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 450
+        }
+      },
+      "weighted_f1": 0.07296123710867147
+    }
+  }
+}
