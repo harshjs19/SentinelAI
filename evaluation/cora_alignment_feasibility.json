@@ -1,0 +1,549 @@
+{
+  "artifact_kind": "cora_alignment_feasibility",
+  "artifact_version": 1,
+  "audit_date": "2026-08-24",
+  "dataset": {
+    "doi": "doi:10.34810/DATA2500",
+    "license": "CC BY 4.0",
+    "title": "Rotating electromechanical system dataset for condition monitoring",
+    "version": "2.1",
+    "version_release_time": "2026-07-20T12:10:02Z"
+  },
+  "downloaded_inspection_data": {
+    "control_jpeg_bytes": 365842,
+    "downloaded_official_material_bytes": 4846398,
+    "file_level_non_f60_ddi_metadata_bytes": 29938,
+    "f60_signal_or_timing_payload_bytes": 0,
+    "ignored_directory_bytes": 5044839,
+    "ignored_directory_file_count": 26,
+    "inspection_summary_bytes": 198441,
+    "manifest_snapshot_bytes": 875733,
+    "official_paper_pdf_bytes": 1179757,
+    "official_paper_pdf_sha256": "70cfe2cb8824a8f77b08665f497ec6dd4994aa393b49f4be0ae6d95504bbd0a2",
+    "stationary_vibration_payload_bytes": 0,
+    "timing_csv_bytes": 2395128
+  },
+  "duration_evidence": {
+    "paper_stationary_duration_seconds": 2700,
+    "released_streams": {
+      "current": {
+        "file_count": 108,
+        "metadata_files_inspected": 3,
+        "representative_inferred_numeric_value_count": 9000000,
+        "published_sample_rate_hz": 4000,
+        "nominal_first_to_last_span_seconds": 2249.99975,
+        "nominal_sample_coverage_seconds": 2250
+      },
+      "rpm": {
+        "file_count": 36,
+        "metadata_files_inspected": 3,
+        "representative_inferred_numeric_value_count": 100,
+        "published_sample_rate_hz": 0.03333333333333333,
+        "nominal_first_to_last_span_seconds": 2970,
+        "nominal_sample_coverage_seconds": 3000
+      },
+      "rtd": {
+        "file_count": 216,
+        "metadata_files_inspected": 3,
+        "representative_inferred_numeric_value_count": 2700000,
+        "published_sample_rate_hz": 1000,
+        "nominal_first_to_last_span_seconds": 2699.999,
+        "nominal_sample_coverage_seconds": 2700
+      },
+      "thermal": {
+        "file_count": 36,
+        "payload_files_inspected": 3,
+        "representative_frame_count": 450,
+        "nominal_capture_rate_hz": 0.16666666666666666,
+        "nominal_capture_coverage_seconds": 2700,
+        "nominal_first_to_last_span_if_exact_seconds": 2694
+      },
+      "vibration": {
+        "axis_file_count": 108,
+        "metadata_files_inspected": 9,
+        "representative_inferred_numeric_value_count": 9000000,
+        "published_sample_rate_hz": 3000,
+        "nominal_first_to_last_span_seconds": 2999.9996666666666,
+        "nominal_sample_coverage_seconds": 3000
+      }
+    },
+    "source": "Pinned v2.1 manifest plus file-level DDI metadata for 18 non-F60 files in H_F5_S, BD_F15_S, and W75_F50_S; the numeric DDI variable name indicates the first numeric line was ingested as a header, so original numeric-line counts are explicitly inferred as case quantity plus one",
+    "unresolved": "Official sources do not explain the different stream spans or establish common start/end boundaries"
+  },
+  "f60_exclusion": {
+    "download_guard": "Reject all F60 experiment payload inspection before data access",
+    "f60_file_level_ddi_metadata_fetched": false,
+    "manifest_metadata_inspected": true,
+    "raw_datafile_payload_or_value_requested": false,
+    "signal_content_downloaded": false,
+    "signal_content_inspected": false,
+    "timing_content_downloaded": false,
+    "timing_content_inspected": false
+  },
+  "gate": {
+    "evidence_status": "partial",
+    "exact_thermal_to_vibration_mapping_reproducible": false,
+    "gate_status": "blocked",
+    "justification": "The paper claims infrared timestamps and modality time vectors enable alignment, but the v2.1 manifest contains no standalone thermal timestamp, separately named stationary timing covers only HB_F60_S, representative MAT/JPEG payloads contain no timestamp evidence, and no common zero, first-frame offset, or camera/DAS clock relationship is documented.",
+    "label": "PARTIAL / BLOCKED",
+    "modeling_scope_note": "The alignment evidence specifically blocks exact frame-level fusion. Gate 0 project policy also forbids starting the next planned CORA modeling milestone without a new user decision.",
+    "next_planned_cora_modeling_milestone_permitted": false,
+    "outcome": "partial"
+  },
+  "manifest": {
+    "classification_method": "Filename-derived audit of the complete pinned v2.1 manifest",
+    "alignment_metadata_search": {
+      "candidate_count": 296,
+      "fields": [
+        "stored filename",
+        "original filename",
+        "directory",
+        "description",
+        "content type"
+      ],
+      "term_counts": {
+        "IR": 72,
+        "RPM": 218,
+        "Vi": 2,
+        "camera": 0,
+        "clock": 0,
+        "sampling": 1,
+        "start": 0,
+        "synchronization/sync": 0,
+        "thermal/thermography": 0,
+        "time": 7,
+        "timestamp": 0,
+        "trigger": 0,
+        "vibration": 0
+      }
+    },
+    "counts": {
+      "metadata_text_files": 4,
+      "stationary_experiment_files": 611,
+      "time_files": 7,
+      "total_files": 1878,
+      "transient_experiment_files": 1263
+    },
+    "paper_category_count_contradiction": {
+      "paper_stationary_files": 510,
+      "paper_transient_files": 1368,
+      "resolution": "Unresolved; both totals are 1878, but the category breakdowns conflict. Released-file inventory uses the audit's filename-derived classification of the pinned v2.1 manifest."
+    },
+    "environmental_metadata_timing_references": {
+      "actual_stationary_references_present": 4,
+      "missing_references": 176,
+      "referenced_per_modality": {
+        "TimeCu": 36,
+        "TimeRPM": 36,
+        "TimeTemp": 36,
+        "TimeVi": 36,
+        "TimeVo": 36
+      },
+      "total_references": 180
+    },
+    "time_ir_exists": false,
+    "time_vo_exists": false,
+    "versioned_api_url": "https://dataverse.csuc.cat/api/datasets/:persistentId/versions/2.1?persistentId=doi%3A10.34810%2FDATA2500"
+  },
+  "official_sources": [
+    {
+      "kind": "dataset_record",
+      "url": "https://doi.org/10.34810/DATA2500"
+    },
+    {
+      "kind": "versioned_manifest",
+      "url": "https://dataverse.csuc.cat/api/datasets/:persistentId/versions/2.1?persistentId=doi%3A10.34810%2FDATA2500"
+    },
+    {
+      "dataverse_file_ids": [
+        335103,
+        335022,
+        335147,
+        335073,
+        335123,
+        335028,
+        335034,
+        335083,
+        335045,
+        335135,
+        335036,
+        335133,
+        335335,
+        335464,
+        335361,
+        335448,
+        335488,
+        335478
+      ],
+      "kind": "representative_non_f60_file_level_ddi_metadata",
+      "pinned_by": "File IDs and checksums from the v2.1 manifest",
+      "url_template": "https://dataverse.csuc.cat/api/access/datafile/{file_id}/metadata/ddi"
+    },
+    {
+      "kind": "scientific_data_paper",
+      "reference_pdf_edition": "16-page ARTICLE IN PRESS",
+      "reference_pdf_sha256": "70cfe2cb8824a8f77b08665f497ec6dd4994aa393b49f4be0ae6d95504bbd0a2",
+      "reference_pdf_url": "https://www.nature.com/articles/s41597-026-07224-0_reference.pdf",
+      "sections": [
+        "Methods pp. 7-10",
+        "Data Records",
+        "Technical Validation p. 12"
+      ],
+      "url": "https://doi.org/10.1038/s41597-026-07224-0"
+    },
+    {
+      "dataverse_file_id": 500929,
+      "kind": "readme",
+      "manifest_md5": "bd2995d85681e8d0a023343953c162ca",
+      "url": "https://dataverse.csuc.cat/api/access/datafile/500929"
+    },
+    {
+      "dataverse_file_id": 335497,
+      "kind": "database_file_information",
+      "manifest_md5": "08d3ee2dc1607371802c879c8d709da9",
+      "url": "https://dataverse.csuc.cat/api/access/datafile/335497"
+    },
+    {
+      "dataverse_file_id": 335498,
+      "kind": "environmental_and_file_references",
+      "manifest_md5": "8e55471eb0859b5f031632941c458775",
+      "url": "https://dataverse.csuc.cat/api/access/datafile/335498"
+    },
+    {
+      "dataverse_file_id": 335499,
+      "kind": "sampling_frequency_and_units",
+      "manifest_md5": "548d3109e71195df85e7592b531b66c8",
+      "url": "https://dataverse.csuc.cat/api/access/datafile/335499"
+    }
+  ],
+  "paper_claims": {
+    "camera_cadence": "10 images per minute (one image every 6 seconds)",
+    "common_hardware_trigger_specified": false,
+    "first_thermal_frame_timing_specified": false,
+    "infrared_timestamp_claimed": true,
+    "interval_sample_counts": {
+      "current": 24000,
+      "rtd": 6000,
+      "vibration": 18000
+    },
+    "sensor_clock_drift_specified": false,
+    "time_vectors_enable_alignment_claimed": true
+  },
+  "representative_files_inspected": {
+    "control_jpegs": [
+      {
+        "dataverse_file_id": 334967,
+        "dimensions": [
+          320,
+          240
+        ],
+        "exif_fields": 0,
+        "filename": "H_F5_S_IR_1_control.jpg",
+        "manifest_md5": "f78195ad56e7c3c13083f29c8c01a69b",
+        "overlay_present": false
+      },
+      {
+        "dataverse_file_id": 334930,
+        "dimensions": [
+          320,
+          240
+        ],
+        "exif_fields": 0,
+        "filename": "H_F5_S_IR_450_control.jpg",
+        "manifest_md5": "d11fd3578ed4148c6ea38e9e34079939",
+        "overlay_present": false
+      }
+    ],
+    "non_f60_stationary_file_metadata": [
+      {
+        "dataverse_file_id": 335103,
+        "filename": "H_F5_S_Vx.csv",
+        "manifest_md5": "10e3d07a5647058f20d2f3565675baf7",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335022,
+        "filename": "H_F5_S_Vy.csv",
+        "manifest_md5": "a45448ca8a0b69431ab1bb7e51f83512",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335147,
+        "filename": "H_F5_S_Vz.csv",
+        "manifest_md5": "36b02031c8b7762aff5d7b2e6767022c",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335073,
+        "filename": "H_F5_S_C1.csv",
+        "manifest_md5": "05f9aa92bf0f9577869a37a638c9748c",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335123,
+        "filename": "H_F5_S_T1.csv",
+        "manifest_md5": "f2b903e55157585c53fe4a444fc61c9b",
+        "inferred_numeric_value_count": 2700000
+      },
+      {
+        "dataverse_file_id": 335028,
+        "filename": "H_F5_S_RPM.csv",
+        "manifest_md5": "c7730d0e24cc3111f6f777759262627b",
+        "inferred_numeric_value_count": 100
+      },
+      {
+        "dataverse_file_id": 335034,
+        "filename": "BD_F15_S_Vx.csv",
+        "manifest_md5": "c54d048194cde04822bd6d515db5a12c",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335083,
+        "filename": "BD_F15_S_Vy.csv",
+        "manifest_md5": "98057fa76d8e961d8db95a92400761fe",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335045,
+        "filename": "BD_F15_S_Vz.csv",
+        "manifest_md5": "f0b46b94a0e43f26af4c79aeb91b5e44",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335135,
+        "filename": "BD_F15_S_C1.csv",
+        "manifest_md5": "0fc4c3b9c43574c2d0dc5ca26b13268b",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335036,
+        "filename": "BD_F15_S_T1.csv",
+        "manifest_md5": "7285b40bdc90f955f64d4ba937379c80",
+        "inferred_numeric_value_count": 2700000
+      },
+      {
+        "dataverse_file_id": 335133,
+        "filename": "BD_F15_S_RPM.csv",
+        "manifest_md5": "8a7aafd3837d0647959263259b3bd4ee",
+        "inferred_numeric_value_count": 100
+      },
+      {
+        "dataverse_file_id": 335335,
+        "filename": "W75_F50_S_Vx.csv",
+        "manifest_md5": "7c108c3eb71b7e2de1e8bf624e1e8418",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335464,
+        "filename": "W75_F50_S_Vy.csv",
+        "manifest_md5": "b9bd62ab45b1275e9b005d3681b65600",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335361,
+        "filename": "W75_F50_S_Vz.csv",
+        "manifest_md5": "6e4b75cd12f109b8057a4b2ea9af511d",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335448,
+        "filename": "W75_F50_S_C1.csv",
+        "manifest_md5": "d917de895463fe2e198bde46f5469e61",
+        "inferred_numeric_value_count": 9000000
+      },
+      {
+        "dataverse_file_id": 335488,
+        "filename": "W75_F50_S_T1.csv",
+        "manifest_md5": "abe3202ee9cc2212388bde7ad00f4b1b",
+        "inferred_numeric_value_count": 2700000
+      },
+      {
+        "dataverse_file_id": 335478,
+        "filename": "W75_F50_S_RPM.csv",
+        "manifest_md5": "635e81b5c4faa9b4cab35623d84cc8de",
+        "inferred_numeric_value_count": 100
+      }
+    ],
+    "non_f60_timing_vectors": [
+      {
+        "dataverse_file_id": 334695,
+        "duration": 29.99975,
+        "filename": "BD_F5_T_TimeCu.csv",
+        "first_value": 0.0,
+        "last_value": 29.99975,
+        "local_sha256": "204c7c73c066151a6be250bc857d3851db26208ff1a466a6dea9599891dbb656",
+        "manifest_md5": "916e0aeaada0620504ac080023f91f2e",
+        "median_increment": 0.00025000000000030553,
+        "value_count": 120000
+      },
+      {
+        "dataverse_file_id": 333966,
+        "duration": 29.97,
+        "filename": "BD_F5_T_TimeRPM.csv",
+        "first_value": 0.0,
+        "last_value": 29.97,
+        "local_sha256": "e7335cdaaa95d00f2a4390abf51af5e498d22609d007cecd5375bac1f9de1209",
+        "manifest_md5": "0ecbeacb444f3a43a7583e65530dc860",
+        "median_increment": 0.009999999999999787,
+        "value_count": 2998
+      },
+      {
+        "dataverse_file_id": 333965,
+        "duration": 29.9996666666667,
+        "filename": "BD_F5_T_TimeVi.csv",
+        "first_value": 0.0,
+        "last_value": 29.9996666666667,
+        "local_sha256": "1ea09a866fc0e0701ac160a8c7aa4fad0f0e0532559abf8aa06877699684801f",
+        "manifest_md5": "e99693b4a2c77c934b68411c14d038eb",
+        "median_increment": 0.00033333333332996595,
+        "value_count": 90000
+      }
+    ],
+    "stationary_vibration_payloads": [],
+    "thermal_mat": [
+      {
+        "dataverse_file_id": 334968,
+        "experiment_id": "H_F5_S",
+        "manifest_md5": "18b4bf748275343a220cca7d4f854d60"
+      },
+      {
+        "dataverse_file_id": 334986,
+        "experiment_id": "BD_F15_S",
+        "manifest_md5": "de197bf1881570c4ead8a7cf9c70fbd7"
+      },
+      {
+        "dataverse_file_id": 334993,
+        "experiment_id": "W75_F50_S",
+        "manifest_md5": "8a1e5d96afe9d33f36755fa75c2e76d4"
+      }
+    ]
+  },
+  "safety_confirmations": {
+    "api_added": false,
+    "calibrator_fit": false,
+    "classifier_selected": false,
+    "commit_created": false,
+    "database_migration_created": false,
+    "domain_model_changed": false,
+    "f60_vibration_content_downloaded_or_inspected": false,
+    "fusion_implemented": false,
+    "generated_dataset_binary_tracked": false,
+    "github_push_performed": false,
+    "model_trained": false,
+    "ordinal_alignment_assumed": false,
+    "thermal_v1_artifacts_or_results_changed": false
+  },
+  "thermal_payload": {
+    "calibrated_temperature_matrix_present": false,
+    "channel_structure": "three identical grayscale channels stored as RGB-shaped arrays",
+    "dtype": "uint8",
+    "files_inspected": 3,
+    "frame_count": 450,
+    "frame_count_scope": "Each of three representative non-F60 MAT files",
+    "frame_dimensions": [
+      240,
+      320,
+      3
+    ],
+    "matlab_format": "MATLAB 5.0",
+    "timestamp_field_present_in_inspected_files": false,
+    "variable_names": [
+      "imagenes_celda"
+    ],
+    "variable_shape": [
+      1,
+      450
+    ]
+  },
+  "timing_files": [
+    {
+      "dataverse_file_id": 334695,
+      "experiment_id": "BD_F5_T",
+      "filename": "BD_F5_T_TimeCu.csv",
+      "manifest_md5": "916e0aeaada0620504ac080023f91f2e",
+      "modality": "current",
+      "original_size": 1066640,
+      "payload_inspected": true,
+      "stored_size": 946638
+    },
+    {
+      "dataverse_file_id": 333966,
+      "experiment_id": "BD_F5_T",
+      "filename": "BD_F5_T_TimeRPM.csv",
+      "manifest_md5": "0ecbeacb444f3a43a7583e65530dc860",
+      "modality": "rpm",
+      "original_size": 19626,
+      "payload_inspected": true,
+      "stored_size": 16626
+    },
+    {
+      "dataverse_file_id": 333965,
+      "experiment_id": "BD_F5_T",
+      "filename": "BD_F5_T_TimeVi.csv",
+      "manifest_md5": "e99693b4a2c77c934b68411c14d038eb",
+      "modality": "vibration",
+      "original_size": 1308862,
+      "payload_inspected": true,
+      "stored_size": 1218860
+    },
+    {
+      "dataverse_file_id": 335009,
+      "experiment_id": "HB_F60_S",
+      "filename": "HB_F60_S_TimeCu.csv",
+      "manifest_md5": "813e62de46af67e66217eeabbeced582",
+      "modality": "current",
+      "original_size": 96558000,
+      "payload_inspected": false,
+      "stored_size": 87557998
+    },
+    {
+      "dataverse_file_id": 335115,
+      "experiment_id": "HB_F60_S",
+      "filename": "HB_F60_S_TimeRPM.csv",
+      "manifest_md5": "1f2f543e23fb63e76c805050550df670",
+      "modality": "rpm",
+      "original_size": 1744,
+      "payload_inspected": false,
+      "stored_size": 1642
+    },
+    {
+      "dataverse_file_id": 335113,
+      "experiment_id": "HB_F60_S",
+      "filename": "HB_F60_S_TimeTemp.csv",
+      "manifest_md5": "9edfe84703ad34552e5b1b49f22cddd5",
+      "modality": "rtd",
+      "original_size": 25587600,
+      "payload_inspected": false,
+      "stored_size": 22887598
+    },
+    {
+      "dataverse_file_id": 334994,
+      "experiment_id": "HB_F60_S",
+      "filename": "HB_F60_S_TimeVi.csv",
+      "manifest_md5": "8684787f1897938b6f1fbc9b3d441dfe",
+      "modality": "vibration",
+      "original_size": 136556222,
+      "payload_inspected": false,
+      "stored_size": 127556220
+    }
+  ],
+  "unresolved_alignment_assumptions": [
+    "No per-frame thermal timestamp evidence was found in the complete manifest or three representative MAT and two JPEG payloads; embedded variables in every MAT were not exhaustively inventoried",
+    "Separately named stationary vibration time vectors are absent from the manifest for 35 of 36 experiments",
+    "A common camera/DAS time zero or trigger is not documented",
+    "The first thermal capture offset relative to vibration is not documented",
+    "Exact per-experiment cadence is not demonstrated by released timestamps",
+    "Camera/DAS clock drift or correction is not documented",
+    "Differing stream durations are not explained",
+    "Interval boundary and first-frame handling are not authoritatively specified",
+    "Thermal timestamp semantics (exposure start, midpoint, end, or file-write time) are not specified",
+    "It is unknown whether absent stationary time vectors were omitted per experiment or intended as reusable templates",
+    "Dropped or duplicated frames and per-experiment cadence jitter are not documented",
+    "Camera-versus-DAS start/stop ordering is not documented"
+  ],
+  "vibration_unit": {
+    "conversion_applied": false,
+    "finding": "Official metadata says 'gs (m^2/s)', which is dimensionally inconsistent because SI acceleration is m/s^2. The intended unit is plausibly g, but the paper's sensor range does not establish released-value conversion or calibration provenance.",
+    "physical_clipping_threshold_established": false
+  }
+}
