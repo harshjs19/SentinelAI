@@ -12,16 +12,18 @@ coordinates local application behavior only.
   is not delivered to subscribers in another worker.
 - Redis does not carry inference events in the current architecture.
 
-The internal deterministic evidence and retrieval path is:
+The internal deterministic evidence and retrieval path, followed by the future Copilot
+boundary, is:
 
 ```text
 Analysis -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
-    -> future Maintenance Copilot
+    -> Copilot Draft -> Deterministic Safety Validation -> Maintenance Report
 ```
 
 Retriever V1 is an explicitly prepared internal component. It does not initialize on
 FastAPI startup, expose a public endpoint, or add an event/subscriber. The Maintenance
-Copilot remains future work. EventBus semantics are unchanged.
+Copilot currently provides offline contracts and deterministic safety machinery only;
+provider and LangGraph integration are later milestones. EventBus semantics are unchanged.
 
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted
