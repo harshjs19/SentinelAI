@@ -69,3 +69,7 @@ multi-worker deployment boundaries are documented in
 
 The deterministic internal contract between Analysis and future retrieval/reporting
 consumers is documented in [docs/evidence_package.md](docs/evidence_package.md).
+
+The curated [Knowledge Base source audit](docs/knowledge_sources.md) and deterministic
+[Retriever V1 contract](docs/retriever.md) describe source-attributed retrieval. A
+Maintenance Copilot is future work; no generated maintenance recommendations exist yet.

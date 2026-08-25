@@ -1,0 +1,689 @@
+{
+  "benchmark_name": "SentinelAI Retriever V1 curated regression",
+  "cases": [
+    {
+      "bundle_chunk_count": 5,
+      "bundle_serialized_bytes": 8737,
+      "bundle_text_characters": 4379,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "bearing_fault",
+          "intent_id": "maintenance:bearing_fault",
+          "lane": "maintenance",
+          "text": "bearing fault bearing condition inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "validated_baseline timeseries model validated scope UTK blocked chronological within-recording multiclass evaluation"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "timeseries model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "bearing_fault_reference",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "bearing_fault",
+      "top_target_chunks": [
+        {
+          "asset_type": "bearing",
+          "fault_code": "bearing_fault",
+          "publisher": "SKF Group",
+          "section": "Common inspection considerations / What this evidence does not establish / Source basis",
+          "similarity": 0.635975,
+          "source_id": "skf_bearing_damage_reference",
+          "source_uri": "https://cdn.skfmediahub.skf.com/api/public/0901d196806f2d3a/pdf_preview_medium/0901d196806f2d3a_pdf_preview_medium.pdf",
+          "title": "Bearing Damage and Failure Analysis"
+        },
+        {
+          "asset_type": "bearing",
+          "fault_code": "bearing_fault",
+          "publisher": "SKF Group",
+          "section": "Scope / What this evidence can mean",
+          "similarity": 0.496331,
+          "source_id": "skf_bearing_damage_reference",
+          "source_uri": "https://cdn.skfmediahub.skf.com/api/public/0901d196806f2d3a/pdf_preview_medium/0901d196806f2d3a_pdf_preview_medium.pdf",
+          "title": "Bearing Damage and Failure Analysis"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 4,
+      "bundle_serialized_bytes": 8180,
+      "bundle_text_characters": 4321,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "imbalance",
+          "intent_id": "maintenance:imbalance",
+          "lane": "maintenance",
+          "text": "rotating machinery imbalance inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "validated_baseline timeseries model validated scope UTK blocked chronological within-recording multiclass evaluation"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "timeseries model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "rotating_imbalance_reference",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "imbalance",
+      "top_target_chunks": [
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "imbalance",
+          "publisher": "Fluke Corporation",
+          "section": "Rotational imbalance and bent-shaft reference",
+          "similarity": 0.609092,
+          "source_id": "fluke_rotating_balance_shaft_reference",
+          "source_uri": "https://www.fluke.com/en-us/learn/blog/alignment/dynamic-unbalance-what-it-is-how-to-fix-i",
+          "title": "Dynamic Unbalance and Triaxial Machine-Fault Interpretation"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 6,
+      "bundle_serialized_bytes": 10842,
+      "bundle_text_characters": 5515,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "misalignment",
+          "intent_id": "maintenance:misalignment",
+          "lane": "maintenance",
+          "text": "shaft coupling misalignment inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model validated scope CORA same-test-bench operating-speed-held-out evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "thermal model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "shaft_misalignment_reference",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "misalignment",
+      "top_target_chunks": [
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "misalignment",
+          "publisher": "U.S. Department of Energy",
+          "section": "Common inspection considerations / What this evidence does not establish / Source basis",
+          "similarity": 0.649611,
+          "source_id": "doe_motor_alignment_coupling_reference",
+          "source_uri": "https://www1.eere.energy.gov/manufacturing/tech_assistance/pdfs/motor.pdf",
+          "title": "Improving Motor and Drive System Performance: A Sourcebook for Industry"
+        },
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "misalignment",
+          "publisher": "U.S. Department of Energy",
+          "section": "Scope / What this evidence can mean",
+          "similarity": 0.592044,
+          "source_id": "doe_motor_alignment_coupling_reference",
+          "source_uri": "https://www1.eere.energy.gov/manufacturing/tech_assistance/pdfs/motor.pdf",
+          "title": "Improving Motor and Drive System Performance: A Sourcebook for Industry"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 6,
+      "bundle_serialized_bytes": 10826,
+      "bundle_text_characters": 5519,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "half_broken_rotor_bar",
+          "intent_id": "maintenance:half_broken_rotor_bar",
+          "lane": "maintenance",
+          "text": "induction motor partial broken rotor bar condition"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model validated scope CORA same-test-bench operating-speed-held-out evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "thermal model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "rotor_bar_reference",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "half_broken_rotor_bar",
+      "top_target_chunks": [
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "half_broken_rotor_bar",
+          "publisher": "IEEE",
+          "section": "Scope / What this evidence can mean",
+          "similarity": 0.645933,
+          "source_id": "ieee_induction_motor_rotor_bar_reference",
+          "source_uri": "https://doi.org/10.1109/28.952499",
+          "title": "Quantitative evaluation of induction motor broken bars by electrical signature analysis"
+        },
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "half_broken_rotor_bar",
+          "publisher": "IEEE",
+          "section": "Common inspection considerations / What this evidence does not establish / Source basis",
+          "similarity": 0.466264,
+          "source_id": "ieee_induction_motor_rotor_bar_reference",
+          "source_uri": "https://doi.org/10.1109/28.952499",
+          "title": "Quantitative evaluation of induction motor broken bars by electrical signature analysis"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 6,
+      "bundle_serialized_bytes": 10711,
+      "bundle_text_characters": 5510,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "gear_wear_75",
+          "intent_id": "maintenance:gear_wear_75",
+          "lane": "maintenance",
+          "text": "gear tooth wear condition inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model validated scope CORA same-test-bench operating-speed-held-out evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "thermal model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "gear_wear_reference",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "gear_wear_75",
+      "top_target_chunks": [
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "gear_wear_75",
+          "publisher": "NASA Glenn Research Center",
+          "section": "Scope / What this evidence can mean",
+          "similarity": 0.511316,
+          "source_id": "nasa_gear_condition_reference",
+          "source_uri": "https://ntrs.nasa.gov/citations/20020009087",
+          "title": "Gear Damage Detection Using Oil Debris Analysis"
+        },
+        {
+          "asset_type": "rotating_electromechanical_system",
+          "fault_code": "gear_wear_75",
+          "publisher": "NASA Glenn Research Center",
+          "section": "Common inspection considerations / What this evidence does not establish / Source basis",
+          "similarity": 0.429813,
+          "source_id": "nasa_gear_condition_reference",
+          "source_uri": "https://ntrs.nasa.gov/citations/20020009087",
+          "title": "Gear Damage Detection Using Oil Debris Analysis"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 5,
+      "bundle_serialized_bytes": 9795,
+      "bundle_text_characters": 5340,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "visual_anomaly",
+          "intent_id": "maintenance:visual_anomaly",
+          "lane": "maintenance",
+          "text": "visual anomaly inspection unidentified physical fault"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:vision_visa_pcb1_v1",
+          "lane": "interpretation",
+          "text": "experimental vision model validated scope VisA PCB1 official one-class split evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:vision_visa_pcb1_v1",
+          "lane": "interpretation",
+          "text": "experimental vision model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:vision_visa_pcb1_v1",
+          "lane": "interpretation",
+          "text": "vision model confidence semantics bounded_empirical_visual_anomaly_evidence_from_normal_calibration"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "visual_anomaly_boundary",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "visual_anomaly",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "visual_anomaly",
+          "publisher": "SentinelAI",
+          "section": "Visual anomaly interpretation",
+          "similarity": 0.585561,
+          "source_id": "sentinelai_visual_anomaly_semantics_v1",
+          "source_uri": "repo://docs/vision_baseline.md",
+          "title": "SentinelAI Visual Anomaly Interpretation V1"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 5,
+      "bundle_serialized_bytes": 9773,
+      "bundle_text_characters": 5313,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "acoustic_anomaly",
+          "intent_id": "maintenance:acoustic_anomaly",
+          "lane": "maintenance",
+          "text": "acoustic anomaly inspection unidentified physical fault"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:audio_mimii_v1",
+          "lane": "interpretation",
+          "text": "experimental audio model validated scope MIMII DG bearing held-out Section 02 domain-shift evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:audio_mimii_v1",
+          "lane": "interpretation",
+          "text": "experimental audio model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:audio_mimii_v1",
+          "lane": "interpretation",
+          "text": "audio model confidence semantics bounded_empirical_anomaly_evidence_from_normal_calibration"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "acoustic_anomaly_boundary",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "acoustic_anomaly",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "acoustic_anomaly",
+          "publisher": "SentinelAI",
+          "section": "Acoustic anomaly interpretation",
+          "similarity": 0.552696,
+          "source_id": "sentinelai_acoustic_anomaly_semantics_v1",
+          "source_uri": "repo://docs/audio_baseline.md",
+          "title": "SentinelAI Acoustic Anomaly Interpretation V1"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 4,
+      "bundle_serialized_bytes": 7820,
+      "bundle_text_characters": 4161,
+      "has_fault_specific_maintenance": false,
+      "intents": [
+        {
+          "fault_code": "healthy",
+          "intent_id": "interpretation:healthy",
+          "lane": "interpretation",
+          "text": "normal condition healthy interpretation within validated model scope"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "validated_baseline timeseries model validated scope UTK blocked chronological within-recording multiclass evaluation"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "timeseries model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "healthy_interpretation",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "healthy",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "healthy",
+          "publisher": "SentinelAI",
+          "section": "Normal-condition interpretation",
+          "similarity": 0.628626,
+          "source_id": "sentinelai_normal_interpretation_v1",
+          "source_uri": "repo://docs/decision_engine.md",
+          "title": "SentinelAI Normal-Condition Interpretation V1"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 2,
+      "bundle_serialized_bytes": 4183,
+      "bundle_text_characters": 2080,
+      "has_fault_specific_maintenance": false,
+      "intents": [
+        {
+          "fault_code": "insufficient_evidence",
+          "intent_id": "interpretation:insufficient_evidence",
+          "lane": "interpretation",
+          "text": "insufficient evidence interpretation evidence limitations"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unsupported claim boundaries evidence limitations"
+        }
+      ],
+      "query_case_id": "insufficient_evidence_boundary",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "insufficient_evidence",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "insufficient_evidence",
+          "publisher": "SentinelAI",
+          "section": "Insufficient-evidence interpretation",
+          "similarity": 0.578356,
+          "source_id": "sentinelai_insufficient_evidence_v1",
+          "source_uri": "repo://docs/decision_engine.md",
+          "title": "SentinelAI Insufficient-Evidence Interpretation V1"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 6,
+      "bundle_serialized_bytes": 10842,
+      "bundle_text_characters": 5515,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "misalignment",
+          "intent_id": "maintenance:misalignment",
+          "lane": "maintenance",
+          "text": "shaft coupling misalignment inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model validated scope CORA same-test-bench operating-speed-held-out evaluation"
+        },
+        {
+          "fault_code": "experimental_model",
+          "intent_id": "interpretation:experimental_model:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "experimental thermal model maturity interpretation limitations"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:thermal_cora_v1",
+          "lane": "interpretation",
+          "text": "thermal model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "experimental_model_interpretation",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "experimental_model",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "experimental_model",
+          "publisher": "SentinelAI",
+          "section": "Model scope and lifecycle interpretation",
+          "similarity": 0.383399,
+          "source_id": "sentinelai_model_scope_lifecycle_v1",
+          "source_uri": "repo://docs/model_capabilities.md",
+          "title": "SentinelAI Model Scope and Lifecycle V1"
+        }
+      ]
+    },
+    {
+      "bundle_chunk_count": 5,
+      "bundle_serialized_bytes": 8737,
+      "bundle_text_characters": 4379,
+      "has_fault_specific_maintenance": true,
+      "intents": [
+        {
+          "fault_code": "bearing_fault",
+          "intent_id": "maintenance:bearing_fault",
+          "lane": "maintenance",
+          "text": "bearing fault bearing condition inspection"
+        },
+        {
+          "fault_code": "model_scope",
+          "intent_id": "interpretation:model_scope:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "validated_baseline timeseries model validated scope UTK blocked chronological within-recording multiclass evaluation"
+        },
+        {
+          "fault_code": "confidence_semantics",
+          "intent_id": "interpretation:confidence:timeseries_utk_v1",
+          "lane": "interpretation",
+          "text": "timeseries model confidence semantics raw_selected_class_predict_proba"
+        },
+        {
+          "fault_code": "evidence_limitations",
+          "intent_id": "interpretation:evidence_limitations",
+          "lane": "interpretation",
+          "text": "SentinelAI unavailable evidence claims limitations single_modality_evidence"
+        }
+      ],
+      "query_case_id": "uncalibrated_confidence_interpretation",
+      "rank_of_expected_source": 1,
+      "target_fault_code": "confidence_semantics",
+      "top_target_chunks": [
+        {
+          "asset_type": "generic",
+          "fault_code": "confidence_semantics",
+          "publisher": "SentinelAI",
+          "section": "Model confidence interpretation",
+          "similarity": 0.554675,
+          "source_id": "sentinelai_confidence_semantics_v1",
+          "source_uri": "repo://docs/model_capabilities.md",
+          "title": "SentinelAI Model Confidence Semantics V1"
+        }
+      ]
+    }
+  ],
+  "corpus": {
+    "asset_type_coverage": [
+      "bearing",
+      "generic",
+      "rotating_electromechanical_system"
+    ],
+    "chunk_count": 28,
+    "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+    "fault_code_coverage": [
+      "acoustic_anomaly",
+      "bearing_fault",
+      "bent_shaft",
+      "blocked_multimodal_fusion",
+      "broken_rotor_bar",
+      "confidence_semantics",
+      "coupling_fault",
+      "eccentric_rotor",
+      "evidence_limitations",
+      "experimental_model",
+      "gear_wear_25",
+      "gear_wear_50",
+      "gear_wear_75",
+      "half_broken_rotor_bar",
+      "healthy",
+      "imbalance",
+      "insufficient_evidence",
+      "misalignment",
+      "model_scope",
+      "visual_anomaly"
+    ],
+    "source_count": 13,
+    "source_type_counts": {
+      "external_authoritative": 6,
+      "project_internal": 7
+    }
+  },
+  "embedding": {
+    "device": "cpu",
+    "dimension": 384,
+    "local_assets_digest_sha256": "4827adf7fa3e57011cc56ace0835d4c142fae764205cfb56a78a8b4651281d67",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "prepared_bytes": 91578415,
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "sentence_transformers_version": "5.7.0"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python": "3.12.10"
+  },
+  "index": {
+    "build_seconds": 0.882534,
+    "chroma_version": "1.5.9",
+    "chunking": {
+      "max_characters": 1200,
+      "overlap_characters": 120,
+      "strategy": "heading_aware_character_v1"
+    },
+    "collection_metadata": {
+      "chunk_count": 28,
+      "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+      "distance_metric": "cosine",
+      "embedding_dimension": 384,
+      "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "knowledge_schema_version": "1",
+      "source_count": 13
+    },
+    "collection_name": "sentinelai_maintenance_v1",
+    "disk_bytes": 1036452,
+    "distance_metric": "cosine",
+    "first_build_rebuilt": true,
+    "unchanged_second_build_chunk_count": 28,
+    "unchanged_second_build_rebuilt": false
+  },
+  "known_limitations": [
+    "Small manually curated English-only corpus.",
+    "No general web search or live source refresh.",
+    "No cross-encoder reranker or LLM query rewriting.",
+    "Curated regression benchmark is not a production retrieval benchmark.",
+    "Semantic embeddings can rank imperfectly; restrictive metadata filters limit contamination.",
+    "Retrieved knowledge does not validate or expand upstream model predictions."
+  ],
+  "latency_seconds": {
+    "chroma_search_mean": 0.002925,
+    "cold_embedder_initialization": 7.316484,
+    "complete_retrieval_bundle_mean": 0.054307,
+    "warm_query_embedding_mean": 0.008641
+  },
+  "metrics": {
+    "citation_completeness": 1.0,
+    "cross_fault_contamination_count": 0,
+    "mean_reciprocal_rank": 1.0,
+    "query_case_count": 11,
+    "recall_at_3": 1.0,
+    "top_1_expected_topic_accuracy": 1.0
+  },
+  "schema_version": "1",
+  "typical_bundle": {
+    "median_chunk_count": 5,
+    "median_serialized_bytes": 9773,
+    "median_text_characters": 5313
+  }
+}

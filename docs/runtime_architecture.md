@@ -12,15 +12,16 @@ coordinates local application behavior only.
   is not delivered to subscribers in another worker.
 - Redis does not carry inference events in the current architecture.
 
-When a future application workflow needs retrieval or reporting evidence, it may
-synchronously build the immutable internal contract after Analysis:
+The internal deterministic evidence and retrieval path is:
 
 ```text
-Analysis -> Evidence Package -> future Retriever / Maintenance Copilot
+Analysis -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
+    -> future Maintenance Copilot
 ```
 
-The Retriever and Maintenance Copilot do not exist yet. V1 adds no Evidence Package
-event/subscriber and does not change EventBus semantics.
+Retriever V1 is an explicitly prepared internal component. It does not initialize on
+FastAPI startup, expose a public endpoint, or add an event/subscriber. The Maintenance
+Copilot remains future work. EventBus semantics are unchanged.
 
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted

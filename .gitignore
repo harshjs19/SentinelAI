@@ -40,6 +40,12 @@ datasets/*
 artifacts/
 checkpoints/
 
+# Generated retrieval assets
+knowledge/chroma/
+knowledge/embeddings/
+knowledge/downloads/
+knowledge/cache/
+
 # Logs
 logs/*
 !logs/.gitkeep

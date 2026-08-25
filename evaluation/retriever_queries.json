@@ -1,0 +1,71 @@
+{
+  "schema_version": "1",
+  "cases": [
+    {
+      "query_case_id": "bearing_fault_reference",
+      "scenario": {"finding_code": "bearing_fault", "modality": "timeseries", "asset_type": "bearing"},
+      "target_fault_code": "bearing_fault",
+      "expected_source_ids": ["skf_bearing_damage_reference"]
+    },
+    {
+      "query_case_id": "rotating_imbalance_reference",
+      "scenario": {"finding_code": "imbalance", "modality": "timeseries", "asset_type": "rotating_electromechanical_system"},
+      "target_fault_code": "imbalance",
+      "expected_source_ids": ["fluke_rotating_balance_shaft_reference"]
+    },
+    {
+      "query_case_id": "shaft_misalignment_reference",
+      "scenario": {"finding_code": "misalignment", "modality": "thermal", "asset_type": "rotating_electromechanical_system"},
+      "target_fault_code": "misalignment",
+      "expected_source_ids": ["doe_motor_alignment_coupling_reference"]
+    },
+    {
+      "query_case_id": "rotor_bar_reference",
+      "scenario": {"finding_code": "half_broken_rotor_bar", "modality": "thermal", "asset_type": "rotating_electromechanical_system"},
+      "target_fault_code": "half_broken_rotor_bar",
+      "expected_source_ids": ["ieee_induction_motor_rotor_bar_reference"]
+    },
+    {
+      "query_case_id": "gear_wear_reference",
+      "scenario": {"finding_code": "gear_wear_75", "modality": "thermal", "asset_type": "rotating_electromechanical_system"},
+      "target_fault_code": "gear_wear_75",
+      "expected_source_ids": ["nasa_gear_condition_reference"]
+    },
+    {
+      "query_case_id": "visual_anomaly_boundary",
+      "scenario": {"finding_code": "visual_anomaly", "modality": "vision", "asset_type": "pcb1"},
+      "target_fault_code": "visual_anomaly",
+      "expected_source_ids": ["sentinelai_visual_anomaly_semantics_v1"]
+    },
+    {
+      "query_case_id": "acoustic_anomaly_boundary",
+      "scenario": {"finding_code": "acoustic_anomaly", "modality": "audio", "asset_type": "bearing"},
+      "target_fault_code": "acoustic_anomaly",
+      "expected_source_ids": ["sentinelai_acoustic_anomaly_semantics_v1"]
+    },
+    {
+      "query_case_id": "healthy_interpretation",
+      "scenario": {"finding_code": "healthy", "modality": "timeseries", "asset_type": "bearing"},
+      "target_fault_code": "healthy",
+      "expected_source_ids": ["sentinelai_normal_interpretation_v1"]
+    },
+    {
+      "query_case_id": "insufficient_evidence_boundary",
+      "scenario": {"finding_code": null, "modality": "timeseries", "asset_type": "bearing"},
+      "target_fault_code": "insufficient_evidence",
+      "expected_source_ids": ["sentinelai_insufficient_evidence_v1"]
+    },
+    {
+      "query_case_id": "experimental_model_interpretation",
+      "scenario": {"finding_code": "misalignment", "modality": "thermal", "asset_type": "rotating_electromechanical_system"},
+      "target_fault_code": "experimental_model",
+      "expected_source_ids": ["sentinelai_model_scope_lifecycle_v1"]
+    },
+    {
+      "query_case_id": "uncalibrated_confidence_interpretation",
+      "scenario": {"finding_code": "bearing_fault", "modality": "timeseries", "asset_type": "bearing"},
+      "target_fault_code": "confidence_semantics",
+      "expected_source_ids": ["sentinelai_confidence_semantics_v1"]
+    }
+  ]
+}
