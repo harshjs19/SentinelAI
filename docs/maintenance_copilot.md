@@ -1,9 +1,9 @@
 # Maintenance Copilot safety foundation
 
 Maintenance Copilot V1 Milestone 1 provides the deterministic contracts and safety
-boundary for a future source-grounded maintenance report generator. It is an offline
-foundation: there is no LLM provider, LangGraph workflow, public API, report persistence,
-or report event in this milestone.
+boundary for a source-grounded maintenance report generator. Milestone 2 adds one
+explicitly constructed structured-output provider boundary. There is still no LangGraph
+workflow, public API, report persistence, or report event.
 
 ## Authority boundary
 
@@ -26,7 +26,7 @@ EvidencePackage + RetrievalBundle
 `EvidencePackage` is the source of machine truth. It exclusively owns the machine
 snapshot, condition, status, findings, confidence, health, risk, claim-support flags,
 limitations, and producing-model provenance. `RetrievalBundle` is the closed-book
-technical knowledge ceiling. A future generator may not diagnose independently or add
+technical knowledge ceiling. The generator may not diagnose independently or add
 maintenance knowledge from pretraining.
 
 ## Internal request and intent policy
@@ -100,7 +100,7 @@ Application citation metadata retains the chunk and source IDs, source digest, t
 publisher, section, local source URI, fault code, asset scope, matched intent, and source
 lane. The provider view contains only the citation label, title, publisher, section,
 fault code, asset scope, lane, and retrieved text. It does not contain source URLs or
-digests. A future generator will return citation IDs only; final source metadata is
+digests. The generator returns citation IDs only; final source metadata is
 restored from the validated application mapping.
 
 `CopilotGenerationContext` contains only:
@@ -301,8 +301,63 @@ The following is abbreviated; values are synthetic:
 }
 ```
 
+## Provider Boundary — Milestone 2
+
+Milestone 2 adds the async, Copilot-specific `MaintenanceGenerator` protocol and one
+`OpenAIMaintenanceGenerator` implementation. It uses the OpenAI Responses API with the
+exact baseline snapshot `gpt-5.4-mini-2026-03-17`; there is no floating alias, provider
+registry, or automatic model fallback. The requested model and response model are both
+retained in the generation receipt so a snapshot mismatch is visible.
+
+The adapter uses the official SDK's current Pydantic Structured Outputs path:
+`responses.parse(..., text_format=CopilotDraft)`. The SDK derives a strict JSON Schema
+from the existing model, marks every object as closed to additional properties, and
+requires the four draft fields. Local strict Pydantic validation remains authoritative
+for every parsed response and preserves all string and collection limits; there is no
+second provider schema, near-JSON recovery, or provider text fallback.
+
+Provider configuration is a frozen per-generator value with these baseline defaults:
+
+| Setting | Default |
+|---|---:|
+| Model | `gpt-5.4-mini-2026-03-17` |
+| Timeout | 30 seconds |
+| Maximum output | 1,200 tokens |
+| Temperature | 0 |
+| Reasoning effort | `none` |
+| Transient transport retries | 1 |
+
+Each call is stateless, uses `store=false` and `truncation=disabled`, and supplies no
+tools, conversation, or previous response ID. The underlying `AsyncOpenAI` client has
+`max_retries=0`; SentinelAI alone permits one retry for connection failures, timeouts,
+rate limits, HTTP 408/409, and 5xx responses. Authentication, permission, bad-request,
+schema, refusal, incomplete, malformed-output, and safety-validation failures are not
+transport-retried. Normalized error categories and messages exclude provider bodies,
+prompts, source text, credentials, paths, and headers.
+
+The versioned developer policy keeps Evidence Package facts authoritative and retrieval
+closed-book. Deterministic evidence, citation-labeled excerpts, and the optional question
+are serialized as stable JSON data. Retrieved content is explicitly untrusted reference
+data, and question text cannot become developer instructions. Provider context still
+excludes machine identity, evidence/retrieval IDs and digests, source URLs and hashes,
+raw sensor/media data, artifact/dataset/evaluation/Chroma paths, API keys, and environment
+values.
+
+Explicit refusal, incomplete status, missing output, and invalid structured output are
+distinct failures; partial or refusal text never becomes a draft. A direct
+`RepairInstruction` can submit the same original context, one previous rejected draft,
+and finite validator codes for a future single repair attempt. This milestone provides no
+repair loop and does not change deterministic provider-bypass decisions for confidence,
+limitations, unsupported requests, or absent grounded content.
+
+The opt-in `uv run python -m scripts.smoke_copilot_provider` command reads
+`OPENAI_API_KEY` only at composition time and runs three synthetic, first-attempt cases.
+It prints receipt and validation metadata but no prompt or draft by default; `--show-draft`
+is explicit. Normal tests remain offline. This smoke is an integration check, not a
+promotion benchmark; formal adversarial safety evaluation remains Milestone 4 work.
+
 ## Next milestones
 
-Milestone 2 may add a provider-neutral generator contract and one structured provider
-adapter after this foundation is reviewed. LangGraph remains a later, separately reviewed
-bounded orchestration milestone. No provider or graph is implemented here.
+LangGraph remains a later, separately reviewed bounded orchestration milestone. No graph,
+application service, public API, report persistence, database schema, or report event is
+implemented here.

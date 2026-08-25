@@ -1,4 +1,4 @@
-"""Offline deterministic safety foundation for the future Maintenance Copilot."""
+"""Maintenance Copilot deterministic safety and structured generation contracts."""
 
 from modules.copilot.context import (
     CopilotContextBuilder,
@@ -20,6 +20,13 @@ from modules.copilot.contracts import (
     ValidationResult,
 )
 from modules.copilot.exceptions import CopilotInputError, CopilotInputErrorCode
+from modules.copilot.generator import (
+    GeneratedDraftResult,
+    GenerationFailureCode,
+    MaintenanceGenerationError,
+    MaintenanceGenerator,
+    RepairInstruction,
+)
 from modules.copilot.policy import RequestPolicyDecision, decide_request_policy
 from modules.copilot.report import (
     MaintenanceReport,
@@ -43,11 +50,16 @@ __all__ = [
     "CopilotIntent",
     "FallbackReason",
     "GenerationStatus",
+    "GeneratedDraftResult",
+    "GenerationFailureCode",
     "MaintenanceCopilotRequest",
+    "MaintenanceGenerationError",
+    "MaintenanceGenerator",
     "MaintenanceReport",
     "MaintenanceSafetyValidator",
     "PreparedCopilotRequest",
     "RequestDisposition",
+    "RepairInstruction",
     "RequestPolicyDecision",
     "SafetyViolationCode",
     "ValidationResult",

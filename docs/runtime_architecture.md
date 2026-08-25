@@ -22,8 +22,9 @@ Analysis -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
 
 Retriever V1 is an explicitly prepared internal component. It does not initialize on
 FastAPI startup, expose a public endpoint, or add an event/subscriber. The Maintenance
-Copilot currently provides offline contracts and deterministic safety machinery only;
-provider and LangGraph integration are later milestones. EventBus semantics are unchanged.
+Copilot has an explicitly constructed, stateless structured-generation provider boundary;
+it is not wired into application startup, an API, persistence, or the EventBus. LangGraph
+orchestration remains a later milestone. EventBus semantics are unchanged.
 
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted

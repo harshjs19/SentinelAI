@@ -72,7 +72,7 @@ consumers is documented in [docs/evidence_package.md](docs/evidence_package.md).
 
 The curated [Knowledge Base source audit](docs/knowledge_sources.md) and deterministic
 [Retriever V1 contract](docs/retriever.md) describe source-attributed retrieval. A
-[Maintenance Copilot safety foundation](docs/maintenance_copilot.md) now defines offline
-contracts, closed-book citation policy, deterministic validation, and safe fallback.
-Provider and orchestration integration remain future work; no generated maintenance
-recommendations or public Copilot API exist yet.
+[Maintenance Copilot](docs/maintenance_copilot.md) defines closed-book contracts,
+deterministic validation, safe fallback, and an explicitly constructed OpenAI Responses
+structured-output provider boundary. LangGraph orchestration, generated report
+persistence, and a public Copilot API remain future work.
