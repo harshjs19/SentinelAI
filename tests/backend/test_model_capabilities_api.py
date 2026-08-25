@@ -47,6 +47,7 @@ async def test_lists_declared_model_capabilities_in_deterministic_order(
                     "UTK blocked chronological within-recording multiclass evaluation"
                 ),
                 "evaluation_reference": "evaluation/timeseries_baseline_results.json",
+                "confidence_semantics": "raw_selected_class_predict_proba",
             },
             {
                 "model_id": "audio_mimii_v1",
@@ -55,6 +56,9 @@ async def test_lists_declared_model_capabilities_in_deterministic_order(
                 "runtime_default": True,
                 "validated_scope": ("MIMII DG bearing held-out Section 02 domain-shift evaluation"),
                 "evaluation_reference": "evaluation/audio_baseline_results.json",
+                "confidence_semantics": (
+                    "bounded_empirical_anomaly_evidence_from_normal_calibration"
+                ),
             },
             {
                 "model_id": "audio_mimii_ast_v2",
@@ -63,6 +67,9 @@ async def test_lists_declared_model_capabilities_in_deterministic_order(
                 "runtime_default": False,
                 "validated_scope": "MIMII DG frozen-AST Section 01 promotion experiment",
                 "evaluation_reference": "evaluation/audio_v2_results.json",
+                "confidence_semantics": (
+                    "bounded_empirical_anomaly_evidence_from_normal_calibration"
+                ),
             },
             {
                 "model_id": "vision_visa_pcb1_v1",
@@ -71,6 +78,9 @@ async def test_lists_declared_model_capabilities_in_deterministic_order(
                 "runtime_default": True,
                 "validated_scope": "VisA PCB1 official one-class split evaluation",
                 "evaluation_reference": "evaluation/vision_baseline_results.json",
+                "confidence_semantics": (
+                    "bounded_empirical_visual_anomaly_evidence_from_normal_calibration"
+                ),
             },
             {
                 "model_id": "thermal_cora_v1",
@@ -79,6 +89,7 @@ async def test_lists_declared_model_capabilities_in_deterministic_order(
                 "runtime_default": True,
                 "validated_scope": "CORA same-test-bench operating-speed-held-out evaluation",
                 "evaluation_reference": "evaluation/thermal_baseline_results.json",
+                "confidence_semantics": "raw_selected_class_predict_proba",
             },
         ]
     }

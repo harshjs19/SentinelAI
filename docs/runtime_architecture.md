@@ -12,6 +12,16 @@ coordinates local application behavior only.
   is not delivered to subscribers in another worker.
 - Redis does not carry inference events in the current architecture.
 
+When a future application workflow needs retrieval or reporting evidence, it may
+synchronously build the immutable internal contract after Analysis:
+
+```text
+Analysis -> Evidence Package -> future Retriever / Maintenance Copilot
+```
+
+The Retriever and Maintenance Copilot do not exist yet. V1 adds no Evidence Package
+event/subscriber and does not change EventBus semantics.
+
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted
 analyses, report generation, notifications, or external integrations—SentinelAI must

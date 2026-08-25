@@ -1,0 +1,1 @@
+"""Model capability contract tests."""

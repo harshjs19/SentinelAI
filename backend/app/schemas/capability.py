@@ -11,6 +11,7 @@ class ModelCapabilityResponse(BaseModel):
     runtime_default: bool
     validated_scope: str
     evaluation_reference: str
+    confidence_semantics: str
 
 
 class ModelCapabilitiesResponse(BaseModel):

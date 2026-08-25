@@ -66,3 +66,6 @@ Current model lifecycle declarations and their scientific evidence are documente
 [docs/model_capabilities.md](docs/model_capabilities.md). The in-process EventBus and
 multi-worker deployment boundaries are documented in
 [docs/runtime_architecture.md](docs/runtime_architecture.md).
+
+The deterministic internal contract between Analysis and future retrieval/reporting
+consumers is documented in [docs/evidence_package.md](docs/evidence_package.md).
