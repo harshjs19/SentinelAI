@@ -170,6 +170,8 @@ class OpenAIMaintenanceGenerator:
             output_tokens=_optional_nonnegative_int(getattr(usage, "output_tokens", None)),
             latency_ms=max(0, round((perf_counter() - started) * 1000)),
             repair_attempted=repair is not None,
+            temperature=self.config.temperature,
+            reasoning_effort=self.config.reasoning_effort,
         )
 
 
@@ -182,7 +184,6 @@ def _classify_openai_error(error: OpenAIError) -> GenerationFailureCode:
         return GenerationFailureCode.PROVIDER_ERROR
 
     if isinstance(error, APITimeoutError | APIConnectionError | RateLimitError):
-        return GenerationFailureCode.TRANSIENT
         return GenerationFailureCode.TRANSIENT
     if isinstance(error, APIStatusError):
         if error.status_code in (408, 409) or error.status_code >= 500:

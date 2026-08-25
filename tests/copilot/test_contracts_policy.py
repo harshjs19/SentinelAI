@@ -10,6 +10,7 @@ from modules.copilot.contracts import (
     CopilotIntent,
     DraftFindingExplanation,
     FallbackReason,
+    GenerationStatus,
     MaintenanceCopilotRequest,
     RequestDisposition,
     normalize_question,
@@ -29,6 +30,14 @@ def test_copilot_intents_are_the_exact_closed_v1_set() -> None:
         "EXPLAIN_CONFIDENCE",
         "INSPECTION_CONSIDERATIONS",
         "EXPLAIN_LIMITATIONS",
+    }
+
+
+def test_generation_statuses_distinguish_provider_deterministic_and_fallback_paths() -> None:
+    assert set(GenerationStatus) == {
+        GenerationStatus.GENERATED,
+        GenerationStatus.DETERMINISTIC,
+        GenerationStatus.FALLBACK,
     }
 
 

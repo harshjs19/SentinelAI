@@ -30,12 +30,14 @@ from modules.copilot.generator import (
 from modules.copilot.policy import RequestPolicyDecision, decide_request_policy
 from modules.copilot.report import (
     MaintenanceReport,
+    assemble_deterministic_report,
     assemble_fallback_report,
     assemble_maintenance_report,
     maintenance_report_payload,
     verify_maintenance_report,
     verify_report_digest,
 )
+from modules.copilot.service import MaintenanceCopilotService
 from modules.copilot.validation import MaintenanceSafetyValidator
 
 __all__ = [
@@ -53,6 +55,7 @@ __all__ = [
     "GeneratedDraftResult",
     "GenerationFailureCode",
     "MaintenanceCopilotRequest",
+    "MaintenanceCopilotService",
     "MaintenanceGenerationError",
     "MaintenanceGenerator",
     "MaintenanceReport",
@@ -64,6 +67,7 @@ __all__ = [
     "SafetyViolationCode",
     "ValidationResult",
     "assemble_fallback_report",
+    "assemble_deterministic_report",
     "assemble_maintenance_report",
     "decide_request_policy",
     "generation_context_payload",

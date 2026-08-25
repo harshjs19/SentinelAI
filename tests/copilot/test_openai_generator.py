@@ -128,10 +128,9 @@ async def test_valid_generation_records_receipt_and_submits_frozen_request() -> 
     assert result.output_tokens == 87
     assert result.latency_ms >= 0
     assert result.repair_attempted is False
-    provenance = result.to_generation_provenance(
-        temperature=generator.config.temperature,
-        reasoning_effort=generator.config.reasoning_effort,
-    )
+    assert result.temperature == 0.0
+    assert result.reasoning_effort == "none"
+    provenance = result.to_generation_provenance()
     assert provenance.model == DEFAULT_OPENAI_MODEL
     assert provenance.model_snapshot == DEFAULT_OPENAI_MODEL
     assert provenance.response_id == "resp_test_123"

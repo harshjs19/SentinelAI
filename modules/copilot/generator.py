@@ -70,6 +70,8 @@ class GeneratedDraftResult:
     output_tokens: int | None
     latency_ms: int
     repair_attempted: bool
+    temperature: float | None = None
+    reasoning_effort: str | None = None
 
     def __post_init__(self) -> None:
         if not self.provider.strip() or not self.requested_model.strip():
@@ -78,18 +80,13 @@ class GeneratedDraftResult:
             if value is not None and (isinstance(value, bool) or value < 0):
                 raise ValueError("Generation usage and latency values cannot be negative")
 
-    def to_generation_provenance(
-        self,
-        *,
-        temperature: float,
-        reasoning_effort: str,
-    ) -> GenerationProvenance:
+    def to_generation_provenance(self) -> GenerationProvenance:
         return GenerationProvenance(
             provider=self.provider,
             model=self.requested_model,
             model_snapshot=self.model_snapshot,
-            temperature=temperature,
-            reasoning_effort=reasoning_effort,
+            temperature=self.temperature,
+            reasoning_effort=self.reasoning_effort,
             schema_version=COPILOT_SCHEMA_VERSION,
             prompt_policy_version=PROMPT_POLICY_VERSION,
             validator_policy_version=VALIDATOR_POLICY_VERSION,

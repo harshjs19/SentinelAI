@@ -186,7 +186,20 @@ def fake_generation_provenance(*, repair_attempted: bool = False) -> GenerationP
 
 def fallback_generation_provenance() -> GenerationProvenance:
     return GenerationProvenance(
-        provider="deterministic",
+        provider="none",
+        model=None,
+        model_snapshot=None,
+        temperature=None,
+        reasoning_effort=None,
+        schema_version=COPILOT_SCHEMA_VERSION,
+        prompt_policy_version=PROMPT_POLICY_VERSION,
+        validator_policy_version=VALIDATOR_POLICY_VERSION,
+    )
+
+
+def deterministic_generation_provenance() -> GenerationProvenance:
+    return GenerationProvenance(
+        provider="none",
         model=None,
         model_snapshot=None,
         temperature=None,
@@ -224,6 +237,36 @@ def assemble_maintenance_report(
         citations=citations,
         generation_provenance=generation_provenance,
         validation=validation,
+        report_id=report_id or uuid4(),
+        generated_at=generated_at or datetime.now(UTC),
+    )
+    return _with_digest(report)
+
+
+def assemble_deterministic_report(
+    prepared: PreparedCopilotRequest,
+    explanations: tuple[str, ...],
+    *,
+    request_disposition: RequestDisposition = RequestDisposition.ANSWERED,
+    report_id: UUID | None = None,
+    generated_at: datetime | None = None,
+) -> MaintenanceReport:
+    if not explanations:
+        raise ValueError("Deterministic report requires at least one explanation")
+    report = _build_report(
+        prepared,
+        generation_status=GenerationStatus.DETERMINISTIC,
+        fallback_reason=None,
+        request_disposition=request_disposition,
+        narrative=ReportNarrative(
+            executive_summary=" ".join(explanations),
+            finding_explanations=(),
+            inspection_considerations=(),
+            knowledge_gap_statement=None,
+        ),
+        citations=(),
+        generation_provenance=deterministic_generation_provenance(),
+        validation=ValidationResult(valid=True, violations=()),
         report_id=report_id or uuid4(),
         generated_at=generated_at or datetime.now(UTC),
     )

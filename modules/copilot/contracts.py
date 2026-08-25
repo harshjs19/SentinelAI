@@ -37,6 +37,7 @@ class CopilotIntent(StrEnum):
 
 class GenerationStatus(StrEnum):
     GENERATED = "generated"
+    DETERMINISTIC = "deterministic"
     FALLBACK = "fallback"
 
 

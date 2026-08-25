@@ -356,8 +356,70 @@ It prints receipt and validation metadata but no prompt or draft by default; `--
 is explicit. Normal tests remain offline. This smoke is an integration check, not a
 promotion benchmark; formal adversarial safety evaluation remains Milestone 4 work.
 
+## Milestone 3 — Bounded LangGraph Workflow
+
+Milestone 3 adds the internal `MaintenanceCopilotService` and uses LangGraph solely to
+make the provider-required `generate -> validate -> one repair -> finalize/fallback`
+control flow explicit. It is not an autonomous agent: there is no planning, tool use,
+query rewriting, retrieval, model selection, database access, or dynamic action surface
+inside the graph.
+
+Deterministic input integrity checks and request policy run before graph entry. Confidence
+and limitation explanations never enter the graph; they use reviewed application
+templates and return successful `DETERMINISTIC` reports. Their generation provenance uses
+`provider="none"` with no model identity. Unsupported/high-impact questions, insufficient
+evidence, normal-condition inspection requests, and requests without compatible grounded
+content also bypass generation and return deterministic fallback reports. A service may
+be constructed without a generator; deterministic paths remain available, while a
+provider-required request returns `GENERATION_UNAVAILABLE`.
+
+The provider-required graph is exactly:
+
+```text
+START -> generate_draft
+generate_draft -> validate_draft | fallback_report
+validate_draft -> finalize_report | repair_draft | fallback_report
+repair_draft -> validate_draft | fallback_report
+finalize_report -> END
+fallback_report -> END
+```
+
+Request-local typed state contains the prepared request, current draft/result, validation
+result, repair count, fallback reason, provider provenance, and final report. Generator
+and validator dependencies are captured when the service compiles the graph; credentials,
+clients, database sessions, Chroma, predictors, raw media/sensor data, paths, and
+environment values are not graph state. The graph has no tools, streaming, checkpoints,
+thread IDs, resume behavior, or conversation memory. Retrieval and citation assignment
+remain complete before entry, so generation cannot widen or rewrite the source boundary.
+
+Each successfully parsed draft is passed unchanged to the one existing
+`MaintenanceSafetyValidator`. An invalid first draft may receive one repair using the same
+context, rejected draft, and finite violation codes. `repair_count` is restricted to 0 or
+1 in nodes and routing, and invocation also uses a low recursion limit. A valid first
+draft therefore uses one logical content call; repair paths use at most two. Separately,
+the provider adapter allows at most two HTTP transport attempts per logical call, making
+four the theoretical HTTP maximum only when both logical calls each need one transient
+retry.
+
+Configuration, authentication, and exhausted transient failures map to
+`GENERATION_UNAVAILABLE`. Refusal, incomplete/malformed output, and other provider errors
+map to `GENERATION_FAILED`. Initial provider failure falls back immediately; repair is
+only for a successfully parsed but validator-rejected draft. Repair-provider failure or a
+second invalid draft also falls back immediately. Validation exhaustion uses
+`VALIDATION_FAILED`. Rejected prose and citations never enter fallback reports.
+
+Only validated drafts reach deterministic report assembly. Every generated,
+deterministic, or fallback report is checked by `verify_maintenance_report` before the
+service returns it. An invariant or digest failure raises a safe internal error rather
+than being hidden as provider fallback. `COPILOT_WORKFLOW_VERSION` is
+`maintenance_graph_v1` for code-level traceability but is not added to the report schema.
+
+The workflow is compiled only when a service is explicitly constructed with a generator.
+There is still no FastAPI endpoint, backend provider wiring, report persistence, database
+migration, EventBus event, frontend, or live safety benchmark. Formal adversarial provider
+evaluation and safety hardening remain Milestone 4 work.
+
 ## Next milestones
 
-LangGraph remains a later, separately reviewed bounded orchestration milestone. No graph,
-application service, public API, report persistence, database schema, or report event is
-implemented here.
+Formal live Copilot evaluation, adversarial safety testing, and any later API/persistence
+design remain separately reviewed milestones.

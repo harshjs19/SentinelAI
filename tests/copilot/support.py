@@ -1,8 +1,22 @@
 from dataclasses import dataclass
 
 from domain.enums.modality import Modality
-from modules.copilot.context import CopilotContextBuilder, PreparedCopilotRequest
-from modules.copilot.contracts import CopilotIntent, MaintenanceCopilotRequest
+from modules.copilot.context import (
+    CopilotContextBuilder,
+    CopilotGenerationContext,
+    PreparedCopilotRequest,
+)
+from modules.copilot.contracts import (
+    CopilotDraft,
+    CopilotIntent,
+    DraftFindingExplanation,
+    MaintenanceCopilotRequest,
+)
+from modules.copilot.generator import (
+    GeneratedDraftResult,
+    MaintenanceGenerationError,
+    RepairInstruction,
+)
 from modules.retriever.models import (
     EmbeddingIdentity,
     RetrievalBundle,
@@ -17,6 +31,67 @@ from tests.retriever.support import make_evidence_package
 CORPUS_DIGEST = "c" * 64
 SOURCE_DIGEST = "d" * 64
 EMBEDDING_IDENTITY = EmbeddingIdentity("fake/copilot-embedder", "test-revision", 8)
+
+
+class FakeMaintenanceGenerator:
+    def __init__(
+        self,
+        *outcomes: GeneratedDraftResult | MaintenanceGenerationError,
+    ) -> None:
+        self.outcomes = list(outcomes)
+        self.calls: list[tuple[CopilotGenerationContext, RepairInstruction | None]] = []
+
+    async def generate(
+        self,
+        context: CopilotGenerationContext,
+        repair: RepairInstruction | None = None,
+    ) -> GeneratedDraftResult:
+        self.calls.append((context, repair))
+        if not self.outcomes:
+            raise AssertionError("Fake Maintenance Generator has no scripted outcome")
+        outcome = self.outcomes.pop(0)
+        if isinstance(outcome, MaintenanceGenerationError):
+            raise outcome
+        return outcome
+
+
+def generated_result(
+    draft: CopilotDraft,
+    *,
+    repair_attempted: bool = False,
+) -> GeneratedDraftResult:
+    return GeneratedDraftResult(
+        draft=draft,
+        provider="fake",
+        requested_model="fake-copilot-model",
+        response_model="fake-copilot-model-snapshot",
+        model_snapshot="fake-copilot-model-snapshot",
+        response_id="response-repair" if repair_attempted else "response-initial",
+        input_tokens=100,
+        output_tokens=40,
+        latency_ms=5,
+        repair_attempted=repair_attempted,
+        temperature=0.0,
+        reasoning_effort="none",
+    )
+
+
+def make_valid_draft(
+    *,
+    summary: str = "The analysis reported a bearing fault.",
+    finding_text: str = "The cited source provides bearing-related condition context.",
+    citation_id: str = "K1",
+) -> CopilotDraft:
+    return CopilotDraft(
+        executive_summary=summary,
+        finding_explanations=(
+            DraftFindingExplanation(
+                finding_id="F1",
+                text=finding_text,
+                citation_ids=(citation_id,),
+            ),
+        ),
+    )
 
 
 @dataclass(frozen=True)

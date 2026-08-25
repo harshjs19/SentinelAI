@@ -74,5 +74,6 @@ The curated [Knowledge Base source audit](docs/knowledge_sources.md) and determi
 [Retriever V1 contract](docs/retriever.md) describe source-attributed retrieval. A
 [Maintenance Copilot](docs/maintenance_copilot.md) defines closed-book contracts,
 deterministic validation, safe fallback, and an explicitly constructed OpenAI Responses
-structured-output provider boundary. LangGraph orchestration, generated report
-persistence, and a public Copilot API remain future work.
+structured-output provider boundary. Bounded internal LangGraph orchestration now connects
+generation, validation, one repair, and deterministic report assembly. Formal live safety
+evaluation, report persistence, and a public Copilot API remain future work.

@@ -12,19 +12,23 @@ coordinates local application behavior only.
   is not delivered to subscribers in another worker.
 - Redis does not carry inference events in the current architecture.
 
-The internal deterministic evidence and retrieval path, followed by the future Copilot
-boundary, is:
+The internal deterministic evidence, retrieval, and Copilot path is:
 
 ```text
 Analysis -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
-    -> Copilot Draft -> Deterministic Safety Validation -> Maintenance Report
+    -> MaintenanceCopilotService
+        -> deterministic report path
+        OR
+        -> bounded LangGraph: generate -> validate -> one repair/fallback
+    -> Maintenance Report
 ```
 
 Retriever V1 is an explicitly prepared internal component. It does not initialize on
 FastAPI startup, expose a public endpoint, or add an event/subscriber. The Maintenance
-Copilot has an explicitly constructed, stateless structured-generation provider boundary;
-it is not wired into application startup, an API, persistence, or the EventBus. LangGraph
-orchestration remains a later milestone. EventBus semantics are unchanged.
+Copilot has an explicitly constructed structured-generation provider and a bounded,
+request-local internal orchestration service. It is not wired into application startup,
+an API, persistence, or the EventBus. The graph has no retrieval, tools, checkpointing,
+memory, or streaming. EventBus semantics are unchanged.
 
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted
