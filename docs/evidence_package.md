@@ -20,8 +20,14 @@ input evidence -> predictor -> InferenceOrchestrator
     -> InferenceResult(Prediction, ProducingModelContext)
     -> Decision Engine(Prediction) -> Analysis
     -> EvidencePackageService(Analysis, ProducingModelContext) -> EvidencePackage
-    -> future Retriever / Maintenance Copilot
+    -> KnowledgeRetriever -> RetrievalBundle -> MaintenanceCopilotService
 ```
+
+The internal `MaintenanceWorkflowService` now owns this construction sequence. Its caller
+cannot submit a Prediction, Analysis, EvidencePackage, RetrievalBundle, source hash, or
+model-provenance claim. The workflow resolves the authoritative Machine, derives source
+provenance from the same input passed to inference, and supplies the exact context from
+`InferenceResult`.
 
 `EvidencePackageService` consumes an existing domain `Machine`, `Analysis`, source
 provenance, and explicit `ProducingModelContext` snapshots. It does not run inference,
@@ -96,7 +102,7 @@ rules are:
 
 ## Source provenance and privacy
 
-`SourceProvenance` has two source kinds:
+Within the server-owned workflow, `SourceProvenance` has two source kinds:
 
 - `file`: Audio, Vision, and Thermal helpers hash the exact uploaded bytes before those
   bytes are discarded from the package;
@@ -271,7 +277,7 @@ CORA frame-level multimodal fusion remains deferred because v2.1 lacks sufficien
 timing evidence for reproducible thermal/vibration alignment. Evidence Package V1 does
 not alter that scientific decision.
 
-A future Retriever can consume the package without model objects, ORM objects, raw
-sensor/media payloads, sklearn, or torch. Future persistence may store the package JSON
-and digest for audit linkage, and a future Retriever/Copilot request may build a package
-explicitly after Analysis. Neither capability exists in V1.
+The current Retriever consumes the package without model objects, ORM objects, raw
+sensor/media payloads, sklearn, or torch. The request-local server workflow can continue
+through retrieval and report generation, but does not persist any intermediate or final
+artifact. Future persistence may store the package JSON and digest for audit linkage.

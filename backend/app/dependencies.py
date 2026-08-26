@@ -18,7 +18,9 @@ from backend.app.repositories.sqlalchemy_machine_repository import (
 )
 from backend.app.services.audio_inference_service import AudioInferenceService
 from backend.app.services.decision_service import DecisionService
+from backend.app.services.evidence_package_service import EvidencePackageService
 from backend.app.services.machine_service import MachineService
+from backend.app.services.maintenance_workflow_service import MaintenanceWorkflowService
 from backend.app.services.thermal_inference_service import ThermalInferenceService
 from backend.app.services.timeseries_inference_service import TimeseriesInferenceService
 from backend.app.services.vision_inference_service import VisionInferenceService
@@ -27,7 +29,23 @@ from inference.event_bus import EventBus
 from inference.orchestrator import InferenceOrchestrator
 from modules.audio.input import AudioInput
 from modules.audio.predictor import AudioPredictor
+from modules.copilot.service import MaintenanceCopilotService
+from modules.copilot.validation import MaintenanceSafetyValidator
 from modules.decision.engine import DecisionEngine
+from modules.retriever.config import (
+    CHROMA_PATH,
+    COLLECTION_NAME,
+    EMBEDDING_DIMENSION,
+    EMBEDDING_MODEL_ID,
+    EMBEDDING_MODEL_PATH,
+    EMBEDDING_MODEL_REVISION,
+    MANIFEST_PATH,
+)
+from modules.retriever.corpus import load_corpus
+from modules.retriever.embedding import SentenceTransformerEmbedder
+from modules.retriever.models import EmbeddingIdentity
+from modules.retriever.retriever import KnowledgeRetriever
+from modules.retriever.store import ChromaKnowledgeStore
 from modules.thermal.input import ThermalInput
 from modules.thermal.predictor import ThermalPredictor
 from modules.timeseries.predictor import TimeseriesPredictor
@@ -182,3 +200,47 @@ def get_thermal_inference_service() -> ThermalInferenceService:
         return ThermalInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
         raise model_unavailable_error("Thermal") from None
+
+
+@lru_cache
+def get_evidence_package_service() -> EvidencePackageService:
+    return EvidencePackageService()
+
+
+@lru_cache
+def get_knowledge_retriever() -> KnowledgeRetriever:
+    identity = EmbeddingIdentity(
+        model_id=EMBEDDING_MODEL_ID,
+        revision=EMBEDDING_MODEL_REVISION,
+        dimension=EMBEDDING_DIMENSION,
+    )
+    corpus = load_corpus(MANIFEST_PATH, identity)
+    return KnowledgeRetriever(
+        store=ChromaKnowledgeStore(CHROMA_PATH, COLLECTION_NAME),
+        embedder=SentenceTransformerEmbedder(EMBEDDING_MODEL_PATH, identity),
+        corpus_digest_sha256=corpus.corpus_digest_sha256,
+    )
+
+
+@lru_cache
+def get_maintenance_copilot_service() -> MaintenanceCopilotService:
+    return MaintenanceCopilotService(
+        generator=None,
+        validator=MaintenanceSafetyValidator(),
+    )
+
+
+def get_maintenance_workflow_service(
+    session: SessionDependency,
+) -> MaintenanceWorkflowService:
+    return MaintenanceWorkflowService(
+        machine_service=get_machine_service(session),
+        timeseries_inference_factory=get_timeseries_inference_service,
+        audio_inference_factory=get_audio_inference_service,
+        vision_inference_factory=get_vision_inference_service,
+        thermal_inference_factory=get_thermal_inference_service,
+        decision_service=get_decision_service(),
+        evidence_package_service=get_evidence_package_service(),
+        knowledge_retriever_factory=get_knowledge_retriever,
+        copilot_service=get_maintenance_copilot_service(),
+    )

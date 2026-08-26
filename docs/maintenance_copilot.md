@@ -19,7 +19,7 @@ Input -> Predictor -> InferenceOrchestrator
     -> EvidencePackage -> KnowledgeRetriever -> RetrievalBundle
 ```
 
-The future language path is bounded by those outputs:
+The language path is bounded by those outputs:
 
 ```text
 EvidencePackage + RetrievalBundle
@@ -33,6 +33,16 @@ snapshot, condition, status, findings, confidence, health, risk, claim-support f
 limitations, and producing-model provenance. `RetrievalBundle` is the closed-book
 technical knowledge ceiling. The generator may not diagnose independently or add
 maintenance knowledge from pretraining.
+
+`MaintenanceWorkflowService` is the authoritative server-owned entry point for a complete
+request-local run. A caller supplies an authoritative machine ID, one typed modality
+source, intent, and optional bounded question. The server performs inference and builds
+the Analysis, EvidencePackage, and matching RetrievalBundle before invoking this service.
+Copilot cannot call inference or retrieval and cannot accept client-constructed derived
+objects through that workflow boundary.
+
+V1 remains single modality. It preserves `SINGLE_MODALITY_EVIDENCE`, performs no synthetic
+fusion, and does not change the CORA alignment feasibility decision.
 
 ## Internal request and intent policy
 
@@ -162,9 +172,9 @@ fault code, or citation metadata.
 
 ## MaintenanceSafetyValidator
 
-There is one semantic safety validator. The future orchestration milestone will call the
-same `MaintenanceSafetyValidator` after initial generation and after no more than one
-repair attempt.
+There is one semantic safety validator. The bounded Copilot workflow calls the same
+`MaintenanceSafetyValidator` after initial generation and after no more than one repair
+attempt.
 
 The validator checks:
 
@@ -428,13 +438,15 @@ than being hidden as provider fallback. `COPILOT_WORKFLOW_VERSION` is
 `maintenance_graph_v1` for code-level traceability but is not added to the report schema.
 
 The workflow is compiled only when a service is explicitly constructed with a generator.
-There is still no FastAPI endpoint, backend provider wiring, report persistence, database
-migration, EventBus event, frontend, or public workflow. Formal adversarial provider
-evaluation and safety hardening are tracked in
+The application composition root constructs the default Copilot service without a
+provider, preserving offline deterministic behavior and safe provider-unavailable
+fallback. There is still no FastAPI maintenance endpoint, provider credential wiring,
+report persistence, database migration, EventBus workflow event, or frontend. Formal
+adversarial provider evaluation and safety hardening are tracked in
 [Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Next milestones
 
 Formal live OpenAI evaluation remains available as a pre-public gate; no live metrics are
-claimed by the offline round. Human citation-entailment review and any later
-API/persistence design remain separately reviewed milestones.
+claimed by the offline round. Human citation-entailment review and later persistence,
+transaction, and public API design remain separately reviewed milestones.

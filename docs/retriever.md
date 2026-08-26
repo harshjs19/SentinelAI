@@ -8,7 +8,7 @@ machine. The deterministic path is:
 
 ```text
 EvidencePackage -> RetrievalQueryPlanner -> KnowledgeRetriever -> RetrievalBundle
-    -> future Maintenance Copilot
+    -> Maintenance Copilot
 ```
 
 `EvidencePackage` remains the evidence boundary. Retrieval validates its digest and uses
@@ -18,8 +18,9 @@ datasets. It does not modify evidence, run a Decision Engine, call an LLM, synth
 diagnosis, or generate a maintenance instruction.
 
 There is no public retrieval API, EventBus event/subscriber, PostgreSQL model, startup
-hook, or automatic index build. Existing health, machine, inference, capability, and
-Alembic paths do not import or initialize the encoder or Chroma.
+hook, or automatic index build. The internal server-owned maintenance workflow resolves
+the prepared retriever lazily only after machine lookup, inference, decision, and Evidence
+Package integrity verification succeed.
 
 ## Rebuildable knowledge corpus
 
@@ -153,7 +154,7 @@ intent order, similarity, source ID, and chunk ID.
 
 Every frozen `RetrievedChunk` contains chunk/source identity, source digest, title,
 publisher, source URI, section, bounded text, scalar fault/asset metadata, similarity,
-and matched intent. A future consumer can cite a result without reopening Chroma.
+and matched intent. Maintenance Copilot can cite a result without reopening Chroma.
 
 The frozen `RetrievalBundle` records schema version, Evidence Package ID/full digest,
 corpus digest, embedding model/revision, collection name, planned queries, retrieved
@@ -197,11 +198,9 @@ objectives.
 - External source availability can change.
 - Retrieved information does not validate or expand an upstream prediction or model scope.
 - CORA fusion remains blocked; retrieval does not resume it.
-- No Maintenance Copilot exists yet. A future Copilot may consume `RetrievalBundle` as
-  deterministic grounding but must retain all evidence and citation boundaries.
-
-Evidence Package V1 has one provenance limitation: it resolves model provenance from the
-runtime-default capability for each prediction modality. Rebuilding historical packages
-after runtime defaults change could therefore misattribute the producing model. Retriever
-V1 does not reconstruct historical packages or change Prediction/domain identity; future
-persistence/runtime provenance must resolve that before historical reconstruction.
+- Maintenance Copilot consumes `RetrievalBundle` only as deterministic grounding and
+  retains all evidence and citation boundaries.
+- The server-owned workflow verifies the bundle digest and exact Evidence Package
+  ID/digest binding before Copilot generation. It remains request-local and unpersisted.
+- Producing-model identity comes from `InferenceResult`; retrieval never reconstructs it
+  from current runtime defaults.
