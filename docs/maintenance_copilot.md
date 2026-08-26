@@ -13,8 +13,10 @@ event. See [Copilot V1 adversarial evaluation](copilot_evaluation.md).
 SentinelAI's authoritative path remains deterministic:
 
 ```text
-Input -> Predictor -> InferenceOrchestrator -> Prediction -> Decision Engine
-    -> Analysis -> EvidencePackage -> KnowledgeRetriever -> RetrievalBundle
+Input -> Predictor -> InferenceOrchestrator
+    -> InferenceResult(Prediction, ProducingModelContext)
+    -> Decision Engine(Prediction) -> Analysis
+    -> EvidencePackage -> KnowledgeRetriever -> RetrievalBundle
 ```
 
 The future language path is bounded by those outputs:
@@ -248,13 +250,18 @@ default logging.
 
 No runtime output files are written by this foundation.
 
-## Producing-model provenance limitation
+## Producing-model provenance
 
-Evidence Package V1 currently resolves producing-model identity from the runtime-default
-capability for each prediction modality. That remains acceptable only for the immediate
-in-process workflow. Exact runtime `ProducingModelContext` propagation must be implemented
-before historical reconstruction, persisted Copilot reports, or a public report API.
-This milestone deliberately does not modify `Prediction` or Evidence Package semantics.
+Exact model identity is now bound to the concrete predictor and captured in an immutable
+`ProducingModelContext` alongside each inference result. Evidence Package construction
+requires those contexts and fails closed instead of reconstructing identity from whatever
+model is currently configured as the runtime default. `Prediction`, `Analysis`, Decision
+Engine semantics, Copilot prompts, validation, and report assembly remain unchanged;
+Maintenance Reports continue copying the exact Evidence Package model snapshots.
+
+The remaining provenance limitation is narrower: current static bindings do not include
+an artifact digest, training-run/registry identity, or cryptographic attestation. No
+MLflow or model registry is implied.
 
 ## Synthetic report example
 

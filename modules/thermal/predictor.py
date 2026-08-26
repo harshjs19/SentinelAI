@@ -36,6 +36,10 @@ class ThermalPredictor:
         )
 
     @property
+    def model_id(self) -> str:
+        return "thermal_cora_v1"
+
+    @property
     def supported_asset_types(self) -> tuple[str, ...]:
         return self._artifact.metadata.supported_asset_types
 

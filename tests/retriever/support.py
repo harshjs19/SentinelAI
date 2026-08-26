@@ -5,6 +5,8 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from uuid import UUID
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
@@ -104,4 +106,11 @@ def make_evidence_package(
             Modality.THERMAL: "image/png",
         }
         source = file_source_provenance(modality, b"private fixture bytes", media_types[modality])
-    return EvidencePackageService().build(machine, analysis, [source])
+    return EvidencePackageService().build(
+        machine,
+        analysis,
+        [source],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(modality)),
+        ),
+    )

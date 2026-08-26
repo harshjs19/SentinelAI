@@ -55,6 +55,7 @@ def test_trains_loads_and_maps_prediction_to_domain(
     probabilities = predictor.predict_probabilities(features)
     evaluation = evaluate_saved_artifact(config)
 
+    assert predictor.model_id == "timeseries_utk_v1"
     assert isinstance(prediction, Prediction)
     assert prediction.modality is Modality.TIMESERIES
     assert prediction.label in probabilities

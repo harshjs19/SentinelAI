@@ -9,6 +9,8 @@ import pytest
 from PIL import Image
 
 import backend.app.dependencies as dependencies
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.dependencies import (
     get_decision_service,
     get_machine_service,
@@ -58,7 +60,14 @@ def api_context() -> Iterator[ApiContext]:
     predictor = FakeThermalPredictor()
     event_bus = EventBus()
     orchestrator = InferenceOrchestrator(event_bus)
-    orchestrator.register(Modality.THERMAL, predictor, input_type=ThermalInput)
+    orchestrator.register(
+        Modality.THERMAL,
+        predictor,
+        input_type=ThermalInput,
+        producing_model=snapshot_producing_model_context(
+            get_runtime_default_capability(Modality.THERMAL)
+        ),
+    )
     inference_service = ThermalInferenceService(
         orchestrator,
         ("rotating_electromechanical_system",),

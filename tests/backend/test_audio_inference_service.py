@@ -5,6 +5,8 @@ import numpy as np
 import pytest
 import soundfile as sf
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.services.audio_inference_service import (
     AudioInferenceService,
     UnsupportedAudioAssetTypeError,
@@ -37,7 +39,14 @@ async def test_decodes_audio_and_emits_prediction_event() -> None:
     event_bus = EventBus()
     orchestrator = InferenceOrchestrator(event_bus)
     predictor = RecordingAudioPredictor()
-    orchestrator.register(Modality.AUDIO, predictor, input_type=AudioInput)
+    orchestrator.register(
+        Modality.AUDIO,
+        predictor,
+        input_type=AudioInput,
+        producing_model=snapshot_producing_model_context(
+            get_runtime_default_capability(Modality.AUDIO)
+        ),
+    )
     service = AudioInferenceService(orchestrator, ("bearing",))
     events: list[PredictionProduced] = []
 
@@ -47,12 +56,13 @@ async def test_decodes_audio_and_emits_prediction_event() -> None:
     event_bus.subscribe(PredictionProduced, record)
     machine_id = uuid4()
 
-    prediction = await service.predict(machine_id, wav_bytes())
+    result = await service.predict(machine_id, wav_bytes())
 
-    assert prediction == Prediction(Modality.AUDIO, "healthy", 0.81)
+    assert result.prediction == Prediction(Modality.AUDIO, "healthy", 0.81)
+    assert result.producing_model.model_id == "audio_mimii_v1"
     assert len(predictor.inputs) == 1
     assert predictor.inputs[0].sample_rate == 16_000
-    assert events == [PredictionProduced(machine_id, prediction)]
+    assert events == [PredictionProduced(machine_id, result.prediction)]
 
 
 def test_rejects_unsupported_asset_type() -> None:

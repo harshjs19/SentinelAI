@@ -4,6 +4,8 @@ from uuid import UUID
 
 import pytest
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
@@ -112,7 +114,15 @@ def test_context_limits_multimodal_findings_to_deterministic_top_three() -> None
         file_source_provenance(Modality.VISION, b"vision", "image/png"),
         file_source_provenance(Modality.THERMAL, b"thermal", "image/png"),
     )
-    package = EvidencePackageService().build(machine, analysis, sources)
+    package = EvidencePackageService().build(
+        machine,
+        analysis,
+        sources,
+        producing_models=tuple(
+            snapshot_producing_model_context(get_runtime_default_capability(modality))
+            for modality, _, _ in prediction_specs
+        ),
+    )
     bundle = make_bundle(
         package,
         (

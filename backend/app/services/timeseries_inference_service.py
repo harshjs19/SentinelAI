@@ -3,9 +3,9 @@ from uuid import UUID
 
 import pandas as pd
 
-from domain.entities.prediction import Prediction
 from domain.enums.modality import Modality
 from inference.orchestrator import InferenceOrchestrator
+from inference.result import InferenceResult
 from modules.timeseries.data import extract_window_features
 
 
@@ -17,7 +17,7 @@ class TimeseriesInferenceService:
         self,
         machine_id: UUID,
         samples: Sequence[Mapping[str, float]],
-    ) -> Prediction:
+    ) -> InferenceResult:
         if len(samples) < 2:
             raise ValueError("A time-series window requires at least two samples")
 

@@ -1,3 +1,4 @@
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
@@ -5,11 +6,18 @@ from pathlib import PurePosixPath, PureWindowsPath
 
 from domain.enums.modality import Modality
 
+_MODEL_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$")
+
 
 class ModelLifecycleStatus(StrEnum):
     VALIDATED_BASELINE = "validated_baseline"
     EXPERIMENTAL = "experimental"
     REJECTED_EXPERIMENT = "rejected_experiment"
+
+
+def validate_model_id(model_id: str) -> None:
+    if _MODEL_ID_PATTERN.fullmatch(model_id) is None:
+        raise ValueError("Model ID must be a concise path-free identifier")
 
 
 def validate_evaluation_reference(reference: str) -> None:
@@ -43,8 +51,7 @@ class ModelCapability:
     confidence_semantics: str
 
     def __post_init__(self) -> None:
-        if not self.model_id.strip():
-            raise ValueError("Model capability model_id cannot be empty")
+        validate_model_id(self.model_id)
         if not self.validated_scope.strip():
             raise ValueError("Model capability validated_scope cannot be empty")
         if not self.confidence_semantics.strip():

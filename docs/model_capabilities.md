@@ -4,6 +4,23 @@
 the experimental maturity and intended runtime selection of each model; it does not
 load artifacts, test their local availability, or provide runtime health.
 
+`runtime_default` is current-configuration metadata. It answers which declared model is
+selected for new runtime inference, not which model produced arbitrary existing evidence.
+The concrete predictor exposes its exact model ID at runtime; composition verifies that
+ID against the configured default and snapshots a `ProducingModelContext` before the
+prediction travels forward. Evidence packaging consumes that snapshot and never performs
+a later current-default lookup.
+
+Consequently:
+
+```text
+runtime_default (configuration now) != producing_model (execution fact for this evidence)
+```
+
+The rejected `audio_mimii_ast_v2` declaration remains visible scientific evidence but
+cannot bind as the current Audio runtime default or be mislabeled as `audio_mimii_v1`.
+No response field or meaning of `GET /capabilities/models` changes in this milestone.
+
 Lifecycle statuses mean:
 
 - `validated_baseline`: validated against the specifically declared experimental

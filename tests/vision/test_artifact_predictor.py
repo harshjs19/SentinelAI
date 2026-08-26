@@ -128,6 +128,7 @@ def test_predictor_returns_bounded_vision_prediction(
 
     output = predictor.predict_with_localization(image)
 
+    assert predictor.model_id == "vision_visa_pcb1_v1"
     assert output.prediction.modality is Modality.VISION
     assert output.prediction.label == expected_label
     assert 0 <= output.prediction.confidence <= 1

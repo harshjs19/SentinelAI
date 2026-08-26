@@ -1,4 +1,5 @@
 from ai_core.evaluation import ClassificationEvaluation
+from ai_core.model_provenance import ProducingModelContext
 from ai_core.predictor import Predictor
 
-__all__ = ["ClassificationEvaluation", "Predictor"]
+__all__ = ["ClassificationEvaluation", "Predictor", "ProducingModelContext"]

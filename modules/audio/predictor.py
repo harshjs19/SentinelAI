@@ -50,6 +50,12 @@ class AudioPredictor:
             )
 
     @property
+    def model_id(self) -> str:
+        if isinstance(self._artifact, AudioV2ModelArtifact):
+            return "audio_mimii_ast_v2"
+        return "audio_mimii_v1"
+
+    @property
     def supported_asset_types(self) -> tuple[str, ...]:
         return self._artifact.metadata.supported_asset_types
 

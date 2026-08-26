@@ -5,6 +5,11 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import (
+    ProducingModelContext,
+    snapshot_producing_model_context,
+)
 from backend.app.config import get_settings
 from backend.app.db.session import get_session
 from backend.app.errors import model_unavailable_error
@@ -64,14 +69,28 @@ def get_inference_orchestrator() -> InferenceOrchestrator:
     return InferenceOrchestrator(get_event_bus())
 
 
+def _runtime_model_context(
+    modality: Modality,
+    model_id: str,
+) -> ProducingModelContext:
+    capability = get_runtime_default_capability(modality)
+    if capability.model_id != model_id:
+        raise RuntimeError(
+            f"Configured {modality.value} predictor model does not match the runtime default"
+        )
+    return snapshot_producing_model_context(capability)
+
+
 @lru_cache
 def get_timeseries_inference_service() -> TimeseriesInferenceService:
     try:
+        predictor = get_timeseries_predictor()
         orchestrator = get_inference_orchestrator()
         orchestrator.register(
             Modality.TIMESERIES,
-            get_timeseries_predictor(),
+            predictor,
             input_type=Mapping,
+            producing_model=_runtime_model_context(Modality.TIMESERIES, predictor.model_id),
         )
         return TimeseriesInferenceService(orchestrator)
     except FileNotFoundError:
@@ -96,7 +115,12 @@ def get_audio_inference_service() -> AudioInferenceService:
     try:
         predictor = get_audio_predictor()
         orchestrator = get_inference_orchestrator()
-        orchestrator.register(Modality.AUDIO, predictor, input_type=AudioInput)
+        orchestrator.register(
+            Modality.AUDIO,
+            predictor,
+            input_type=AudioInput,
+            producing_model=_runtime_model_context(Modality.AUDIO, predictor.model_id),
+        )
         return AudioInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
         raise model_unavailable_error("Audio") from None
@@ -120,7 +144,12 @@ def get_vision_inference_service() -> VisionInferenceService:
     try:
         predictor = get_vision_predictor()
         orchestrator = get_inference_orchestrator()
-        orchestrator.register(Modality.VISION, predictor, input_type=VisionInput)
+        orchestrator.register(
+            Modality.VISION,
+            predictor,
+            input_type=VisionInput,
+            producing_model=_runtime_model_context(Modality.VISION, predictor.model_id),
+        )
         return VisionInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
         raise model_unavailable_error("Vision") from None
@@ -144,7 +173,12 @@ def get_thermal_inference_service() -> ThermalInferenceService:
     try:
         predictor = get_thermal_predictor()
         orchestrator = get_inference_orchestrator()
-        orchestrator.register(Modality.THERMAL, predictor, input_type=ThermalInput)
+        orchestrator.register(
+            Modality.THERMAL,
+            predictor,
+            input_type=ThermalInput,
+            producing_model=_runtime_model_context(Modality.THERMAL, predictor.model_id),
+        )
         return ThermalInferenceService(orchestrator, predictor.supported_asset_types)
     except FileNotFoundError:
         raise model_unavailable_error("Thermal") from None

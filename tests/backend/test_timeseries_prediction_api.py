@@ -6,6 +6,8 @@ import httpx
 import pytest
 
 import backend.app.dependencies as dependencies
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.dependencies import (
     get_machine_service,
     get_timeseries_inference_service,
@@ -52,7 +54,14 @@ def api_context() -> Iterator[ApiContext]:
     predictor = FakeTimeseriesPredictor()
     event_bus = EventBus()
     orchestrator = InferenceOrchestrator(event_bus)
-    orchestrator.register(Modality.TIMESERIES, predictor, input_type=Mapping)
+    orchestrator.register(
+        Modality.TIMESERIES,
+        predictor,
+        input_type=Mapping,
+        producing_model=snapshot_producing_model_context(
+            get_runtime_default_capability(Modality.TIMESERIES)
+        ),
+    )
     inference_service = TimeseriesInferenceService(orchestrator)
     events: list[PredictionProduced] = []
 

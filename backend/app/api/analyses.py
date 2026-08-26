@@ -60,11 +60,11 @@ async def analyze_timeseries(
     if machine is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Machine not found")
 
-    prediction = await inference_service.predict(
+    result = await inference_service.predict(
         machine_id,
         [sample.model_dump() for sample in request.samples],
     )
-    analysis = await decision_service.analyze(machine_id, [prediction])
+    analysis = await decision_service.analyze(machine_id, [result.prediction])
     return _analysis_response(analysis)
 
 
@@ -92,10 +92,10 @@ async def analyze_audio(
         ) from None
 
     try:
-        prediction = await inference_service.predict(machine_id, await file.read())
+        result = await inference_service.predict(machine_id, await file.read())
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from None
-    analysis = await decision_service.analyze(machine_id, [prediction])
+    analysis = await decision_service.analyze(machine_id, [result.prediction])
     return _analysis_response(analysis)
 
 
@@ -121,10 +121,10 @@ async def analyze_vision(
             detail=str(error),
         ) from None
     try:
-        prediction = await inference_service.predict(machine_id, await file.read())
+        result = await inference_service.predict(machine_id, await file.read())
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from None
-    analysis = await decision_service.analyze(machine_id, [prediction])
+    analysis = await decision_service.analyze(machine_id, [result.prediction])
     return _analysis_response(analysis)
 
 
@@ -150,10 +150,10 @@ async def analyze_thermal(
             detail=str(error),
         ) from None
     try:
-        prediction = await inference_service.predict(machine_id, await file.read())
+        result = await inference_service.predict(machine_id, await file.read())
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(error)) from None
-    analysis = await decision_service.analyze(machine_id, [prediction])
+    analysis = await decision_service.analyze(machine_id, [result.prediction])
     return _analysis_response(analysis)
 
 

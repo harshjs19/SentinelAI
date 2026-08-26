@@ -3,8 +3,9 @@
 ## Purpose and boundary
 
 Evidence Package V1 is SentinelAI's immutable, deterministic bridge from an existing
-`Machine`, an already-produced `Analysis`, source provenance, and static model-capability
-metadata to a small serializable evidence snapshot. It records:
+`Machine`, an already-produced `Analysis`, source provenance, and the exact producing
+model context captured during inference to a small serializable evidence snapshot. It
+records:
 
 - what SentinelAI observed;
 - which runtime model produced each prediction;
@@ -15,16 +16,19 @@ metadata to a small serializable evidence snapshot. It records:
 The flow is:
 
 ```text
-input evidence -> predictor -> InferenceOrchestrator -> Prediction
-    -> Decision Engine -> Analysis -> EvidencePackageService -> EvidencePackage
+input evidence -> predictor -> InferenceOrchestrator
+    -> InferenceResult(Prediction, ProducingModelContext)
+    -> Decision Engine(Prediction) -> Analysis
+    -> EvidencePackageService(Analysis, ProducingModelContext) -> EvidencePackage
     -> future Retriever / Maintenance Copilot
 ```
 
-`EvidencePackageService` consumes an existing domain `Machine`, `Analysis`, and source
-provenance. It does not run inference, call `DecisionEngine`, query a database, read an
-evaluation file, retrieve documents, invoke an LLM, or generate maintenance advice.
-There is no public Evidence Package endpoint, persistence model, EventBus event, or
-subscriber in V1.
+`EvidencePackageService` consumes an existing domain `Machine`, `Analysis`, source
+provenance, and explicit `ProducingModelContext` snapshots. It does not run inference,
+rediscover a model from current configuration, call `DecisionEngine`, query a database,
+read an evaluation file, retrieve documents, invoke an LLM, or generate maintenance
+advice. There is no public Evidence Package endpoint, persistence model, EventBus event,
+or subscriber in V1.
 
 ## Immutable schema
 
@@ -42,7 +46,7 @@ shape.
   `top_findings` ordering;
 - `sources`: modality, source kind, SHA-256, canonical/input byte size, and descriptive
   content type;
-- `models`: an immutable copy of runtime-default capability metadata;
+- `models`: an immutable copy of exact execution-time producing-model metadata;
 - `claim_support`: explicit availability boundaries for condition, failure probability,
   fault severity, health score, and operational risk.
 
@@ -110,9 +114,23 @@ package is a few KB rather than MB.
 
 ## Model provenance and confidence semantics
 
-The service resolves exactly one static `runtime_default` capability for every
-Prediction modality and copies it into `ModelProvenance`. It rejects missing or multiple
-defaults. Rejected Audio V2 is never selected.
+The concrete predictor binding is resolved before inference. `InferenceOrchestrator`
+returns an immutable `InferenceResult` containing the `Prediction` and its bound
+`ProducingModelContext`. The context snapshots model ID, modality, lifecycle status,
+whether it was the runtime default at execution, validated scope, evaluation reference,
+and confidence semantics. It contains no predictor, estimator, artifact, path, raw input,
+or credential.
+
+`EvidencePackageService` requires the captured contexts for every evidence-bearing
+Prediction and copies them into `ModelProvenance`. It never asks which model is the
+current default. Missing exact context fails closed; duplicate, wrong, missing, or extra
+modalities are rejected. An insufficient-evidence Analysis with no Predictions correctly
+uses empty source and model provenance.
+
+`runtime_default` in serialized model provenance is the snapshotted
+`runtime_default_at_execution` fact. It is historical configuration metadata, not a way
+to rediscover producing identity and not a claim of superiority or maturity. A producing
+model and the model configured as the default at some later time are distinct concepts.
 
 | Model | Modality | Lifecycle | Runtime default | Confidence semantics |
 | --- | --- | --- | ---: | --- |
@@ -151,6 +169,9 @@ provenance, and model provenance.
 
 - Machine and Analysis machine IDs must match.
 - Prediction modalities must be unique.
+- Every Prediction modality must have exactly one explicit producing-model context.
+- Producing-model context and Prediction modalities must match exactly; missing, duplicate,
+  wrong, and extra contexts fail construction.
 - Source and model modalities must exactly match the Analysis prediction modalities.
 - Source and model provenance cannot contain duplicate modalities.
 - Time-Series sources must be `structured`; Audio, Vision, and Thermal sources must be
@@ -240,10 +261,11 @@ provenance, and model provenance.
 
 ## Current limitations and future use
 
-V1 does not include model artifact hashes, training-run identities, binary signatures,
-durable persistence, or external audit guarantees. Those belong to a later artifact
-registry/persistence milestone. It also does not make model claims broader than each
-capability's `validated_scope`.
+V1 does not include model artifact hashes, training-run or registry identities, binary
+signatures, durable persistence, or external audit guarantees. The static predictor/model
+binding is explicit and tested, but no artifact registry independently attests that
+binding. Those capabilities belong to later MLOps and persistence milestones. V1 also
+does not make model claims broader than each capability's `validated_scope`.
 
 CORA frame-level multimodal fusion remains deferred because v2.1 lacks sufficient
 timing evidence for reproducible thermal/vibration alignment. Evidence Package V1 does

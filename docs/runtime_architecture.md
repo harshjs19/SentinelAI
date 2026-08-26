@@ -15,13 +15,27 @@ coordinates local application behavior only.
 The internal deterministic evidence, retrieval, and Copilot path is:
 
 ```text
-Analysis -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
+Predictor binding -> InferenceResult(Prediction, ProducingModelContext)
+    -> Decision Engine(Prediction) -> Analysis
+    -> EvidencePackageService(Analysis, ProducingModelContext)
+    -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
     -> MaintenanceCopilotService
         -> deterministic report path
         OR
         -> bounded LangGraph: generate -> validate -> one repair/fallback
     -> Maintenance Report
 ```
+
+`InferenceOrchestrator` binds each registered predictor to immutable producing-model
+metadata and returns both in `InferenceResult`. `Prediction` and `Analysis` remain free of
+model lifecycle metadata, and `DecisionEngine` still receives only Predictions. The
+application layer retains the producing contexts for later evidence construction.
+`EvidencePackageService` fails closed when an evidence-bearing Analysis lacks an exact
+context; it does not reconstruct identity from the current runtime default.
+
+`PredictionProduced` remains Prediction-only. No new provenance event was added because
+there is no current durable or asynchronous evidence workflow, and the application result
+envelope is sufficient for explicit propagation.
 
 Retriever V1 is an explicitly prepared internal component. It does not initialize on
 FastAPI startup, expose a public endpoint, or add an event/subscriber. The Maintenance

@@ -1,9 +1,9 @@
 from uuid import UUID
 
 from backend.app.services.asset_compatibility import ensure_supported_asset_type
-from domain.entities.prediction import Prediction
 from domain.enums.modality import Modality
 from inference.orchestrator import InferenceOrchestrator
+from inference.result import InferenceResult
 from modules.thermal.preprocessing import decode_thermal_image
 
 
@@ -28,6 +28,6 @@ class ThermalInferenceService:
             UnsupportedThermalAssetTypeError,
         )
 
-    async def predict(self, machine_id: UUID, content: bytes) -> Prediction:
+    async def predict(self, machine_id: UUID, content: bytes) -> InferenceResult:
         image = decode_thermal_image(content)
         return await self._orchestrator.predict(machine_id, Modality.THERMAL, image)

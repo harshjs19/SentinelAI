@@ -100,8 +100,10 @@ def test_predictor_returns_bounded_audio_prediction(
     save_fixed_artifact(path, score)
     waveform = np.sin(np.linspace(0, 100, 16_000)).astype(np.float32)
 
-    prediction = AudioPredictor(path).predict(AudioInput(waveform, 16_000))
+    predictor = AudioPredictor(path)
+    prediction = predictor.predict(AudioInput(waveform, 16_000))
 
+    assert predictor.model_id == "audio_mimii_v1"
     assert prediction.modality is Modality.AUDIO
     assert prediction.label == expected_label
     assert 0 <= prediction.confidence <= 1

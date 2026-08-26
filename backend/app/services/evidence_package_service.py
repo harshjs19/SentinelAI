@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import ProducingModelContext
 from domain.entities.analysis import Analysis
 from domain.entities.machine import Machine
 from shared.evidence.models import (
@@ -14,6 +14,10 @@ from shared.evidence.models import (
 from shared.evidence.provenance import SourceProvenance
 
 
+class ProducingModelProvenanceUnavailable(RuntimeError):
+    pass
+
+
 class EvidencePackageService:
     """Package already-produced evidence without inference, decisions, I/O, or persistence."""
 
@@ -22,6 +26,8 @@ class EvidencePackageService:
         machine: Machine,
         analysis: Analysis,
         sources: Sequence[SourceProvenance],
+        *,
+        producing_models: Sequence[ProducingModelContext] = (),
     ) -> EvidencePackage:
         if machine.id != analysis.machine_id:
             raise ValueError("Machine ID must match Analysis machine_id")
@@ -37,11 +43,30 @@ class EvidencePackageService:
         if set(source_modalities) != set(prediction_modalities):
             raise ValueError("Source provenance modalities must match Analysis predictions")
 
+        model_contexts = tuple(producing_models)
+        model_modalities = [context.modality for context in model_contexts]
+        if len(set(model_modalities)) != len(model_modalities):
+            raise ValueError("Duplicate producing-model context modality")
+        prediction_modality_set = set(prediction_modalities)
+        model_modality_set = set(model_modalities)
+        if not model_contexts and prediction_modalities:
+            raise ProducingModelProvenanceUnavailable(
+                "Exact producing-model provenance is required for evidence-bearing Analysis"
+            )
+        missing = prediction_modality_set - model_modality_set
+        extra = model_modality_set - prediction_modality_set
+        if missing and extra:
+            raise ValueError("Producing-model context modalities must match Analysis predictions")
+        if missing:
+            missing_names = ", ".join(sorted(modality.value for modality in missing))
+            raise ProducingModelProvenanceUnavailable(
+                f"Exact producing-model provenance unavailable for: {missing_names}"
+            )
+        if extra:
+            raise ValueError("Producing-model contexts contain modalities absent from Analysis")
+
         analysis_snapshot = snapshot_analysis(analysis)
-        model_provenance = tuple(
-            snapshot_model(get_runtime_default_capability(modality))
-            for modality in sorted(set(prediction_modalities), key=lambda item: item.value)
-        )
+        model_provenance = tuple(snapshot_model(context) for context in model_contexts)
         return create_evidence_package(
             machine=snapshot_machine(machine),
             analysis=analysis_snapshot,

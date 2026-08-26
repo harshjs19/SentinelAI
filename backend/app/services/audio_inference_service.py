@@ -1,9 +1,9 @@
 from uuid import UUID
 
 from backend.app.services.asset_compatibility import ensure_supported_asset_type
-from domain.entities.prediction import Prediction
 from domain.enums.modality import Modality
 from inference.orchestrator import InferenceOrchestrator
+from inference.result import InferenceResult
 from modules.audio.data import decode_wav
 
 
@@ -28,6 +28,6 @@ class AudioInferenceService:
             UnsupportedAudioAssetTypeError,
         )
 
-    async def predict(self, machine_id: UUID, content: bytes) -> Prediction:
+    async def predict(self, machine_id: UUID, content: bytes) -> InferenceResult:
         audio = decode_wav(content)
         return await self._orchestrator.predict(machine_id, Modality.AUDIO, audio)

@@ -42,6 +42,10 @@ class VisionPredictor:
         validate_encoder_metadata(self._encoder.metadata, self._artifact.metadata.encoder)
 
     @property
+    def model_id(self) -> str:
+        return "vision_visa_pcb1_v1"
+
+    @property
     def supported_asset_types(self) -> tuple[str, ...]:
         return self._artifact.metadata.supported_asset_types
 

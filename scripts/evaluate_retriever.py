@@ -9,6 +9,8 @@ from importlib.metadata import version
 from pathlib import Path
 from uuid import UUID
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
@@ -324,7 +326,14 @@ def _package_for_case(index: int, scenario: dict[str, object]) -> EvidencePackag
             b"synthetic public benchmark evidence",
             content_types[modality],
         )
-    return EvidencePackageService().build(machine, analysis, [source])
+    return EvidencePackageService().build(
+        machine,
+        analysis,
+        [source],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(modality)),
+        ),
+    )
 
 
 def _directory_size(path: Path) -> int:

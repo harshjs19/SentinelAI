@@ -12,6 +12,10 @@ class TimeseriesPredictor:
     def __init__(self, artifact_path: Path) -> None:
         self._artifact = load_artifact(artifact_path)
 
+    @property
+    def model_id(self) -> str:
+        return "timeseries_utk_v1"
+
     def predict_probabilities(self, features: Mapping[str, float]) -> dict[str, float]:
         expected = set(self._artifact.metadata.feature_names)
         missing = expected - set(features)

@@ -5,6 +5,8 @@ from uuid import UUID
 
 import pytest
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.schemas.evidence import EvidencePackageSchema
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
@@ -118,6 +120,9 @@ def test_serialized_package_is_small_frozen_and_excludes_raw_sources_and_local_p
         _machine(),
         analysis,
         [file_source_provenance(Modality.VISION, raw_secret, "image/png")],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(Modality.VISION)),
+        ),
     )
     schema = EvidencePackageSchema.from_domain(package)
     serialized = schema.model_dump_json()
@@ -151,6 +156,9 @@ def test_structured_raw_sample_values_are_not_serialized() -> None:
                 {"samples": [{"marker": marker, "value": 1.0}]},
             )
         ],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(Modality.TIMESERIES)),
+        ),
     )
 
     assert marker not in EvidencePackageSchema.from_domain(package).model_dump_json()
@@ -174,6 +182,9 @@ def test_uploaded_media_bytes_are_not_serialized(
         _machine(),
         _analysis(Prediction(modality, label, 0.8)),
         [file_source_provenance(modality, raw_marker, content_type)],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(modality)),
+        ),
     )
 
     assert raw_marker.decode() not in EvidencePackageSchema.from_domain(package).model_dump_json()
@@ -189,6 +200,9 @@ def _timeseries_package():
                 {"samples": [{"ch1": 1.0}, {"ch1": 2.0}]},
             )
         ],
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(Modality.TIMESERIES)),
+        ),
     )
 
 

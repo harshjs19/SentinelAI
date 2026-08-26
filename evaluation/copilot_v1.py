@@ -16,6 +16,8 @@ from time import perf_counter
 from typing import Any
 from uuid import UUID
 
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
@@ -772,6 +774,9 @@ def _single_finding_package(code: str, modality: Modality) -> EvidencePackage:
         Machine(_MACHINE_ID, _MACHINE_NAME, _ASSET_TYPE),
         analysis,
         (_source_for_modality(modality),),
+        producing_models=(
+            snapshot_producing_model_context(get_runtime_default_capability(modality)),
+        ),
     )
 
 
@@ -802,6 +807,10 @@ def _multiple_findings_package() -> EvidencePackage:
         Machine(_MACHINE_ID, _MACHINE_NAME, _ASSET_TYPE),
         analysis,
         tuple(_source_for_modality(modality) for modality, _, _ in specs),
+        producing_models=tuple(
+            snapshot_producing_model_context(get_runtime_default_capability(modality))
+            for modality, _, _ in specs
+        ),
     )
 
 

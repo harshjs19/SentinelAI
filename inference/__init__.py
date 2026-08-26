@@ -5,14 +5,18 @@ from inference.orchestrator import (
     PredictionModalityMismatchError,
     PredictorInputTypeError,
     PredictorNotRegisteredError,
+    ProducingModelModalityMismatchError,
 )
+from inference.result import InferenceResult
 
 __all__ = [
     "AnalysisProduced",
     "EventBus",
     "InferenceOrchestrator",
+    "InferenceResult",
     "PredictionModalityMismatchError",
     "PredictionProduced",
     "PredictorInputTypeError",
     "PredictorNotRegisteredError",
+    "ProducingModelModalityMismatchError",
 ]

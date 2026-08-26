@@ -9,6 +9,8 @@ import pytest
 import soundfile as sf
 
 import backend.app.dependencies as dependencies
+from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import snapshot_producing_model_context
 from backend.app.dependencies import (
     get_audio_inference_service,
     get_decision_service,
@@ -57,7 +59,14 @@ def api_context() -> Iterator[ApiContext]:
     predictor = FakeAudioPredictor()
     event_bus = EventBus()
     orchestrator = InferenceOrchestrator(event_bus)
-    orchestrator.register(Modality.AUDIO, predictor, input_type=AudioInput)
+    orchestrator.register(
+        Modality.AUDIO,
+        predictor,
+        input_type=AudioInput,
+        producing_model=snapshot_producing_model_context(
+            get_runtime_default_capability(Modality.AUDIO)
+        ),
+    )
     inference_service = AudioInferenceService(orchestrator, ("bearing",))
     events: list[object] = []
 

@@ -5,6 +5,10 @@ from uuid import UUID
 import pytest
 
 from ai_core.model_capabilities import get_runtime_default_capability
+from ai_core.model_provenance import (
+    ProducingModelContext,
+    snapshot_producing_model_context,
+)
 from backend.app.services.evidence_package_service import EvidencePackageService
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
@@ -56,6 +60,7 @@ def test_abnormal_single_modality_claim_boundaries_and_runtime_model_mapping(
         _machine(),
         analysis,
         [_source(modality, b"synthetic source")],
+        producing_models=(_model_context(modality),),
     )
 
     assert package.claim_support.condition_available is True
@@ -80,7 +85,10 @@ def test_health_and_risk_availability_only_reflect_existing_analysis_values() ->
     )
 
     package = EvidencePackageService().build(
-        _machine(), analysis, [_source(Modality.TIMESERIES, b"window")]
+        _machine(),
+        analysis,
+        [_source(Modality.TIMESERIES, b"window")],
+        producing_models=(_model_context(Modality.TIMESERIES),),
     )
 
     assert package.analysis.health_score == 42
@@ -118,8 +126,9 @@ def test_same_inputs_produce_same_digest_and_package_id() -> None:
     source = _source(Modality.TIMESERIES, b"same window")
     service = EvidencePackageService()
 
-    first = service.build(_machine(), analysis, [source])
-    second = service.build(_machine(), analysis, [source])
+    context = _model_context(Modality.TIMESERIES)
+    first = service.build(_machine(), analysis, [source], producing_models=(context,))
+    second = service.build(_machine(), analysis, [source], producing_models=(context,))
 
     assert first == second
     assert first.package_digest_sha256 == second.package_digest_sha256
@@ -131,19 +140,30 @@ def test_same_inputs_produce_same_digest_and_package_id() -> None:
 def test_identity_changes_with_source_analysis_machine_or_model_provenance() -> None:
     analysis = _analysis(Modality.TIMESERIES, "bearing_fault")
     service = EvidencePackageService()
-    original = service.build(_machine(), analysis, [_source(Modality.TIMESERIES, b"source one")])
+    context = _model_context(Modality.TIMESERIES)
+    original = service.build(
+        _machine(),
+        analysis,
+        [_source(Modality.TIMESERIES, b"source one")],
+        producing_models=(context,),
+    )
     changed_source = service.build(
-        _machine(), analysis, [_source(Modality.TIMESERIES, b"source two")]
+        _machine(),
+        analysis,
+        [_source(Modality.TIMESERIES, b"source two")],
+        producing_models=(context,),
     )
     changed_analysis = service.build(
         _machine(),
         replace(analysis, id=UUID("00000000-0000-0000-0000-000000000202")),
         [_source(Modality.TIMESERIES, b"source one")],
+        producing_models=(context,),
     )
     changed_machine = service.build(
         replace(_machine(), name="Changed machine"),
         analysis,
         [_source(Modality.TIMESERIES, b"source one")],
+        producing_models=(context,),
     )
     changed_model_snapshot = replace(original.models[0], validated_scope="changed scope")
     changed_model = create_evidence_package(
@@ -166,6 +186,7 @@ def test_integrity_verification_detects_tampered_snapshot_with_old_identity() ->
         _machine(),
         _analysis(Modality.VISION, "visual_anomaly"),
         [_source(Modality.VISION, b"image")],
+        producing_models=(_model_context(Modality.VISION),),
     )
     tampered = replace(package, machine=replace(package.machine, name="Tampered"))
 
@@ -181,7 +202,13 @@ def test_new_provenance_collections_sort_without_changing_analysis_order() -> No
     timeseries_source = _source(Modality.TIMESERIES, b"samples")
 
     package = EvidencePackageService().build(
-        _machine(), analysis, [timeseries_source, audio_source]
+        _machine(),
+        analysis,
+        [timeseries_source, audio_source],
+        producing_models=(
+            _model_context(Modality.TIMESERIES),
+            _model_context(Modality.AUDIO),
+        ),
     )
 
     assert [item.modality for item in package.analysis.predictions] == [
@@ -244,14 +271,20 @@ def test_service_rejects_wrong_source_kind_for_modality() -> None:
     )
 
     with pytest.raises(ValueError, match="timeseries source must use structured"):
-        EvidencePackageService().build(_machine(), analysis, [wrong_kind])
+        EvidencePackageService().build(
+            _machine(),
+            analysis,
+            [wrong_kind],
+            producing_models=(_model_context(Modality.TIMESERIES),),
+        )
 
 
 def test_pure_builder_snapshots_capability_instead_of_holding_live_declaration() -> None:
     analysis = _analysis(Modality.THERMAL, "gear_wear_75")
     analysis_snapshot = snapshot_analysis(analysis)
     capability = get_runtime_default_capability(Modality.THERMAL)
-    model = snapshot_model(capability)
+    context = snapshot_producing_model_context(capability)
+    model = snapshot_model(context)
 
     package = create_evidence_package(
         machine=snapshot_machine(_machine()),
@@ -261,7 +294,7 @@ def test_pure_builder_snapshots_capability_instead_of_holding_live_declaration()
         claim_support=claim_support_for_analysis(analysis_snapshot),
     )
 
-    assert package.models[0] is not capability
+    assert package.models[0] is not context
     assert package.models[0].model_id == capability.model_id
     assert package.models[0].validated_scope == capability.validated_scope
 
@@ -271,6 +304,7 @@ def test_pure_builder_rejects_duplicate_models_and_unsupported_claims() -> None:
         _machine(),
         _analysis(Modality.AUDIO, "acoustic_anomaly"),
         [_source(Modality.AUDIO, b"audio")],
+        producing_models=(_model_context(Modality.AUDIO),),
     )
 
     with pytest.raises(ValueError, match="duplicate model"):
@@ -374,3 +408,7 @@ def _source(modality: Modality, content: bytes) -> SourceProvenance:
         Modality.THERMAL: "image/png",
     }
     return file_source_provenance(modality, content, content_types[modality])
+
+
+def _model_context(modality: Modality) -> ProducingModelContext:
+    return snapshot_producing_model_context(get_runtime_default_capability(modality))

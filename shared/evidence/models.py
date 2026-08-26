@@ -6,10 +6,11 @@ from datetime import datetime, timedelta
 from uuid import UUID
 
 from ai_core.model_capabilities import (
-    ModelCapability,
     ModelLifecycleStatus,
     validate_evaluation_reference,
+    validate_model_id,
 )
+from ai_core.model_provenance import ProducingModelContext
 from domain.entities.analysis import Analysis
 from domain.entities.finding import Finding
 from domain.entities.machine import Machine
@@ -70,14 +71,11 @@ class ModelProvenance:
     confidence_semantics: str
 
     def __post_init__(self) -> None:
-        if not self.model_id.strip():
-            raise ValueError("Model provenance model_id cannot be empty")
+        validate_model_id(self.model_id)
         if not self.validated_scope.strip():
             raise ValueError("Model provenance validated_scope cannot be empty")
         if not self.confidence_semantics.strip():
             raise ValueError("Model provenance confidence_semantics cannot be empty")
-        if not self.runtime_default:
-            raise ValueError("Evidence Package model provenance must be a runtime default")
         if self.status is ModelLifecycleStatus.REJECTED_EXPERIMENT:
             raise ValueError("Rejected model capability cannot be Evidence Package provenance")
         validate_evaluation_reference(self.evaluation_reference)
@@ -145,15 +143,15 @@ def snapshot_analysis(analysis: Analysis) -> AnalysisSnapshot:
     )
 
 
-def snapshot_model(capability: ModelCapability) -> ModelProvenance:
+def snapshot_model(context: ProducingModelContext) -> ModelProvenance:
     return ModelProvenance(
-        model_id=str(capability.model_id),
-        modality=capability.modality,
-        status=capability.status,
-        runtime_default=bool(capability.runtime_default),
-        validated_scope=str(capability.validated_scope),
-        evaluation_reference=str(capability.evaluation_reference),
-        confidence_semantics=str(capability.confidence_semantics),
+        model_id=str(context.model_id),
+        modality=context.modality,
+        status=context.lifecycle_status,
+        runtime_default=bool(context.runtime_default_at_execution),
+        validated_scope=str(context.validated_scope),
+        evaluation_reference=str(context.evaluation_reference),
+        confidence_semantics=str(context.confidence_semantics),
     )
 
 

@@ -140,6 +140,7 @@ def test_predictor_returns_canonical_thermal_prediction(
 
     prediction = predictor.predict(image)
 
+    assert predictor.model_id == "thermal_cora_v1"
     assert prediction.modality is Modality.THERMAL
     assert prediction.label == expected_label
     assert 0 <= prediction.confidence <= 1

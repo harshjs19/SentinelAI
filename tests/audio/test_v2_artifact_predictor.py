@@ -120,6 +120,7 @@ def test_v2_predictor_returns_bounded_audio_prediction(
 
     prediction = predictor.predict(AudioInput(np.ones(1_600, dtype=np.float32), 16_000))
 
+    assert predictor.model_id == "audio_mimii_ast_v2"
     assert prediction.modality is Modality.AUDIO
     assert prediction.label == expected_label
     assert 0 <= prediction.confidence <= 1
