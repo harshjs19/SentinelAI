@@ -75,5 +75,8 @@ The curated [Knowledge Base source audit](docs/knowledge_sources.md) and determi
 [Maintenance Copilot](docs/maintenance_copilot.md) defines closed-book contracts,
 deterministic validation, safe fallback, and an explicitly constructed OpenAI Responses
 structured-output provider boundary. Bounded internal LangGraph orchestration now connects
-generation, validation, one repair, and deterministic report assembly. Formal live safety
-evaluation, report persistence, and a public Copilot API remain future work.
+generation, validation, one repair, and deterministic report assembly. The frozen
+[Copilot adversarial evaluation](docs/copilot_evaluation.md) preserves an offline routing
+defect and the successful single deterministic hardening rerun. Paid live evaluation and
+human review remain pending; the Copilot is internal/experimental, with report persistence
+and a public API still out of scope.

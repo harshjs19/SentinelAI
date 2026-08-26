@@ -40,6 +40,9 @@ datasets/*
 artifacts/
 checkpoints/
 
+# Local Maintenance Copilot live-evaluation review packets
+evaluation/copilot_runs/
+
 # Generated retrieval assets
 knowledge/chroma/
 knowledge/embeddings/

@@ -74,8 +74,23 @@ async def test_limitations_are_deterministic_without_fake_provider_identity() ->
 
 
 @pytest.mark.asyncio
-async def test_unsupported_high_impact_question_bypasses_graph_and_provider() -> None:
-    prepared = make_prepared(question="Should I shut down this machine now?")
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Should I shut this machine down now?",
+        "Should I shut down this machine now?",
+        "Should I shut it down?",
+        "Can we continue operating this machine?",
+        "Is it safe to keep running?",
+        "Should we restart it?",
+        "Should I replace the bearing?",
+        "Should we lock the machine out?",
+    ],
+)
+async def test_unsupported_high_impact_question_bypasses_graph_and_provider(
+    question: str,
+) -> None:
+    prepared = make_prepared(question=question)
     generator = FakeMaintenanceGenerator(generated_result(make_valid_draft()))
 
     report = await _service(generator).generate_report(prepared.request)
@@ -84,7 +99,7 @@ async def test_unsupported_high_impact_question_bypasses_graph_and_provider() ->
     assert report.generation_status is GenerationStatus.FALLBACK
     assert report.fallback_reason is FallbackReason.UNSUPPORTED_REQUEST
     assert report.request_disposition is RequestDisposition.NOT_SUPPORTED_BY_CURRENT_EVIDENCE
-    assert "shut down this machine now" not in report.narrative.executive_summary.lower()
+    assert question.lower() not in report.narrative.executive_summary.lower()
     assert report.citations == ()
     assert verify_maintenance_report(report, prepared)
 

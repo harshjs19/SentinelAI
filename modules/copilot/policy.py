@@ -8,17 +8,44 @@ from modules.copilot.context import PreparedCopilotRequest
 from modules.copilot.contracts import CopilotIntent, FallbackReason, RequestDisposition
 from modules.retriever.models import RetrievalLane
 
+_ACTOR = r"(?:i|we|you)"
+_EQUIPMENT = r"(?:it|(?:(?:this|that|the)\s+)?(?:machine|motor|equipment))"
+_REPLACEABLE = rf"(?:{_EQUIPMENT}|(?:(?:this|that|the)\s+)?(?:bearing|component))"
+_MODAL_ACTOR_PREFIX = rf"(?:(?:should|can|could|may|must)\s+{_ACTOR}\s+)?"
+_OPERATIONAL_END = r"(?:\s+(?:now|immediately))?\s*[?.!]*$"
+
+_HIGH_IMPACT_OPERATIONAL_PATTERNS = (
+    # "shut down the machine" and separable "shut the machine down" phrasal forms.
+    rf"^\s*{_MODAL_ACTOR_PREFIX}(?:shut\s+down(?:\s+{_EQUIPMENT})?|"
+    rf"shut\s+{_EQUIPMENT}\s+down){_OPERATIONAL_END}",
+    rf"^\s*{_MODAL_ACTOR_PREFIX}stop(?:\s+(?:the\s+)?(?:machine|motor|equipment|operation))?"
+    rf"{_OPERATIONAL_END}",
+    # Continued-operation authority, including explicit safety-to-operate questions.
+    rf"^\s*(?:(?:should|can|could|may)\s+{_ACTOR}\s+|is\s+it\s+safe\s+to\s+)?"
+    rf"(?:keep\s+(?:operating|running)(?:\s+{_EQUIPMENT})?|"
+    rf"continue\s+(?:operating|running)(?:\s+{_EQUIPMENT})?|operate|run|continue)"
+    rf"{_OPERATIONAL_END}",
+    # Restart and return-to-service authorization.
+    rf"^\s*{_MODAL_ACTOR_PREFIX}(?:restart(?:\s+{_EQUIPMENT})?|"
+    rf"start\s+{_EQUIPMENT}\s+again|return(?:\s+{_EQUIPMENT})?\s+to\s+service)"
+    rf"{_OPERATIONAL_END}",
+    # Isolation, lockout/tagout, and de-energization instructions.
+    rf"^\s*{_MODAL_ACTOR_PREFIX}(?:isolate\s+{_EQUIPMENT}|"
+    rf"lock(?:\s+out\s+{_EQUIPMENT}|\s+{_EQUIPMENT}\s+out)|"
+    rf"lockout\s+{_EQUIPMENT}|tag(?:\s+out\s+{_EQUIPMENT}|\s+{_EQUIPMENT}\s+out)|"
+    rf"tagout\s+{_EQUIPMENT}|de-?energize\s+{_EQUIPMENT}){_OPERATIONAL_END}",
+    # Replacement/disposal decisions remain outside V1 authority.
+    rf"^\s*{_MODAL_ACTOR_PREFIX}(?:replace\s+{_REPLACEABLE}|discard\s+{_REPLACEABLE}|"
+    rf"evacuate(?:\s+(?:the\s+)?(?:area|machine|equipment))?){_OPERATIONAL_END}",
+    # Explicit repair urgency is an operational decision even without a named asset.
+    r"^\s*(?:must\s+repair(?:\s+(?:it|the\s+(?:machine|motor|equipment)))?\s+now|"
+    r"urgent\s+repair)\s*[?.!]*$",
+)
+
 _UNSUPPORTED_QUESTION_PATTERNS = tuple(
     re.compile(pattern, re.IGNORECASE)
     for pattern in (
-        r"\bshut\s*down\b",
-        r"\bstop (?:the )?(?:machine|operation)\b",
-        r"\bcontinue operat(?:e|ing|ion)\b",
-        r"\brestart\b",
-        r"\breturn to service\b",
-        r"\block\s*out\b|\btag\s*out\b|\blockout\b|\btagout\b",
-        r"\bde-?energize\b|\bisolate (?:the )?(?:machine|equipment)\b",
-        r"\breplace\b|\bdiscard\b|\bevacuate\b",
+        *_HIGH_IMPACT_OPERATIONAL_PATTERNS,
         r"\b(?:chance|likelihood|probability)\b.{0,40}\b(?:fail|fails|failure|breakdown)\b",
         r"\bremaining useful life\b|\bRUL\b|\btime to failure\b",
         r"\b(?:safe|unsafe) to (?:operate|run|continue)\b",

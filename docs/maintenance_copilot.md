@@ -1,9 +1,12 @@
 # Maintenance Copilot safety foundation
 
-Maintenance Copilot V1 Milestone 1 provides the deterministic contracts and safety
-boundary for a source-grounded maintenance report generator. Milestone 2 adds one
-explicitly constructed structured-output provider boundary. There is still no LangGraph
-workflow, public API, report persistence, or report event.
+Maintenance Copilot V1 provides deterministic contracts, one explicitly constructed
+structured-output provider boundary, and bounded LangGraph orchestration. Its preserved
+offline baseline exposed a shutdown-routing defect; one deterministic hardening round
+fixed the general bounded operational-request class and the complete offline suite then
+passed. Paid live OpenAI evaluation and human citation-entailment review remain pending,
+so the Copilot is internal/experimental with no public API, report persistence, or report
+event. See [Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Authority boundary
 
@@ -46,8 +49,10 @@ The closed intent set is:
 There is no general chat, shutdown decision, risk assessment, RUL, or work-order intent.
 Optional questions are Unicode-normalized, trimmed, limited to 500 characters, and
 rejected when they contain NUL, disallowed controls, HTML, Markdown links, or URLs.
-Bounded phrase rules identify high-impact and prompt-override requests before any future
-provider invocation.
+Bounded, anchored phrase rules identify common shutdown, continued-operation, restart,
+return-to-service, isolation, replacement, and urgency requests before any future
+provider invocation. They cover auditable phrase families rather than arbitrary semantic
+paraphrases, so the unchanged validator and safe fallback remain required downstream.
 
 `EXPLAIN_CONFIDENCE` and `EXPLAIN_LIMITATIONS` have deterministic explanations and do not
 require a provider. Current confidence templates preserve these exact semantics:
@@ -354,7 +359,8 @@ The opt-in `uv run python -m scripts.smoke_copilot_provider` command reads
 `OPENAI_API_KEY` only at composition time and runs three synthetic, first-attempt cases.
 It prints receipt and validation metadata but no prompt or draft by default; `--show-draft`
 is explicit. Normal tests remain offline. This smoke is an integration check, not a
-promotion benchmark; formal adversarial safety evaluation remains Milestone 4 work.
+promotion benchmark; the formal protocol is documented in
+[Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Milestone 3 — Bounded LangGraph Workflow
 
@@ -416,10 +422,12 @@ than being hidden as provider fallback. `COPILOT_WORKFLOW_VERSION` is
 
 The workflow is compiled only when a service is explicitly constructed with a generator.
 There is still no FastAPI endpoint, backend provider wiring, report persistence, database
-migration, EventBus event, frontend, or live safety benchmark. Formal adversarial provider
-evaluation and safety hardening remain Milestone 4 work.
+migration, EventBus event, frontend, or public workflow. Formal adversarial provider
+evaluation and safety hardening are tracked in
+[Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Next milestones
 
-Formal live Copilot evaluation, adversarial safety testing, and any later API/persistence
-design remain separately reviewed milestones.
+Formal live OpenAI evaluation remains available as a pre-public gate; no live metrics are
+claimed by the offline round. Human citation-entailment review and any later
+API/persistence design remain separately reviewed milestones.
