@@ -16,10 +16,16 @@ from backend.app.errors import model_unavailable_error
 from backend.app.repositories.sqlalchemy_machine_repository import (
     SQLAlchemyMachineRepository,
 )
+from backend.app.repositories.sqlalchemy_maintenance_workflow_repository import (
+    SQLAlchemyMaintenanceWorkflowRepository,
+)
 from backend.app.services.audio_inference_service import AudioInferenceService
 from backend.app.services.decision_service import DecisionService
 from backend.app.services.evidence_package_service import EvidencePackageService
 from backend.app.services.machine_service import MachineService
+from backend.app.services.maintenance_workflow_persistence_service import (
+    MaintenanceWorkflowPersistenceService,
+)
 from backend.app.services.maintenance_workflow_service import MaintenanceWorkflowService
 from backend.app.services.thermal_inference_service import ThermalInferenceService
 from backend.app.services.timeseries_inference_service import TimeseriesInferenceService
@@ -57,6 +63,12 @@ SessionDependency = Annotated[AsyncSession, Depends(get_session, scope="function
 
 def get_machine_service(session: SessionDependency) -> MachineService:
     return MachineService(SQLAlchemyMachineRepository(session))
+
+
+def get_maintenance_workflow_persistence_service(
+    session: SessionDependency,
+) -> MaintenanceWorkflowPersistenceService:
+    return MaintenanceWorkflowPersistenceService(SQLAlchemyMaintenanceWorkflowRepository(session))
 
 
 @lru_cache

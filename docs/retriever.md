@@ -192,7 +192,9 @@ objectives.
 ## Limitations and future contract
 
 - The V1 corpus is small, manually curated, and English-only.
-- There is no general web search, live source refresh, or persisted retrieval history.
+- There is no general web search or live source refresh. Completed maintenance workflows
+  retain the exact verified RetrievalBundle used by their report; this is immutable
+  history, not a mutable retrieval cache.
 - There is no cross-encoder reranker, LLM rewriting, or production retrieval benchmark.
 - Semantic embeddings can rank imperfectly; restrictive metadata filtering is deliberate.
 - External source availability can change.
@@ -201,6 +203,11 @@ objectives.
 - Maintenance Copilot consumes `RetrievalBundle` only as deterministic grounding and
   retains all evidence and citation boundaries.
 - The server-owned workflow verifies the bundle digest and exact Evidence Package
-  ID/digest binding before Copilot generation. It remains request-local and unpersisted.
+  ID/digest binding before Copilot generation. A completed verified workflow may then
+  persist that exact bundle; historical reads do not query Chroma, re-embed, or rerank.
 - Producing-model identity comes from `InferenceResult`; retrieval never reconstructs it
   from current runtime defaults.
+
+The durable representation stores the bundle's complete payload, digest, Evidence
+Package binding, corpus digest, and embedding identity/revision. See
+[Maintenance workflow persistence](maintenance_workflow_persistence.md).

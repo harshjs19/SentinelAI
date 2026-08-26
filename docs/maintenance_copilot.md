@@ -5,8 +5,10 @@ structured-output provider boundary, and bounded LangGraph orchestration. Its pr
 offline baseline exposed a shutdown-routing defect; one deterministic hardening round
 fixed the general bounded operational-request class and the complete offline suite then
 passed. Paid live OpenAI evaluation and human citation-entailment review remain pending,
-so the Copilot is internal/experimental with no public API, report persistence, or report
-event. See [Copilot V1 adversarial evaluation](copilot_evaluation.md).
+so the Copilot is internal/experimental with no public API or report event. A separate
+internal layer can persist a fully verified completed workflow; Copilot itself still has
+no database access. See [Copilot V1 adversarial evaluation](copilot_evaluation.md) and
+[Maintenance workflow persistence](maintenance_workflow_persistence.md).
 
 ## Authority boundary
 
@@ -441,12 +443,14 @@ The workflow is compiled only when a service is explicitly constructed with a ge
 The application composition root constructs the default Copilot service without a
 provider, preserving offline deterministic behavior and safe provider-unavailable
 fallback. There is still no FastAPI maintenance endpoint, provider credential wiring,
-report persistence, database migration, EventBus workflow event, or frontend. Formal
+EventBus workflow event, or frontend. Durable report persistence is a separate
+post-verification application service and does not alter this graph. Formal
 adversarial provider evaluation and safety hardening are tracked in
 [Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Next milestones
 
 Formal live OpenAI evaluation remains available as a pre-public gate; no live metrics are
-claimed by the offline round. Human citation-entailment review and later persistence,
-transaction, and public API design remain separately reviewed milestones.
+claimed by the offline round. Human citation-entailment review and later authorization,
+request-level idempotency, retention, and public API design remain separately reviewed
+milestones.

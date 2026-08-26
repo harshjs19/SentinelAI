@@ -25,7 +25,10 @@ MaintenanceWorkflowService(typed single-modality request)
         -> deterministic report path
         OR
         -> bounded LangGraph: generate -> validate -> one repair/fallback
-    -> Maintenance Report
+    -> verified MaintenanceWorkflowResult
+    -> MaintenanceWorkflowPersistenceService
+        -> Analysis + EvidencePackage + RetrievalBundle + MaintenanceReport
+        -> one request/application transaction
 ```
 
 `MaintenanceWorkflowService` is a thin application orchestrator. Clients provide only a
@@ -47,9 +50,9 @@ workflow execution.
 `EvidencePackageService` fails closed when an evidence-bearing Analysis lacks an exact
 context; it does not reconstruct identity from the current runtime default.
 
-`PredictionProduced` remains Prediction-only. No new provenance event was added because
-the workflow is request-local and non-durable, and the application result envelope is
-sufficient for explicit propagation.
+`PredictionProduced` remains Prediction-only. No persistence event was added: the
+verified application result is passed explicitly to the persistence service, while the
+existing request/application session remains the transaction boundary.
 
 Retriever V1 is an explicitly prepared internal component. The composition root resolves
 its local assets lazily only when a validated workflow reaches retrieval; it does not
@@ -57,8 +60,11 @@ initialize on FastAPI startup, expose a public endpoint, or add an event/subscri
 Maintenance Copilot remains a bounded, request-local internal service. The default
 application wiring supplies no generation provider, so deterministic paths work offline
 and provider-required paths use the existing safe unavailable result. There is no public
-maintenance endpoint, persistence, or workflow event. The Copilot graph has no retrieval,
-tools, checkpointing, memory, or streaming. EventBus semantics are unchanged.
+maintenance endpoint or workflow event. Complete verified results can be stored by the
+separate durable persistence layer described in
+[Maintenance workflow persistence](maintenance_workflow_persistence.md). The Copilot
+graph has no retrieval, database access, tools, checkpointing, memory, or streaming.
+EventBus semantics are unchanged.
 
 These boundaries are suitable while events coordinate synchronous, process-local V1
 behavior. Before events trigger durable asynchronous workflows such as persisted

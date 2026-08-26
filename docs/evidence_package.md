@@ -33,8 +33,10 @@ provenance from the same input passed to inference, and supplies the exact conte
 provenance, and explicit `ProducingModelContext` snapshots. It does not run inference,
 rediscover a model from current configuration, call `DecisionEngine`, query a database,
 read an evaluation file, retrieve documents, invoke an LLM, or generate maintenance
-advice. There is no public Evidence Package endpoint, persistence model, EventBus event,
-or subscriber in V1.
+advice. There is no public Evidence Package endpoint, EventBus event, or subscriber in
+this construction service. A separate internal persistence layer stores the complete
+validated package only as part of an atomic completed workflow; it does not change this
+construction boundary.
 
 ## Immutable schema
 
@@ -268,9 +270,11 @@ provenance, and model provenance.
 ## Current limitations and future use
 
 V1 does not include model artifact hashes, training-run or registry identities, binary
-signatures, durable persistence, or external audit guarantees. The static predictor/model
-binding is explicit and tested, but no artifact registry independently attests that
-binding. Those capabilities belong to later MLOps and persistence milestones. V1 also
+signatures, or external audit guarantees. Durable maintenance workflow storage retains
+the exact package JSON and re-runs the existing digest verifier on historical reads. The
+static predictor/model binding is explicit and tested, but no artifact registry
+independently attests that
+binding. Those capabilities belong to later MLOps milestones. V1 also
 does not make model claims broader than each capability's `validated_scope`.
 
 CORA frame-level multimodal fusion remains deferred because v2.1 lacks sufficient
@@ -279,5 +283,7 @@ not alter that scientific decision.
 
 The current Retriever consumes the package without model objects, ORM objects, raw
 sensor/media payloads, sklearn, or torch. The request-local server workflow can continue
-through retrieval and report generation, but does not persist any intermediate or final
-artifact. Future persistence may store the package JSON and digest for audit linkage.
+through retrieval and report generation. After the entire result verifies, a separate
+durable layer can atomically store the package JSON and digest with the other three
+artifacts. Historical reconstruction does not consult current model defaults. See
+[Maintenance workflow persistence](maintenance_workflow_persistence.md).
