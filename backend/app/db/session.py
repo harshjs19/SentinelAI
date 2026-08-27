@@ -35,3 +35,9 @@ async def get_session() -> AsyncIterator[AsyncSession]:
         except Exception:
             await session.rollback()
             raise
+
+
+async def get_workflow_lookup_session() -> AsyncIterator[AsyncSession]:
+    autocommit_engine = engine.execution_options(isolation_level="AUTOCOMMIT")
+    async with AsyncSession(bind=autocommit_engine, expire_on_commit=False) as session:
+        yield session

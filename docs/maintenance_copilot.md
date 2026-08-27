@@ -7,8 +7,9 @@ fixed the general bounded operational-request class and the complete offline sui
 passed. Paid live OpenAI evaluation and human citation-entailment review remain pending,
 so the Copilot is internal/experimental with no public API or report event. A separate
 internal layer can persist a fully verified completed workflow; Copilot itself still has
-no database access. See [Copilot V1 adversarial evaluation](copilot_evaluation.md) and
-[Maintenance workflow persistence](maintenance_workflow_persistence.md).
+no database access. See [Copilot V1 adversarial evaluation](copilot_evaluation.md),
+[Maintenance workflow persistence](maintenance_workflow_persistence.md), and the
+[internal maintenance report API](maintenance_report_api.md).
 
 ## Authority boundary
 
@@ -442,15 +443,16 @@ than being hidden as provider fallback. `COPILOT_WORKFLOW_VERSION` is
 The workflow is compiled only when a service is explicitly constructed with a generator.
 The application composition root constructs the default Copilot service without a
 provider, preserving offline deterministic behavior and safe provider-unavailable
-fallback. There is still no FastAPI maintenance endpoint, provider credential wiring,
-EventBus workflow event, or frontend. Durable report persistence is a separate
-post-verification application service and does not alter this graph. Formal
+fallback. The internal/demo FastAPI maintenance endpoints delegate to the complete
+server-owned workflow and do not add provider credential wiring, an EventBus workflow
+event, or a frontend. Durable report persistence remains a separate post-verification
+application service and does not alter this graph. Formal
 adversarial provider evaluation and safety hardening are tracked in
 [Copilot V1 adversarial evaluation](copilot_evaluation.md).
 
 ## Next milestones
 
 Formal live OpenAI evaluation remains available as a pre-public gate; no live metrics are
-claimed by the offline round. Human citation-entailment review and later authorization,
-request-level idempotency, retention, and public API design remain separately reviewed
-milestones.
+claimed by the offline round. Human citation-entailment review, authorization, retention,
+and public promotion remain separately reviewed milestones. Request-level idempotency now
+exists only for the bounded internal/demo report API.

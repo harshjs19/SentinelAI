@@ -5,11 +5,13 @@ from backend.app.db.models.maintenance_artifacts import (
     MaintenanceReportModel,
     RetrievalBundleModel,
 )
+from backend.app.db.models.maintenance_request import MaintenanceReportRequestModel
 
 __all__ = [
     "AnalysisModel",
     "EvidencePackageModel",
     "MachineModel",
+    "MaintenanceReportRequestModel",
     "MaintenanceReportModel",
     "RetrievalBundleModel",
 ]

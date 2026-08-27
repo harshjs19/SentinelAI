@@ -185,49 +185,30 @@ class MaintenanceWorkflowService:
         request: MaintenanceWorkflowRequest,
     ) -> tuple[InferenceResult, SourceProvenance]:
         if isinstance(request, TimeseriesMaintenanceRequest):
-            samples = tuple(dict(sample) for sample in request.samples)
+            samples = timeseries_samples_snapshot(request)
             result = await self._timeseries_inference_factory().predict(
                 request.machine_id,
                 samples,
             )
-            source = structured_source_provenance(
-                Modality.TIMESERIES,
-                {"samples": samples},
-            )
-            return result, source
+            return result, maintenance_request_source_provenance(request)
 
         if isinstance(request, AudioMaintenanceRequest):
             service = self._audio_inference_factory()
             service.validate_asset_type(asset_type)
             result = await service.predict(request.machine_id, request.content)
-            source = file_source_provenance(
-                Modality.AUDIO,
-                request.content,
-                "audio/wav",
-            )
-            return result, source
+            return result, maintenance_request_source_provenance(request)
 
         if isinstance(request, VisionMaintenanceRequest):
             service = self._vision_inference_factory()
             service.validate_asset_type(asset_type)
             result = await service.predict(request.machine_id, request.content)
-            source = file_source_provenance(
-                Modality.VISION,
-                request.content,
-                _image_content_type(request.content),
-            )
-            return result, source
+            return result, maintenance_request_source_provenance(request)
 
         if isinstance(request, ThermalMaintenanceRequest):
             service = self._thermal_inference_factory()
             service.validate_asset_type(asset_type)
             result = await service.predict(request.machine_id, request.content)
-            source = file_source_provenance(
-                Modality.THERMAL,
-                request.content,
-                _image_content_type(request.content),
-            )
-            return result, source
+            return result, maintenance_request_source_provenance(request)
 
         raise TypeError("Unsupported maintenance workflow request type")
 
@@ -276,6 +257,35 @@ def _image_content_type(content: bytes) -> str:
         return "image/png"
     if content.startswith(_JPEG_SIGNATURE):
         return "image/jpeg"
-    raise MaintenanceWorkflowIntegrityError(
-        "Successful image inference did not receive JPEG or PNG source bytes"
-    )
+    raise ValueError("Maintenance image source must be valid JPEG or PNG bytes")
+
+
+def timeseries_samples_snapshot(
+    request: TimeseriesMaintenanceRequest,
+) -> tuple[dict[str, float], ...]:
+    return tuple(dict(sample) for sample in request.samples)
+
+
+def maintenance_request_source_provenance(
+    request: MaintenanceWorkflowRequest,
+) -> SourceProvenance:
+    if isinstance(request, TimeseriesMaintenanceRequest):
+        return structured_source_provenance(
+            Modality.TIMESERIES,
+            {"samples": timeseries_samples_snapshot(request)},
+        )
+    if isinstance(request, AudioMaintenanceRequest):
+        return file_source_provenance(Modality.AUDIO, request.content, "audio/wav")
+    if isinstance(request, VisionMaintenanceRequest):
+        return file_source_provenance(
+            Modality.VISION,
+            request.content,
+            _image_content_type(request.content),
+        )
+    if isinstance(request, ThermalMaintenanceRequest):
+        return file_source_provenance(
+            Modality.THERMAL,
+            request.content,
+            _image_content_type(request.content),
+        )
+    raise TypeError("Unsupported maintenance workflow request type")

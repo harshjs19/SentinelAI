@@ -35,4 +35,7 @@ class MaintenanceWorkflowRepository(Protocol):
     async def list_for_machine(
         self,
         machine_id: UUID,
+        *,
+        limit: int = 20,
+        offset: int = 0,
     ) -> list[HistoricalMaintenanceWorkflow]: ...

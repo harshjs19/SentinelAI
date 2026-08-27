@@ -232,7 +232,12 @@ class SQLAlchemyMaintenanceWorkflowRepository:
     async def list_for_machine(
         self,
         machine_id: UUID,
+        *,
+        limit: int = 20,
+        offset: int = 0,
     ) -> list[HistoricalMaintenanceWorkflow]:
+        if limit <= 0 or offset < 0:
+            raise ValueError("Maintenance history pagination is out of bounds")
         report_ids = await self._session.scalars(
             select(MaintenanceReportModel.report_id)
             .where(MaintenanceReportModel.machine_id == machine_id)
@@ -240,6 +245,8 @@ class SQLAlchemyMaintenanceWorkflowRepository:
                 MaintenanceReportModel.generated_at.desc(),
                 MaintenanceReportModel.report_id.desc(),
             )
+            .limit(limit)
+            .offset(offset)
         )
         workflows: list[HistoricalMaintenanceWorkflow] = []
         for report_id in report_ids:

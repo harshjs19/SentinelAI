@@ -78,14 +78,17 @@ metadata, and payload reuses the existing row. Reusing an identity with differen
 raises an integrity conflict and never overwrites history. Distinct report IDs remain
 distinct even when they refer to the same Evidence Package.
 
-Request-level idempotency is intentionally deferred. A public API milestone must define
-an explicit request identity or `Idempotency-Key`; Evidence Package identity alone is not
-a request identity and must not deduplicate legitimate future report executions.
+The internal maintenance report API now adds a separate request-level idempotency table.
+It hashes the opaque `Idempotency-Key`, binds it to the exact semantic request, coordinates
+concurrent claims with a bounded lease, and associates one completed request with its
+report in the same final transaction as artifact persistence. Evidence Package identity
+alone is still not used as request identity. See
+[Internal maintenance report API](maintenance_report_api.md).
 
 ## Deferred concerns
 
-There is no public maintenance report route, authentication/authorization layer,
-retention/delete API, durable workflow event, or partial workflow recovery in this
-milestone. Persistence is not an authorization boundary. Public historical access must
-add authorization before promotion. The process-local EventBus and all Copilot safety,
-retrieval, inference, and model behavior remain unchanged.
+There is no public maintenance report promotion, authentication/authorization layer,
+retention/delete API, durable workflow event, or partial artifact checkpointing.
+Persistence and request idempotency are not authorization boundaries. The internal/demo
+routes must not be publicly exposed until authorization is added. The process-local
+EventBus and all Copilot safety, retrieval, inference, and model behavior remain unchanged.

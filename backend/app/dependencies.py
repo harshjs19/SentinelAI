@@ -11,10 +11,17 @@ from ai_core.model_provenance import (
     snapshot_producing_model_context,
 )
 from backend.app.config import get_settings
-from backend.app.db.session import get_session
+from backend.app.db.session import (
+    async_session_factory,
+    get_session,
+    get_workflow_lookup_session,
+)
 from backend.app.errors import model_unavailable_error
 from backend.app.repositories.sqlalchemy_machine_repository import (
     SQLAlchemyMachineRepository,
+)
+from backend.app.repositories.sqlalchemy_maintenance_request_idempotency_repository import (
+    SQLAlchemyMaintenanceRequestIdempotencyRepository,
 )
 from backend.app.repositories.sqlalchemy_maintenance_workflow_repository import (
     SQLAlchemyMaintenanceWorkflowRepository,
@@ -23,6 +30,12 @@ from backend.app.services.audio_inference_service import AudioInferenceService
 from backend.app.services.decision_service import DecisionService
 from backend.app.services.evidence_package_service import EvidencePackageService
 from backend.app.services.machine_service import MachineService
+from backend.app.services.maintenance_report_creation_service import (
+    MaintenanceReportCreationService,
+)
+from backend.app.services.maintenance_request_idempotency_service import (
+    MaintenanceRequestIdempotencyService,
+)
 from backend.app.services.maintenance_workflow_persistence_service import (
     MaintenanceWorkflowPersistenceService,
 )
@@ -59,6 +72,10 @@ from modules.vision.input import VisionInput
 from modules.vision.predictor import VisionPredictor
 
 SessionDependency = Annotated[AsyncSession, Depends(get_session, scope="function")]
+WorkflowLookupSessionDependency = Annotated[
+    AsyncSession,
+    Depends(get_workflow_lookup_session, scope="function"),
+]
 
 
 def get_machine_service(session: SessionDependency) -> MachineService:
@@ -69,6 +86,15 @@ def get_maintenance_workflow_persistence_service(
     session: SessionDependency,
 ) -> MaintenanceWorkflowPersistenceService:
     return MaintenanceWorkflowPersistenceService(SQLAlchemyMaintenanceWorkflowRepository(session))
+
+
+def get_maintenance_request_idempotency_service(
+    session: SessionDependency,
+) -> MaintenanceRequestIdempotencyService:
+    return MaintenanceRequestIdempotencyService(
+        reservation_session_factory=async_session_factory,
+        completion_repository=SQLAlchemyMaintenanceRequestIdempotencyRepository(session),
+    )
 
 
 @lru_cache
@@ -243,7 +269,7 @@ def get_maintenance_copilot_service() -> MaintenanceCopilotService:
 
 
 def get_maintenance_workflow_service(
-    session: SessionDependency,
+    session: WorkflowLookupSessionDependency,
 ) -> MaintenanceWorkflowService:
     return MaintenanceWorkflowService(
         machine_service=get_machine_service(session),
@@ -255,4 +281,25 @@ def get_maintenance_workflow_service(
         evidence_package_service=get_evidence_package_service(),
         knowledge_retriever_factory=get_knowledge_retriever,
         copilot_service=get_maintenance_copilot_service(),
+    )
+
+
+def get_maintenance_report_creation_service(
+    workflow_service: Annotated[
+        MaintenanceWorkflowService,
+        Depends(get_maintenance_workflow_service),
+    ],
+    persistence_service: Annotated[
+        MaintenanceWorkflowPersistenceService,
+        Depends(get_maintenance_workflow_persistence_service),
+    ],
+    idempotency_service: Annotated[
+        MaintenanceRequestIdempotencyService,
+        Depends(get_maintenance_request_idempotency_service),
+    ],
+) -> MaintenanceReportCreationService:
+    return MaintenanceReportCreationService(
+        workflow_service=workflow_service,
+        persistence_service=persistence_service,
+        idempotency_service=idempotency_service,
     )

@@ -78,5 +78,6 @@ structured-output provider boundary. Bounded internal LangGraph orchestration no
 generation, validation, one repair, and deterministic report assembly. The frozen
 [Copilot adversarial evaluation](docs/copilot_evaluation.md) preserves an offline routing
 defect and the successful single deterministic hardening rerun. Paid live evaluation and
-human review remain pending; the Copilot is internal/experimental, with report persistence
-and a public API still out of scope.
+human review remain pending. The bounded
+[maintenance report API](docs/maintenance_report_api.md) is internal/demo only and must not
+be publicly exposed without authorization.

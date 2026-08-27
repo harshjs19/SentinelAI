@@ -54,8 +54,15 @@ class MaintenanceWorkflowPersistenceService:
     async def list_for_machine(
         self,
         machine_id: UUID,
+        *,
+        limit: int = 20,
+        offset: int = 0,
     ) -> list[HistoricalMaintenanceWorkflow]:
-        return await self._repository.list_for_machine(machine_id)
+        return await self._repository.list_for_machine(
+            machine_id,
+            limit=limit,
+            offset=offset,
+        )
 
     @staticmethod
     def _validate_workflow_result(result: MaintenanceWorkflowResult) -> None:
