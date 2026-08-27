@@ -4,6 +4,7 @@ from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 from ai_core.model_capabilities import ModelLifecycleStatus
 from backend.app.schemas.timeseries import TimeseriesSample
+from domain.entities.analysis import Analysis
 from domain.enums.analysis_limitation import AnalysisLimitation
 from domain.enums.analysis_status import AnalysisStatus
 from domain.enums.condition_state import ConditionState
@@ -17,7 +18,9 @@ from modules.copilot.contracts import (
     RequestDisposition,
 )
 from modules.copilot.report import MaintenanceReport
-from modules.retriever.models import RetrievalLane
+from modules.retriever.models import RetrievalBundle, RetrievalLane
+from shared.evidence.models import EvidencePackage
+from shared.evidence.provenance import SourceKind
 
 
 class TimeseriesMaintenanceReportRequest(BaseModel):
@@ -224,4 +227,111 @@ class MaintenanceReportSummaryResponse(BaseModel):
             condition=report.analysis.condition,
             analysis_status=report.analysis.status,
             executive_summary=report.narrative.executive_summary,
+        )
+
+
+class MaintenanceSourceProvenanceResponse(BaseModel):
+    modality: Modality
+    source_kind: SourceKind
+    sha256: str
+    size_bytes: int = Field(ge=0)
+    content_type: str
+
+
+class MaintenanceAnalysisBindingResponse(BaseModel):
+    analysis_id: UUID
+    machine_id: UUID
+    condition: ConditionState
+    status: AnalysisStatus
+    created_at: AwareDatetime
+
+
+class MaintenanceEvidencePackageIdentityResponse(BaseModel):
+    package_id: str
+    package_digest_sha256: str
+    schema_version: str
+    created_at: AwareDatetime
+    analysis_id: UUID
+
+
+class MaintenanceRetrievalBundleIdentityResponse(BaseModel):
+    retrieval_bundle_digest_sha256: str
+    evidence_package_id: str
+    evidence_package_digest_sha256: str
+    corpus_digest_sha256: str
+    embedding_model_id: str
+    embedding_model_revision: str
+    schema_version: str
+
+
+class MaintenanceReportBindingResponse(BaseModel):
+    report_id: UUID
+    report_digest_sha256: str
+    schema_version: str
+    generation_status: GenerationStatus
+    generated_at: AwareDatetime
+    evidence_package_id: str
+    evidence_package_digest_sha256: str
+    retrieval_bundle_digest_sha256: str
+
+
+class MaintenanceReportEvidenceResponse(BaseModel):
+    report: MaintenanceReportBindingResponse
+    analysis: MaintenanceAnalysisBindingResponse
+    evidence_package: MaintenanceEvidencePackageIdentityResponse
+    retrieval_bundle: MaintenanceRetrievalBundleIdentityResponse
+    sources: tuple[MaintenanceSourceProvenanceResponse, ...]
+
+    @classmethod
+    def from_domain(
+        cls,
+        *,
+        analysis: Analysis,
+        evidence_package: EvidencePackage,
+        retrieval_bundle: RetrievalBundle,
+        report: MaintenanceReport,
+    ) -> "MaintenanceReportEvidenceResponse":
+        return cls(
+            report=MaintenanceReportBindingResponse(
+                report_id=report.report_id,
+                report_digest_sha256=report.report_digest_sha256,
+                schema_version=report.schema_version,
+                generation_status=report.generation_status,
+                generated_at=report.generated_at,
+                evidence_package_id=report.evidence_reference.package_id,
+                evidence_package_digest_sha256=(report.evidence_reference.package_digest_sha256),
+                retrieval_bundle_digest_sha256=(
+                    report.retrieval_reference.retrieval_bundle_digest_sha256
+                ),
+            ),
+            analysis=MaintenanceAnalysisBindingResponse(
+                analysis_id=analysis.id,
+                machine_id=analysis.machine_id,
+                condition=analysis.condition,
+                status=analysis.status,
+                created_at=analysis.created_at,
+            ),
+            evidence_package=MaintenanceEvidencePackageIdentityResponse(
+                package_id=evidence_package.package_id,
+                package_digest_sha256=evidence_package.package_digest_sha256,
+                schema_version=evidence_package.schema_version,
+                created_at=evidence_package.created_at,
+                analysis_id=evidence_package.analysis.analysis_id,
+            ),
+            retrieval_bundle=MaintenanceRetrievalBundleIdentityResponse(
+                retrieval_bundle_digest_sha256=(retrieval_bundle.retrieval_bundle_digest_sha256),
+                evidence_package_id=retrieval_bundle.evidence_package_id,
+                evidence_package_digest_sha256=(retrieval_bundle.evidence_package_digest_sha256),
+                corpus_digest_sha256=retrieval_bundle.corpus_digest_sha256,
+                embedding_model_id=retrieval_bundle.embedding_model_id,
+                embedding_model_revision=retrieval_bundle.embedding_model_revision,
+                schema_version=retrieval_bundle.schema_version,
+            ),
+            sources=tuple(
+                MaintenanceSourceProvenanceResponse.model_validate(
+                    source,
+                    from_attributes=True,
+                )
+                for source in evidence_package.sources
+            ),
         )

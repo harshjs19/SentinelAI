@@ -374,6 +374,42 @@ async def test_historical_get_returns_stored_safe_report_without_workflow_depend
 
 
 @pytest.mark.asyncio
+async def test_historical_evidence_get_returns_only_typed_lineage_metadata(
+    api_client: httpx.AsyncClient,
+) -> None:
+    historical = _historical()
+    persistence = FakePersistenceService([historical])
+    app.dependency_overrides[get_maintenance_workflow_persistence_service] = lambda: persistence
+
+    response = await api_client.get(
+        f"/maintenance-reports/{historical.maintenance_report.report_id}/evidence"
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["analysis"]["analysis_id"] == str(historical.analysis.id)
+    assert body["evidence_package"]["package_id"] == (historical.evidence_package.package_id)
+    assert body["retrieval_bundle"]["retrieval_bundle_digest_sha256"] == (
+        historical.retrieval_bundle.retrieval_bundle_digest_sha256
+    )
+    assert body["report"]["report_id"] == str(historical.maintenance_report.report_id)
+    assert body["sources"] == [
+        {
+            "modality": source.modality.value,
+            "source_kind": source.source_kind.value,
+            "sha256": source.sha256,
+            "size_bytes": source.size_bytes,
+            "content_type": source.content_type,
+        }
+        for source in historical.evidence_package.sources
+    ]
+    assert "chunks" not in response.text
+    assert "queries" not in response.text
+    assert "source_uri" not in response.text
+    assert "collection_name" not in response.text
+
+
+@pytest.mark.asyncio
 async def test_historical_get_returns_404_or_safe_integrity_error(
     api_client: httpx.AsyncClient,
 ) -> None:
@@ -382,10 +418,13 @@ async def test_historical_get_returns_404_or_safe_integrity_error(
     report_id = uuid4()
 
     missing = await api_client.get(f"/maintenance-reports/{report_id}")
+    missing_evidence = await api_client.get(f"/maintenance-reports/{report_id}/evidence")
     persistence.error = ArtifactPersistenceIntegrityError("private database detail")
-    corrupt = await api_client.get(f"/maintenance-reports/{report_id}")
+    corrupt = await api_client.get(f"/maintenance-reports/{report_id}/evidence")
 
     assert missing.status_code == 404
+    assert missing_evidence.status_code == 404
+    assert missing_evidence.json() == {"detail": "Maintenance report not found"}
     assert corrupt.status_code == 500
     assert corrupt.json() == {"detail": "Stored maintenance report failed integrity verification"}
     assert "private" not in corrupt.text

@@ -20,10 +20,14 @@ from backend.app.dependencies import (
     get_maintenance_workflow_persistence_service,
 )
 from backend.app.persistence.errors import ArtifactPersistenceIntegrityError
+from backend.app.repositories.maintenance_workflow_repository import (
+    HistoricalMaintenanceWorkflow,
+)
 from backend.app.repositories.sqlalchemy_maintenance_request_idempotency_repository import (
     IdempotencyPersistenceIntegrityError,
 )
 from backend.app.schemas.maintenance_report import (
+    MaintenanceReportEvidenceResponse,
     MaintenanceReportResponse,
     MaintenanceReportSummaryResponse,
     TimeseriesMaintenanceReportRequest,
@@ -196,6 +200,23 @@ async def create_thermal_maintenance_report(
 
 
 @router.get(
+    "/maintenance-reports/{report_id}/evidence",
+    response_model=MaintenanceReportEvidenceResponse,
+)
+async def get_maintenance_report_evidence(
+    report_id: UUID,
+    service: PersistenceServiceDependency,
+) -> MaintenanceReportEvidenceResponse:
+    historical = await _load_historical_report(report_id, service)
+    return MaintenanceReportEvidenceResponse.from_domain(
+        analysis=historical.analysis,
+        evidence_package=historical.evidence_package,
+        retrieval_bundle=historical.retrieval_bundle,
+        report=historical.maintenance_report,
+    )
+
+
+@router.get(
     "/maintenance-reports/{report_id}",
     response_model=MaintenanceReportResponse,
 )
@@ -203,6 +224,14 @@ async def get_maintenance_report(
     report_id: UUID,
     service: PersistenceServiceDependency,
 ) -> MaintenanceReportResponse:
+    historical = await _load_historical_report(report_id, service)
+    return MaintenanceReportResponse.from_domain(historical.maintenance_report)
+
+
+async def _load_historical_report(
+    report_id: UUID,
+    service: MaintenanceWorkflowPersistenceService,
+) -> HistoricalMaintenanceWorkflow:
     try:
         historical = await service.get_by_report_id(report_id)
     except ArtifactPersistenceIntegrityError:
@@ -215,7 +244,7 @@ async def get_maintenance_report(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Maintenance report not found",
         )
-    return MaintenanceReportResponse.from_domain(historical.maintenance_report)
+    return historical
 
 
 @router.get(

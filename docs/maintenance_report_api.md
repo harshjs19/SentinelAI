@@ -84,6 +84,15 @@ report is unknown. A corrupted stored chain fails closed with a safe `500` respo
 read never reruns inference, consults current model defaults or current corpus state, reruns
 retrieval, or invokes a provider.
 
+`GET /maintenance-reports/{report_id}/evidence` returns a compact, read-only lineage view
+for technical clients and the dashboard Evidence Chain. It identifies the exact stored
+Analysis, Evidence Package, Retrieval Bundle, report binding, and safe source provenance
+metadata (`modality`, source kind, SHA-256, byte size, and content type). The response is
+produced through the same verified historical-chain loader as the report endpoint. It never
+reruns ML, the Decision Engine, retrieval, or an LLM and never reconstructs provenance from
+current runtime defaults. It omits raw samples/media, filenames, local paths, full retrieval
+queries/chunks, provider prompts/responses, and persistence JSONB payloads.
+
 `GET /machines/{machine_id}/maintenance-reports` first verifies that the Machine exists and
 then returns concise report summaries. `limit` defaults to 20 and is bounded to 1–100;
 `offset` defaults to zero. Ordering is stable: `generated_at DESC`, then `report_id DESC`.
@@ -105,4 +114,3 @@ verified `GENERATION_UNAVAILABLE` fallback. High-impact questions such as shutdo
 bypass the provider and persist the verified `UNSUPPORTED_REQUEST` fallback. The existing
 `MaintenanceSafetyValidator` remains the only semantic safety validator; this API does not
 bypass or weaken it.
-

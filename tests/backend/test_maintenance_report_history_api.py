@@ -82,7 +82,13 @@ async def test_historical_get_uses_only_verified_stored_chain(
     )
     await persistence.persist(result)
     db_session.expunge_all()
-    calls = {"predictor": 0, "retriever": 0, "generator": 0, "default": 0}
+    calls = {
+        "predictor": 0,
+        "decision": 0,
+        "retriever": 0,
+        "generator": 0,
+        "default": 0,
+    }
 
     def unavailable(name: str) -> object:
         calls[name] += 1
@@ -97,6 +103,11 @@ async def test_historical_get_uses_only_verified_stored_chain(
         dependencies,
         "get_knowledge_retriever",
         lambda: unavailable("retriever"),
+    )
+    monkeypatch.setattr(
+        dependencies,
+        "get_decision_service",
+        lambda: unavailable("decision"),
     )
     monkeypatch.setattr(
         dependencies,
@@ -125,11 +136,94 @@ async def test_historical_get_uses_only_verified_stored_chain(
     app.dependency_overrides[get_maintenance_workflow_persistence_service] = lambda: persistence
 
     response = await api_client.get(f"/maintenance-reports/{result.maintenance_report.report_id}")
+    evidence_response = await api_client.get(
+        f"/maintenance-reports/{result.maintenance_report.report_id}/evidence"
+    )
 
     assert response.status_code == 200
     assert response.json()["producing_models"][0]["model_id"] == "vision_visa_pcb1_v1"
     assert response.json()["citations"][0]["citation_id"] == "K1"
-    assert calls == {"predictor": 0, "retriever": 0, "generator": 0, "default": 0}
+    assert evidence_response.status_code == 200
+    evidence = evidence_response.json()
+    assert set(evidence) == {
+        "report",
+        "analysis",
+        "evidence_package",
+        "retrieval_bundle",
+        "sources",
+    }
+    assert evidence["report"] == {
+        "report_id": str(result.maintenance_report.report_id),
+        "report_digest_sha256": result.maintenance_report.report_digest_sha256,
+        "schema_version": result.maintenance_report.schema_version,
+        "generation_status": result.maintenance_report.generation_status.value,
+        "generated_at": result.maintenance_report.generated_at.isoformat().replace("+00:00", "Z"),
+        "evidence_package_id": result.maintenance_report.evidence_reference.package_id,
+        "evidence_package_digest_sha256": (
+            result.maintenance_report.evidence_reference.package_digest_sha256
+        ),
+        "retrieval_bundle_digest_sha256": (
+            result.maintenance_report.retrieval_reference.retrieval_bundle_digest_sha256
+        ),
+    }
+    assert evidence["analysis"] == {
+        "analysis_id": str(result.analysis.id),
+        "machine_id": str(machine.id),
+        "condition": result.analysis.condition.value,
+        "status": result.analysis.status.value,
+        "created_at": result.analysis.created_at.isoformat().replace("+00:00", "Z"),
+    }
+    assert evidence["evidence_package"] == {
+        "package_id": result.evidence_package.package_id,
+        "package_digest_sha256": result.evidence_package.package_digest_sha256,
+        "schema_version": result.evidence_package.schema_version,
+        "created_at": result.evidence_package.created_at.isoformat().replace("+00:00", "Z"),
+        "analysis_id": str(result.analysis.id),
+    }
+    assert evidence["retrieval_bundle"] == {
+        "retrieval_bundle_digest_sha256": (result.retrieval_bundle.retrieval_bundle_digest_sha256),
+        "evidence_package_id": result.retrieval_bundle.evidence_package_id,
+        "evidence_package_digest_sha256": (result.retrieval_bundle.evidence_package_digest_sha256),
+        "corpus_digest_sha256": result.retrieval_bundle.corpus_digest_sha256,
+        "embedding_model_id": result.retrieval_bundle.embedding_model_id,
+        "embedding_model_revision": result.retrieval_bundle.embedding_model_revision,
+        "schema_version": result.retrieval_bundle.schema_version,
+    }
+    source = result.evidence_package.sources[0]
+    assert evidence["sources"] == [
+        {
+            "modality": source.modality.value,
+            "source_kind": source.source_kind.value,
+            "sha256": source.sha256,
+            "size_bytes": source.size_bytes,
+            "content_type": source.content_type,
+        }
+    ]
+    assert "vision_fake_v2" not in evidence_response.text
+    assert calls == {
+        "predictor": 0,
+        "decision": 0,
+        "retriever": 0,
+        "generator": 0,
+        "default": 0,
+    }
+
+    serialized = evidence_response.text.lower()
+    forbidden = (
+        "private fixture bytes",
+        "synthetic source-backed visual inspection context",
+        "source_uri",
+        "collection_name",
+        "document_path",
+        "base64",
+        "openai_api_key",
+        "provider prompt",
+        ".joblib",
+        "chroma",
+        "dataset",
+        "d:\\",
+    )
+    assert all(value not in serialized for value in forbidden)
 
 
 @pytest.mark.asyncio
@@ -155,7 +249,9 @@ async def test_tampered_historical_chain_fails_closed_at_api_boundary(
     db_session.expunge_all()
     app.dependency_overrides[get_maintenance_workflow_persistence_service] = lambda: persistence
 
-    response = await api_client.get(f"/maintenance-reports/{result.maintenance_report.report_id}")
+    response = await api_client.get(
+        f"/maintenance-reports/{result.maintenance_report.report_id}/evidence"
+    )
 
     assert response.status_code == 500
     assert response.json() == {"detail": "Stored maintenance report failed integrity verification"}
