@@ -15,4 +15,3 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
     </div>
   );
 }
-

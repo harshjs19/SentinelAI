@@ -48,11 +48,19 @@ export function MachineDetailPage() {
   return (
     <PageTransition>
       <section className="machine-hero glass-panel">
+        <span className="machine-hero__contour" aria-hidden="true" />
         <div className="machine-hero__icon"><ServerCog aria-hidden="true" /></div>
-        <div className="machine-hero__identity"><p className="eyebrow">{machine.data.asset_type}</p><h1>{machine.data.name}</h1><code>{machine.data.id}</code></div>
+        <div className="machine-hero__identity"><p className="eyebrow">{machine.data.asset_type}</p><motion.h1 layoutId={`machine-name-${machine.data.id}`}>{machine.data.name}</motion.h1><code>{machine.data.id}</code></div>
         <div className="machine-hero__condition">
           {history.data?.[0] ? <><span>Latest stored condition</span><StatusBadge tone={conditionTone(history.data[0].condition)}>{humanize(history.data[0].condition)}</StatusBadge><small>{formatDate(history.data[0].generated_at)}</small></> : <><span>Latest stored condition</span><strong>Not determined</strong><small>No stored report loaded</small></>}
         </div>
+        {latest.data?.report.analysis.findings[0] && (
+          <div className="machine-hero__lineage">
+            <span>Latest stored finding</span>
+            <strong>{latest.data.report.analysis.findings[0].code}</strong>
+            <small>{humanize(latest.data.report.analysis.findings[0].modality)} · {latest.data.report.producing_models[0]?.model_id ?? "Model identity unavailable"}</small>
+          </div>
+        )}
         <button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}><Play size={16} /> Run Analysis</button>
       </section>
 
@@ -77,3 +85,4 @@ export function MachineDetailPage() {
     </PageTransition>
   );
 }
+import { motion } from "framer-motion";

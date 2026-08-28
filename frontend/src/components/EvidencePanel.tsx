@@ -1,21 +1,40 @@
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, Clipboard, Database, FileKey2 } from "lucide-react";
 import { useState } from "react";
 
 import type { MaintenanceReportEvidence } from "../api/types";
 import { formatBytes, formatDate, humanize, shortId } from "../lib/format";
+import { motionDuration, premiumEase } from "../lib/motion";
 
 function CopyValue({ value, label }: { value: string; label: string }) {
   const [copied, setCopied] = useState(false);
+  const reduced = useReducedMotion();
   const copy = async () => {
     if (!navigator.clipboard) return;
-    await navigator.clipboard.writeText(value);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
   };
   return (
-    <button className="copy-value" type="button" onClick={() => void copy()} aria-label={`Copy ${label}`}>
+    <button className="copy-value" type="button" onClick={() => void copy()} aria-label={`Copy ${label}`} title={value}>
       <code>{shortId(value, 14, 8)}</code>
-      {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
+      <AnimatePresence initial={false} mode="wait">
+        <motion.span
+          className="copy-value__icon"
+          key={copied ? "copied" : "copy"}
+          initial={reduced ? false : { opacity: 0, scale: 0.82 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={reduced ? undefined : { opacity: 0, scale: 0.82 }}
+          transition={{ duration: reduced ? 0 : motionDuration.fast, ease: premiumEase }}
+        >
+          {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
+        </motion.span>
+      </AnimatePresence>
+      <span className="sr-only" aria-live="polite">{copied ? `${label} copied` : ""}</span>
     </button>
   );
 }

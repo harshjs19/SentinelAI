@@ -7,8 +7,12 @@ import { EmptyState, ErrorState, LoadingState } from "../components/States";
 import { PageHeader } from "../components/PageHeader";
 import { PageTransition } from "../components/PageTransition";
 import { useAsyncResource } from "../hooks/useAsyncResource";
+import { motionDuration, premiumEase } from "../lib/motion";
+
+const MotionLink = motion.create(Link);
 
 export function MachinesPage() {
+  const reduced = useReducedMotion();
   const [query, setQuery] = useState("");
   const loader = useCallback((signal: AbortSignal) => listMachines(signal), []);
   const machines = useAsyncResource(loader);
@@ -28,14 +32,22 @@ export function MachinesPage() {
       {machines.data && machines.data.length > 0 && filtered.length === 0 && <EmptyState title="No matching machines" message="Adjust the local search filter. No machine data has been changed." />}
       <section className="machine-grid" aria-label="Machines">
         {filtered.map((machine) => (
-          <Link className="machine-card glass-card" to={`/machines/${machine.id}`} key={machine.id}>
+          <MotionLink
+            className="machine-card glass-card"
+            to={`/machines/${machine.id}`}
+            key={machine.id}
+            layoutId={`machine-card-${machine.id}`}
+            whileHover={reduced ? undefined : { y: -2 }}
+            transition={{ duration: reduced ? 0 : motionDuration.fast, ease: premiumEase }}
+          >
             <div className="machine-card__icon"><ServerCog aria-hidden="true" /></div>
-            <div className="machine-card__body"><p className="eyebrow">{machine.asset_type}</p><h2>{machine.name}</h2><code>{machine.id}</code></div>
+            <div className="machine-card__body"><p className="eyebrow">{machine.asset_type}</p><motion.h2 layoutId={`machine-name-${machine.id}`}>{machine.name}</motion.h2><code>{machine.id}</code></div>
             <div className="machine-card__action"><span>Open workspace</span><ArrowUpRight aria-hidden="true" /></div>
             <p className="machine-card__boundary">Condition is shown only when a stored report exists.</p>
-          </Link>
+          </MotionLink>
         ))}
       </section>
     </PageTransition>
   );
 }
+import { motion, useReducedMotion } from "framer-motion";

@@ -83,8 +83,15 @@ export function AppShell() {
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) => `nav-link ${isActive ? "nav-link--active" : ""}`}
             >
-              <Icon aria-hidden="true" />
-              <span>{label}</span>
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="nav-link__indicator" />
+                  )}
+                  <Icon aria-hidden="true" />
+                  <span>{label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -139,4 +146,3 @@ export function AppShell() {
     </div>
   );
 }
-

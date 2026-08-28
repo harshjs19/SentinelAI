@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import type { MaintenanceCitation } from "../api/types";
 import { humanize } from "../lib/format";
+import { motionDuration, premiumEase } from "../lib/motion";
 
 export function CitationCard({ citation }: { citation: MaintenanceCitation }) {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ export function CitationCard({ citation }: { citation: MaintenanceCitation }) {
             initial={reduced ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={reduced ? undefined : { opacity: 0, height: 0 }}
-            transition={{ duration: reduced ? 0 : 0.22 }}
+            transition={{ duration: reduced ? 0 : motionDuration.standard, ease: premiumEase }}
           >
             <BookOpen aria-hidden="true" />
             <dl>
@@ -52,4 +53,3 @@ export function CitationCard({ citation }: { citation: MaintenanceCitation }) {
     </article>
   );
 }
-

@@ -54,3 +54,29 @@ persistence. Image previews use short-lived object URLs.
 
 No WebSocket, polling loop, paid service, Raspberry Pi, new backend subsystem, or database
 migration is required by this dashboard.
+
+## Premium Visual Refinement V2
+
+V2 preserves every V1 route, API contract, report structure, and scientific boundary. A
+shared motion vocabulary uses fast (160 ms), standard (260 ms), enter (380 ms), and
+cinematic (680 ms) timings with one restrained easing curve. Page entry, disclosure,
+navigation, evidence, and drawer movement all use that vocabulary. Reduced-motion mode
+removes continuous orbit, particle, parallax, and signal movement while retaining content.
+
+The interface uses the locally packaged Manrope variable font for UI and display text and
+system monospace only for technical identifiers. Four consistent glass elevations define
+navigation, cards, intelligence panels, and the analysis drawer. Directional highlights,
+quiet ambient depth, and selected pointer spotlights reinforce hierarchy without adding
+telemetry or data-like decoration.
+
+The procedural Sentinel Core now layers a nucleus, translucent shell, lattice, orbital
+geometry, bounded particles, module nodes, and subtle architecture pulses. Pointer and
+scroll response are deliberately small, use frame-local refs rather than React state, and
+return toward a neutral camera. Tablet rendering reduces particle density; reduced-motion
+uses demand rendering. No GLTF, texture, video, post-processing pipeline, or downloaded
+visual asset is used. WebGL failure retains an intentional CSS core/orbit/node composition.
+
+Evidence Chain motion runs once as stored lineage enters view, then becomes a stable
+technical diagram. Focus and hover progressively disclose stored identifiers and digests.
+All effects remain decorative: they do not describe live data, sensor synchronization,
+multimodal fusion, or a physical digital twin.

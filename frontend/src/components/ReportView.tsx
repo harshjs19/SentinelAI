@@ -6,9 +6,11 @@ import {
   Microscope,
   ShieldAlert,
 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 
 import type { MaintenanceReport, MaintenanceReportEvidence } from "../api/types";
 import { confidenceLabel, formatDate, humanize, limitationLabel } from "../lib/format";
+import { motionDuration, premiumEase } from "../lib/motion";
 import { CitationCard } from "./CitationCard";
 import { EvidenceChain } from "./EvidenceChain";
 import { EvidencePanel } from "./EvidencePanel";
@@ -21,6 +23,7 @@ function TruthMetric({ label, value }: { label: string; value: string }) {
 }
 
 export function ReportView({ report, evidence }: { report: MaintenanceReport; evidence: MaintenanceReportEvidence | null }) {
+  const reduced = useReducedMotion();
   const support = report.analysis.claim_support;
   const allLimitations = [
     ...report.limitations.analysis_limitations,
@@ -44,8 +47,8 @@ export function ReportView({ report, evidence }: { report: MaintenanceReport; ev
             </StatusBadge>
             <span>{formatDate(report.generated_at)}</span>
           </div>
-          <h2>Executive summary</h2>
-          <p>{report.narrative.executive_summary}</p>
+          <h2>/ Executive summary</h2>
+          <p className="executive-summary">{report.narrative.executive_summary}</p>
           {report.request_disposition !== "answered" && (
             <div className="safe-boundary"><ShieldAlert aria-hidden="true" /><span>{humanize(report.request_disposition)}. The interface adds no operational advice.</span></div>
           )}
@@ -73,7 +76,7 @@ export function ReportView({ report, evidence }: { report: MaintenanceReport; ev
                 </header>
                 <div className="confidence-block">
                   <div><span>Model confidence</span><strong>{confidenceLabel(finding.confidence)}</strong></div>
-                  <div className="confidence-track" aria-hidden="true"><i style={{ width: `${Math.max(0, Math.min(1, finding.confidence)) * 100}%` }} /></div>
+                  <div className="confidence-track" aria-hidden="true"><motion.i initial={reduced ? false : { width: 0 }} whileInView={{ width: `${Math.max(0, Math.min(1, finding.confidence)) * 100}%` }} viewport={{ once: true, amount: 0.8 }} transition={{ duration: reduced ? 0 : motionDuration.cinematic, ease: premiumEase }} /></div>
                   <p>{humanize(finding.confidence_kind)} confidence</p>
                   {finding.confidence_kind === "raw" && <small>Raw model confidence — not failure probability.</small>}
                 </div>
@@ -102,7 +105,7 @@ export function ReportView({ report, evidence }: { report: MaintenanceReport; ev
 
       <section className="boundaries glass-panel" aria-labelledby="boundaries-title">
         <div className="section-heading"><div><p className="eyebrow">Scientific boundaries</p><h2 id="boundaries-title">What this report does not claim</h2></div><AlertOctagon aria-hidden="true" /></div>
-        <div className="boundary-tags">{allLimitations.map((limitation) => <span key={limitation}>{limitationLabel(limitation)}</span>)}</div>
+        <div className="boundary-tags">{allLimitations.map((limitation, index) => <motion.span key={limitation} initial={reduced ? false : { opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduced ? 0 : motionDuration.standard, delay: reduced ? 0 : Math.min(index * 0.04, 0.2), ease: premiumEase }}>{limitationLabel(limitation)}</motion.span>)}</div>
         {report.narrative.knowledge_gap_statement && <p>{report.narrative.knowledge_gap_statement}</p>}
         <div className="safety-strip"><CheckCircle2 aria-hidden="true" /><div><strong>Safety validation {report.safety_validation.valid ? "passed" : "not confirmed"}</strong><span>Policy {report.safety_validation.validator_policy_version}</span></div></div>
         <p className="report-disclaimer">{report.disclaimer}</p>

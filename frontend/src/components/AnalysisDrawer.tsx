@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FileAudio, FileImage, FlaskConical, LoaderCircle, Thermometer, X } from "lucide-react";
+import { FileAudio, FileImage, FlaskConical, LoaderCircle, Thermometer, UploadCloud, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiError } from "../api/client";
@@ -13,6 +13,7 @@ import type {
   TimeseriesSample,
 } from "../api/types";
 import { humanize } from "../lib/format";
+import { motionDuration, premiumEase } from "../lib/motion";
 import { lifecycleTone } from "./badgeTone";
 import { StatusBadge } from "./StatusBadge";
 
@@ -138,8 +139,8 @@ export function AnalysisDrawer({
     <AnimatePresence>
       {open && (
         <div className="drawer-layer">
-          <motion.button className="drawer-backdrop" type="button" aria-label="Close analysis drawer" onClick={onClose} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-          <motion.aside className="analysis-drawer glass-panel" role="dialog" aria-modal="true" aria-labelledby="analysis-title" initial={reduced ? false : { opacity: 0, x: 32 }} animate={{ opacity: 1, x: 0 }} exit={reduced ? undefined : { opacity: 0, x: 24 }} transition={{ duration: reduced ? 0 : 0.25 }}>
+          <motion.button className="drawer-backdrop" type="button" aria-label="Close analysis drawer" onClick={onClose} initial={reduced ? false : { opacity: 0, backdropFilter: "blur(0px)" }} animate={{ opacity: 1, backdropFilter: "blur(8px)" }} exit={{ opacity: 0, backdropFilter: "blur(0px)" }} transition={{ duration: reduced ? 0 : motionDuration.standard, ease: premiumEase }} />
+          <motion.aside className="analysis-drawer glass-panel" role="dialog" aria-modal="true" aria-labelledby="analysis-title" initial={reduced ? false : { opacity: 0, x: 32, scale: 0.99 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={reduced ? undefined : { opacity: 0, x: 24, scale: 0.995 }} transition={{ duration: reduced ? 0 : motionDuration.standard, ease: premiumEase }}>
             <header className="analysis-drawer__header">
               <div><p className="eyebrow">New single-modality request</p><h2 id="analysis-title">Run Analysis</h2><span>{machineName}</span></div>
               <button className="icon-button" type="button" aria-label="Close" onClick={onClose} disabled={submitting}><X /></button>
@@ -155,14 +156,14 @@ export function AnalysisDrawer({
               {modality === "timeseries" ? (
                 <label className="field"><span>Time-series samples</span><small>Synthetic/demo values are prefilled. Replace them with raw input rows; feature engineering remains server-owned.</small><textarea rows={12} value={samplesText} onChange={(event) => { setSamplesText(event.target.value); setPendingRetry(null); }} spellCheck={false} /></label>
               ) : (
-                <label className="file-drop"><input type="file" accept={accepts} onChange={(event) => { setFile(event.target.files?.[0] ?? null); setPendingRetry(null); }} /><span>{file ? file.name : `Select ${modality} source`}</span><small>{file ? `${(file.size / 1024).toFixed(1)} KB / sent directly as multipart data` : "Raw browser File only — never base64 encoded or persisted locally."}</small>{previewUrl && <img src={previewUrl} alt="Selected source preview" />}</label>
+                <label className={`file-drop ${file ? "file-drop--selected" : ""}`}><input type="file" accept={accepts} onChange={(event) => { setFile(event.target.files?.[0] ?? null); setPendingRetry(null); }} /><span className="file-drop__icon"><UploadCloud aria-hidden="true" /></span><span>{file ? file.name : `Select ${modality} source`}</span><small>{file ? `${(file.size / 1024).toFixed(1)} KB / sent directly as multipart data` : "Raw browser File only — never base64 encoded or persisted locally."}</small>{previewUrl && <img src={previewUrl} alt="Selected source preview" />}</label>
               )}
 
               <label className="field"><span>Copilot intent</span><select value={intent} onChange={(event) => { setIntent(event.target.value as CopilotIntent); setPendingRetry(null); }}>{intents.map((item) => <option value={item.value} key={item.value}>{item.label}</option>)}</select></label>
               <label className="field"><span>Optional bounded question</span><textarea rows={3} maxLength={500} placeholder="Ask for an evidence-bounded explanation..." value={question} onChange={(event) => { setQuestion(event.target.value); setPendingRetry(null); }} /><small>{question.length}/500 characters. Operational decisions require qualified human judgment.</small></label>
 
               {error && <div className="inline-error" role="alert">{error}</div>}
-              {submitting && <div className="analysis-progress" role="status"><LoaderCircle aria-hidden="true" /><div><strong>Preparing maintenance intelligence...</strong><span>No fabricated progress percentage is shown.</span></div></div>}
+              {submitting && <div className="analysis-progress" role="status"><span className="analysis-progress__core" aria-hidden="true"><LoaderCircle /></span><div><strong>Analyzing machine evidence…</strong><span>No fabricated progress percentage is shown.</span></div></div>}
             </div>
 
             <footer className="analysis-drawer__footer">

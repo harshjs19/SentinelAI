@@ -51,7 +51,7 @@ test("all major dashboard views are usable and console-clean", async ({ page }, 
 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /Industrial intelligence grounded/i })).toBeVisible();
-  await expect(page.getByText("Four independently available modules.")).toBeVisible();
+  await expect(page.getByText(/Independent analysis modules/)).toBeVisible();
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("overview-1440.png"), fullPage: true });
 
@@ -108,6 +108,11 @@ test("tablet, reduced-motion, empty-history, and WebGL fallback remain usable", 
   const problems = captureConsole(page);
   await page.goto("/");
   await expect(page.locator(".static-core:not(.static-core--loading)")).toBeVisible();
+  const reducedDurationMs = await page.locator(".ambient-canvas__glow").first().evaluate((element) => {
+    const value = getComputedStyle(element).animationDuration;
+    return value.endsWith("ms") ? Number.parseFloat(value) : Number.parseFloat(value) * 1000;
+  });
+  expect(reducedDurationMs).toBeLessThanOrEqual(0.001);
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("overview-tablet-webgl-fallback.png"), fullPage: true });
 
@@ -118,6 +123,27 @@ test("tablet, reduced-motion, empty-history, and WebGL fallback remain usable", 
   await expect(page.getByRole("dialog", { name: "Run Analysis" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("analysis-tablet.png"), fullPage: true });
+  expect(problems).toEqual([]);
+});
+
+test("1024 workspace preserves premium hierarchy and evidence legibility", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await mockApi(page);
+  const problems = captureConsole(page);
+
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: /Industrial intelligence grounded/i })).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath("overview-1024.png"), fullPage: true });
+
+  await page.goto(`/reports/${report.report_id}`);
+  const chain = page.getByRole("heading", { name: "Evidence Chain" });
+  await chain.scrollIntoViewIfNeeded();
+  await expect(chain).toBeVisible();
+  await page.waitForTimeout(800);
+  await expectNoHorizontalOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath("report-evidence-1024.png") });
+
   expect(problems).toEqual([]);
 });
 

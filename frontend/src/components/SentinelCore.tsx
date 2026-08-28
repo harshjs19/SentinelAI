@@ -12,7 +12,18 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
 }
 
 function StaticCore({ loading = false }: { loading?: boolean }) {
-  return <div className={`static-core ${loading ? "static-core--loading" : ""}`} aria-label={loading ? "Loading Sentinel Core" : "Static Sentinel Core fallback"}><i /><i /><i /><span /></div>;
+  return (
+    <div className={`static-core ${loading ? "static-core--loading" : ""}`} aria-label={loading ? "Loading Sentinel Core" : "Static Sentinel Core fallback"}>
+      <i className="static-core__orbit static-core__orbit--one" />
+      <i className="static-core__orbit static-core__orbit--two" />
+      <i className="static-core__orbit static-core__orbit--three" />
+      <span className="static-core__shell"><b /></span>
+      <em className="static-core__node static-core__node--one" />
+      <em className="static-core__node static-core__node--two" />
+      <em className="static-core__node static-core__node--three" />
+      <em className="static-core__node static-core__node--four" />
+    </div>
+  );
 }
 
 function supportsWebGL(): boolean {
@@ -32,18 +43,19 @@ const moduleNodes = [
 export function SentinelCore() {
   const reduced = useReducedMotion();
   const webgl = useMemo(supportsWebGL, []);
+  const compact = useMemo(() => window.matchMedia("(max-width: 900px)").matches, []);
   const fallback = <StaticCore />;
 
   return (
     <section className="sentinel-core" aria-labelledby="core-title">
-      <div className="sentinel-core__heading"><span>Sentinel Core / V1</span><strong id="core-title">Available intelligence modules</strong></div>
+      <div className="sentinel-core__heading"><span>Sentinel Core / V2</span><strong id="core-title">Available intelligence modules</strong></div>
       <div className="sentinel-core__viewport" aria-hidden="true">
-        {webgl ? <SceneBoundary fallback={fallback}><Suspense fallback={<StaticCore loading />}><Scene motionEnabled={!reduced} /></Suspense></SceneBoundary> : fallback}
+        {webgl ? <SceneBoundary fallback={fallback}><Suspense fallback={<StaticCore loading />}><Scene motionEnabled={!reduced} compact={compact} /></Suspense></SceneBoundary> : fallback}
       </div>
       <div className="module-nodes">
         {moduleNodes.map(({ label, icon: Icon }) => <div key={label}><Icon aria-hidden="true" /><span>{label}</span></div>)}
       </div>
-      <p>Four independently available modules. No multimodal fusion or physical digital twin is implied.</p>
+      <p>Independent analysis modules — no sensor fusion, live telemetry, or physical digital twin is implied.</p>
     </section>
   );
 }

@@ -11,8 +11,10 @@ import { MetricCard } from "../components/MetricCard";
 import { PageTransition } from "../components/PageTransition";
 import { SentinelCore } from "../components/SentinelCore";
 import { useAsyncResource } from "../hooks/useAsyncResource";
+import { usePointerSpotlight } from "../hooks/usePointerSpotlight";
 
 export function OverviewPage() {
+  const heroSpotlight = usePointerSpotlight<HTMLElement>();
   const machinesLoader = useCallback((signal: AbortSignal) => listMachines(signal), []);
   const modelsLoader = useCallback((signal: AbortSignal) => listModelCapabilities(signal), []);
   const machines = useAsyncResource(machinesLoader);
@@ -20,9 +22,10 @@ export function OverviewPage() {
 
   return (
     <PageTransition>
-      <section className="overview-hero glass-panel">
+      <section ref={heroSpotlight.ref} onPointerMove={heroSpotlight.onPointerMove} className="overview-hero glass-panel spotlight-surface">
         <div className="overview-hero__copy">
           <p className="eyebrow">Evidence-bounded industrial AI</p>
+          <span className="hero-index" aria-hidden="true">SYSTEM / 01</span>
           <h1>Industrial intelligence grounded in <em>evidence, provenance,</em> and bounded reasoning.</h1>
           <p>SentinelAI turns one machine signal at a time into a verified maintenance record without inventing operational certainty.</p>
           <div className="hero-actions">

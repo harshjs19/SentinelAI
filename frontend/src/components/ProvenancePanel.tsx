@@ -15,6 +15,7 @@ export function ProvenancePanel({ models }: { models: ProducingModel[] }) {
         </div>
         <Fingerprint aria-hidden="true" />
       </div>
+      <div className="provenance-fingerprint" aria-hidden="true"><i /><i /><i /></div>
       <div className="provenance-list">
         {models.map((model) => (
           <article key={model.model_id}>
