@@ -30,6 +30,12 @@ build/
 dist/
 *.egg-info/
 
+# Frontend
+node_modules/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+
 # Machine learning artifacts
 models/*
 !models/.gitkeep

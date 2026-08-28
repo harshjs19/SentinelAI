@@ -81,3 +81,9 @@ defect and the successful single deterministic hardening rerun. Paid live evalua
 human review remain pending. The bounded
 [maintenance report API](docs/maintenance_report_api.md) is internal/demo only and must not
 be publicly exposed without authorization.
+
+## Premium dashboard
+
+The React/Vite dashboard is in [`frontend/`](frontend/). Local setup, its verified demo
+flow, scientific boundaries, and browser fallbacks are documented in
+[`docs/premium_dashboard_v1.md`](docs/premium_dashboard_v1.md).
