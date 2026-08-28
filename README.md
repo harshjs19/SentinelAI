@@ -18,17 +18,36 @@ SentinelAI follows a layered architecture:
 
 High-level flow:
 
-## Local database
+## Local development
 
-Start PostgreSQL and Redis, then apply the database migrations:
+From the repository root, start the complete local development environment with:
 
-```shell
-docker compose up -d
-uv run alembic upgrade head
+```powershell
+.\scripts\dev.ps1
 ```
 
-The default values in `.env.example` match the local PostgreSQL service in
-`docker-compose.yml`.
+The launcher checks the required tools, starts or reuses the PostgreSQL and Redis
+Compose services, waits for them to become ready, applies committed Alembic migrations,
+starts or reuses FastAPI, and waits for `/health` before starting Vite. Vite then opens
+the dashboard in the default browser on its actual selected port. Persistent database
+data is preserved, and an OpenAI API key is not required for ordinary local startup.
+
+For manual troubleshooting, use separate terminals from the repository root:
+
+```powershell
+docker compose up -d postgres redis
+uv run alembic upgrade head
+uv run uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+```powershell
+Set-Location frontend
+# Run npm ci first if frontend/node_modules is not installed.
+npm run dev
+```
+
+The default values in `.env.example` match the local services in
+`docker-compose.yml`. Vite proxies `/api` to FastAPI at `127.0.0.1:8000`.
 
 ## Time-series baseline
 
