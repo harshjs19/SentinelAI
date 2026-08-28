@@ -43,12 +43,15 @@ export function EvidencePanel({ evidence }: { evidence: MaintenanceReportEvidenc
   return (
     <section className="evidence-panel glass-card" aria-labelledby="evidence-panel-title">
       <div className="section-heading">
+        <span className="section-number" aria-hidden="true">05A</span>
         <div>
           <p className="eyebrow">Historical integrity</p>
           <h2 id="evidence-panel-title">Evidence Package</h2>
         </div>
         <FileKey2 aria-hidden="true" />
       </div>
+
+      <div className="evidence-panel__lattice" aria-hidden="true"><i /><i /><i /><span>PACKAGE / VERIFIED BINDINGS</span></div>
 
       <div className="evidence-panel__identity">
         <div>

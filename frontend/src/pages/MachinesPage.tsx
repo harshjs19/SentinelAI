@@ -1,11 +1,12 @@
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Search, ServerCog } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { listMachines } from "../api/machines";
 import { EmptyState, ErrorState, LoadingState } from "../components/States";
-import { PageHeader } from "../components/PageHeader";
 import { PageTransition } from "../components/PageTransition";
+import { SignatureHero } from "../components/SignatureHero";
 import { useAsyncResource } from "../hooks/useAsyncResource";
 import { motionDuration, premiumEase } from "../lib/motion";
 
@@ -21,17 +22,40 @@ export function MachinesPage() {
     if (!normalized) return machines.data ?? [];
     return (machines.data ?? []).filter((machine) => `${machine.name} ${machine.asset_type} ${machine.id}`.toLowerCase().includes(normalized));
   }, [machines.data, query]);
+  const assetTypes = useMemo(
+    () => Array.from(new Set((machines.data ?? []).map((machine) => machine.asset_type))).sort(),
+    [machines.data],
+  );
 
   return (
     <PageTransition>
-      <PageHeader eyebrow="Authoritative inventory" title="Machines" description="Select a persisted asset to inspect stored reports or run one bounded analysis." />
-      <label className="search-box glass-card"><Search aria-hidden="true" /><span className="sr-only">Search machines</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, asset type, or ID" /></label>
+      <SignatureHero
+        index="CHAPTER / 02"
+        eyebrow="Machines / authoritative inventory"
+        title={<>Fleet <em>Intelligence</em></>}
+        description="Navigate persisted industrial assets through a spatial inventory built from authoritative machine records—not inferred live topology."
+        variant="fleet"
+        sceneKicker="Representational asset field"
+        sceneTitle={machines.data ? `${machines.data.length} persisted assets` : "Authoritative asset field"}
+        sceneNote="Nodes represent stored machine identities only. They are not live network, telemetry, or health indicators."
+        sceneItems={assetTypes.map((label) => ({ label: `Asset class / ${label}`, meta: "persisted", tone: "accent" }))}
+        facts={
+          <>
+            <span><strong>{machines.data ? machines.data.length : "—"}</strong> persisted machine records</span>
+            <span><strong>Stored reports only</strong> determine displayed condition</span>
+          </>
+        }
+      />
+      <div className="fleet-toolbar">
+        <div className="fleet-toolbar__count"><span>Asset index</span><strong>{filtered.length} visible / {machines.data?.length ?? 0} stored</strong></div>
+        <label className="search-box glass-card"><Search aria-hidden="true" /><span className="sr-only">Search machines</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, asset type, or ID" /></label>
+      </div>
       {machines.loading && <LoadingState label="Loading machine inventory…" />}
       {machines.error && <ErrorState error={machines.error} onRetry={machines.reload} />}
       {machines.data && machines.data.length === 0 && <EmptyState title="No machines yet" message="Create a machine through the authoritative backend API before running analysis." />}
       {machines.data && machines.data.length > 0 && filtered.length === 0 && <EmptyState title="No matching machines" message="Adjust the local search filter. No machine data has been changed." />}
       <section className="machine-grid" aria-label="Machines">
-        {filtered.map((machine) => (
+        {filtered.map((machine, index) => (
           <MotionLink
             className="machine-card glass-card"
             to={`/machines/${machine.id}`}
@@ -40,6 +64,8 @@ export function MachinesPage() {
             whileHover={reduced ? undefined : { y: -2 }}
             transition={{ duration: reduced ? 0 : motionDuration.fast, ease: premiumEase }}
           >
+            <span className="machine-card__index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <span className="machine-card__architecture" aria-hidden="true"><i /><i /><i /></span>
             <div className="machine-card__icon"><ServerCog aria-hidden="true" /></div>
             <div className="machine-card__body"><p className="eyebrow">{machine.asset_type}</p><motion.h2 layoutId={`machine-name-${machine.id}`}>{machine.name}</motion.h2><code>{machine.id}</code></div>
             <div className="machine-card__action"><span>Open workspace</span><ArrowUpRight aria-hidden="true" /></div>
@@ -50,4 +76,3 @@ export function MachinesPage() {
     </PageTransition>
   );
 }
-import { motion, useReducedMotion } from "framer-motion";

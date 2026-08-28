@@ -1,4 +1,5 @@
-import { Activity, ArrowRight, CalendarClock, Play, ServerCog } from "lucide-react";
+import { motion } from "framer-motion";
+import { Activity, ArrowRight, CalendarClock, Play } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -10,8 +11,8 @@ import { AnalysisDrawer } from "../components/AnalysisDrawer";
 import { EmptyState, ErrorState, LoadingState } from "../components/States";
 import { PageTransition } from "../components/PageTransition";
 import { ReportView } from "../components/ReportView";
+import { SignatureHero } from "../components/SignatureHero";
 import { StatusBadge } from "../components/StatusBadge";
-import { conditionTone } from "../components/badgeTone";
 import { useAsyncResource } from "../hooks/useAsyncResource";
 import { formatDate, humanize, shortId } from "../lib/format";
 
@@ -44,25 +45,39 @@ export function MachineDetailPage() {
     setDrawerOpen(false);
     navigate(`/reports/${report.report_id}`);
   };
+  const latestSummary = history.data?.[0];
+  const latestFinding = latest.data?.report.analysis.findings[0];
+  const producingModel = latest.data?.report.producing_models[0];
+  const sceneItems = [
+    latestSummary ? {
+      label: humanize(latestSummary.condition),
+      meta: "stored condition",
+      tone: latestSummary.condition === "normal" ? "positive" as const : latestSummary.condition === "abnormal" ? "warning" as const : "neutral" as const,
+    } : null,
+    latestFinding ? { label: humanize(latestFinding.modality), meta: latestFinding.code, tone: "accent" as const } : null,
+    producingModel ? { label: producingModel.model_id, meta: "producing model", tone: "positive" as const } : null,
+  ].filter((item): item is NonNullable<typeof item> => item !== null);
 
   return (
     <PageTransition>
-      <section className="machine-hero glass-panel">
-        <span className="machine-hero__contour" aria-hidden="true" />
-        <div className="machine-hero__icon"><ServerCog aria-hidden="true" /></div>
-        <div className="machine-hero__identity"><p className="eyebrow">{machine.data.asset_type}</p><motion.h1 layoutId={`machine-name-${machine.data.id}`}>{machine.data.name}</motion.h1><code>{machine.data.id}</code></div>
-        <div className="machine-hero__condition">
-          {history.data?.[0] ? <><span>Latest stored condition</span><StatusBadge tone={conditionTone(history.data[0].condition)}>{humanize(history.data[0].condition)}</StatusBadge><small>{formatDate(history.data[0].generated_at)}</small></> : <><span>Latest stored condition</span><strong>Not determined</strong><small>No stored report loaded</small></>}
-        </div>
-        {latest.data?.report.analysis.findings[0] && (
-          <div className="machine-hero__lineage">
-            <span>Latest stored finding</span>
-            <strong>{latest.data.report.analysis.findings[0].code}</strong>
-            <small>{humanize(latest.data.report.analysis.findings[0].modality)} · {latest.data.report.producing_models[0]?.model_id ?? "Model identity unavailable"}</small>
-          </div>
-        )}
-        <button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}><Play size={16} /> Run Analysis</button>
-      </section>
+      <SignatureHero
+        index="CHAPTER / 03"
+        eyebrow={`${machine.data.asset_type} / machine intelligence`}
+        title={<motion.span layoutId={`machine-name-${machine.data.id}`}>{machine.data.name}</motion.span>}
+        description="An evidence-bounded workspace for one persisted asset. Visual geometry is architectural; stored reports remain the only source of condition and finding context."
+        variant="machine"
+        sceneKicker="Machine intelligence halo"
+        sceneTitle={latestSummary ? `${humanize(latestSummary.condition)} / stored record` : "Condition not determined"}
+        sceneNote={latestSummary ? `Latest authoritative report stored ${formatDate(latestSummary.generated_at)}.` : "No stored report has established condition for this asset."}
+        sceneItems={sceneItems}
+        facts={
+          <>
+            <span><strong>Machine ID</strong><code>{machine.data.id}</code></span>
+            <span><strong>Latest finding</strong>{latestFinding?.code ?? "Not available"}</span>
+          </>
+        }
+        actions={<button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}><Play size={16} /> Run Analysis</button>}
+      />
 
       {history.loading && <LoadingState label="Loading stored report history…" />}
       {history.error && <ErrorState error={history.error} onRetry={history.reload} />}
@@ -74,8 +89,8 @@ export function MachineDetailPage() {
       {history.data && history.data.length > 0 && (
         <section className="history-section glass-panel" aria-labelledby="machine-history-title">
           <div className="section-heading"><div><p className="eyebrow">Stored authoritative records</p><h2 id="machine-history-title">Report history</h2></div><CalendarClock aria-hidden="true" /></div>
-          <div className="history-list">
-            {history.data.map((report) => <Link to={`/reports/${report.report_id}`} key={report.report_id}><Activity aria-hidden="true" /><div><strong>{humanize(report.condition)}</strong><span>{report.executive_summary}</span></div><div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><time>{formatDate(report.generated_at)}</time><code>{shortId(report.report_id)}</code></div><ArrowRight aria-hidden="true" /></Link>)}
+          <div className="history-list history-list--timeline">
+            {history.data.map((report, index) => <Link to={`/reports/${report.report_id}`} key={report.report_id}><span className="history-list__node" aria-hidden="true"><Activity /></span><div><small>Record {String(page * PAGE_SIZE + index + 1).padStart(2, "0")}</small><strong>{humanize(report.condition)}</strong><span>{report.executive_summary}</span></div><div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><time>{formatDate(report.generated_at)}</time><code>{shortId(report.report_id)}</code></div><ArrowRight aria-hidden="true" /></Link>)}
           </div>
           <div className="pagination"><button className="button button--secondary" type="button" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page + 1}</span><button className="button button--secondary" type="button" disabled={history.data.length < PAGE_SIZE} onClick={() => setPage((value) => value + 1)}>Next</button></div>
         </section>
@@ -85,4 +100,3 @@ export function MachineDetailPage() {
     </PageTransition>
   );
 }
-import { motion } from "framer-motion";

@@ -1,9 +1,10 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { BarChart3, Database, FileCheck2, ScanLine, ScrollText } from "lucide-react";
+import type { CSSProperties } from "react";
 
 import type { MaintenanceReportEvidence } from "../api/types";
 import { usePointerSpotlight } from "../hooks/usePointerSpotlight";
-import { formatDate, shortId } from "../lib/format";
+import { formatDate, humanize, shortId } from "../lib/format";
 import { motionDuration, premiumEase } from "../lib/motion";
 
 const icons = [ScanLine, BarChart3, Database, FileCheck2, ScrollText];
@@ -48,11 +49,16 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
   return (
     <section ref={spotlight.ref} onPointerMove={spotlight.onPointerMove} className="evidence-chain glass-card spotlight-surface" aria-labelledby="evidence-chain-title">
       <div className="section-heading">
+        <span className="section-number" aria-hidden="true">04</span>
         <div>
           <p className="eyebrow">Verified lineage</p>
           <h2 id="evidence-chain-title">Evidence Chain</h2>
         </div>
-        <span>Stored historical bindings</span>
+        <span>Stored artifact bindings / one-time traversal</span>
+      </div>
+      <div className="evidence-chain__architecture" aria-hidden="true">
+        <i /><i /><i />
+        <span>LINEAGE PLANE / STORED</span>
       </div>
       <div className="evidence-chain__track">
         <motion.div
@@ -60,21 +66,21 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
           initial={reduced ? false : { scale: 0, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true, amount: 0.65 }}
-          transition={{ duration: reduced ? 0 : motionDuration.cinematic, ease: premiumEase }}
+          transition={{ duration: reduced ? 0 : motionDuration.lineage, ease: premiumEase }}
         />
         <motion.i
           className="evidence-chain__signal evidence-chain__signal--horizontal"
           initial={reduced ? false : { left: "8%", opacity: 0 }}
           whileInView={reduced ? undefined : { left: ["8%", "92%"], opacity: [0, 1, 1, 0] }}
           viewport={{ once: true, amount: 0.65 }}
-          transition={{ duration: motionDuration.cinematic, delay: 0.18, ease: premiumEase, times: [0, 0.12, 0.84, 1] }}
+          transition={{ duration: motionDuration.lineage, delay: 0.24, ease: premiumEase, times: [0, 0.12, 0.84, 1] }}
         />
         <motion.i
           className="evidence-chain__signal evidence-chain__signal--vertical"
           initial={reduced ? false : { top: "4%", opacity: 0 }}
           whileInView={reduced ? undefined : { top: ["4%", "96%"], opacity: [0, 1, 1, 0] }}
           viewport={{ once: true, amount: 0.45 }}
-          transition={{ duration: motionDuration.cinematic, delay: 0.18, ease: premiumEase, times: [0, 0.12, 0.84, 1] }}
+          transition={{ duration: motionDuration.lineage, delay: 0.24, ease: premiumEase, times: [0, 0.12, 0.84, 1] }}
         />
         {nodes.map((node, index) => {
           const Icon = icons[index] ?? FileCheck2;
@@ -82,17 +88,19 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
             <motion.article
               className="evidence-node"
               key={node.label}
+              style={{ "--node-index": index } as CSSProperties}
               initial={reduced ? false : { opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.65 }}
               transition={{ delay: reduced ? 0 : index * 0.07, duration: reduced ? 0 : motionDuration.enter, ease: premiumEase }}
               tabIndex={0}
             >
+              <span className="evidence-node__stage">0{index + 1}</span>
               <span className="evidence-node__icon">
                 <Icon aria-hidden="true" />
               </span>
               <small>{node.label}</small>
-              <strong>{node.value}</strong>
+              <strong>{humanize(node.value)}</strong>
               <code>{node.detail}</code>
               <span className="evidence-node__detail"><code>{node.fullDetail}</code></span>
             </motion.article>
@@ -100,7 +108,7 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
         })}
       </div>
       <p className="evidence-chain__note">
-        The chain represents one stored single-modality report. It does not imply sensor fusion.
+        One stored single-modality artifact lineage. The traversal is not streaming, live telemetry, continuous processing, or sensor fusion.
       </p>
     </section>
   );

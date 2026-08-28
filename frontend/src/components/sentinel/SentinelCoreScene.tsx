@@ -96,7 +96,16 @@ function Core({ motionEnabled, compact, pointerTarget }: { motionEnabled: boolea
       <group ref={orbit}>
         <mesh rotation={[Math.PI / 2.45, 0.2, 0]}><torusGeometry args={[1.72, 0.009, 8, 128]} /><meshBasicMaterial color="#70def3" transparent opacity={0.46} /></mesh>
         <mesh rotation={[Math.PI / 1.8, 0.5, 0]}><torusGeometry args={[2.14, 0.006, 8, 128]} /><meshBasicMaterial color="#6d82ae" transparent opacity={0.3} /></mesh>
+        <mesh rotation={[Math.PI / 1.32, -0.34, 0.38]}><torusGeometry args={[2.52, 0.004, 8, 160]} /><meshBasicMaterial color="#8ce8f7" transparent opacity={0.16} /></mesh>
       </group>
+      <mesh scale={1.42} rotation={[0.22, 0.35, 0]}>
+        <icosahedronGeometry args={[1.05, 1]} />
+        <meshBasicMaterial color="#8ce7f5" transparent opacity={0.055} wireframe depthWrite={false} />
+      </mesh>
+      <mesh scale={1.86} rotation={[0.3, -0.18, 0.12]}>
+        <icosahedronGeometry args={[1.05, 1]} />
+        <meshBasicMaterial color="#6178ae" transparent opacity={0.035} wireframe depthWrite={false} />
+      </mesh>
       {nodes.map((position, index) => (
         <group key={index} position={position}>
           <mesh><sphereGeometry args={[0.13, 20, 20]} /><meshStandardMaterial color={index === 3 ? "#e9ba7a" : "#9aeaf8"} emissive={index === 3 ? "#8d531d" : "#167f96"} emissiveIntensity={0.9} /></mesh>

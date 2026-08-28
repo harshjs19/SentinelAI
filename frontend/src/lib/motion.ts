@@ -5,6 +5,7 @@ export const motionDuration = {
   standard: 0.26,
   enter: 0.38,
   cinematic: 0.68,
+  lineage: 1.65,
 } as const;
 
 export const premiumEase = [0.22, 1, 0.36, 1] as const;

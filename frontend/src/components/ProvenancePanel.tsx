@@ -9,6 +9,7 @@ export function ProvenancePanel({ models }: { models: ProducingModel[] }) {
   return (
     <section className="provenance-panel glass-card" aria-labelledby="provenance-title">
       <div className="section-heading">
+        <span className="section-number" aria-hidden="true">05B</span>
         <div>
           <p className="eyebrow">Captured at execution</p>
           <h2 id="provenance-title">Producing Model</h2>
@@ -16,9 +17,16 @@ export function ProvenancePanel({ models }: { models: ProducingModel[] }) {
         <Fingerprint aria-hidden="true" />
       </div>
       <div className="provenance-fingerprint" aria-hidden="true"><i /><i /><i /></div>
+      <div className="provenance-panel__seal">
+        <span>Historical execution identity</span>
+        <strong>{models.length} stored model record{models.length === 1 ? "" : "s"}</strong>
+        <small>Never substituted from current runtime defaults</small>
+      </div>
       <div className="provenance-list">
-        {models.map((model) => (
+        {models.map((model, index) => (
           <article key={model.model_id}>
+            <span className="provenance-list__index" aria-hidden="true">IDENTITY / {String(index + 1).padStart(2, "0")}</span>
+            <span className="provenance-list__signature" aria-hidden="true"><i /><i /><i /><i /></span>
             <div className="provenance-list__identity">
               <span className="provenance-list__glyph">
                 <ShieldCheck aria-hidden="true" />

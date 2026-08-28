@@ -19,6 +19,9 @@ export function OverviewPage() {
   const modelsLoader = useCallback((signal: AbortSignal) => listModelCapabilities(signal), []);
   const machines = useAsyncResource(machinesLoader);
   const capabilities = useAsyncResource(modelsLoader);
+  const modalityCount = capabilities.data
+    ? new Set(capabilities.data.models.map((model) => model.modality)).size
+    : 0;
 
   return (
     <PageTransition>
@@ -35,6 +38,13 @@ export function OverviewPage() {
           <div className="hero-proof"><ShieldCheck aria-hidden="true" /><span>Single-modality analysis / historical lineage / deterministic safety boundaries</span></div>
         </div>
         <SentinelCore />
+        {machines.data && capabilities.data && (
+          <div className="overview-hero__ledger" aria-label="Authoritative overview context">
+            <div><span>Persisted assets</span><strong>{machines.data.length}</strong></div>
+            <div><span>Declared models</span><strong>{capabilities.data.models.length}</strong></div>
+            <div><span>Independent modalities</span><strong>{modalityCount}</strong></div>
+          </div>
+        )}
       </section>
 
       {(machines.loading || capabilities.loading) && <LoadingState label="Loading authoritative workspace data…" />}

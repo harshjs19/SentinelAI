@@ -19,9 +19,19 @@ export function AssetChart({ machines }: { machines: Machine[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 10, bottom: 4 }}>
             <CartesianGrid stroke="rgba(255,255,255,.06)" horizontal={false} />
-            <XAxis type="number" allowDecimals={false} stroke="#768393" fontSize={11} />
-            <YAxis type="category" dataKey="name" width={172} stroke="#95a2b3" fontSize={10} tickLine={false} axisLine={false} />
-            <Tooltip cursor={{ fill: "rgba(99,220,255,.04)" }} contentStyle={{ background: "#101821", border: "1px solid rgba(255,255,255,.12)", borderRadius: 10 }} />
+            <XAxis type="number" allowDecimals={false} stroke="#8493a2" fontSize={13} />
+            <YAxis type="category" dataKey="name" width={172} stroke="#a7b5c0" fontSize={13} tickLine={false} axisLine={false} />
+            <Tooltip
+              cursor={{ fill: "rgba(99,220,255,.04)" }}
+              contentStyle={{
+                background: "rgba(10,17,24,.96)",
+                border: "1px solid rgba(102,215,239,.18)",
+                borderRadius: 10,
+                color: "#dce8ec",
+                fontSize: 13,
+                boxShadow: "0 16px 38px rgba(0,0,0,.34)",
+              }}
+            />
             <Bar dataKey="count" fill="#56c9e8" radius={[0, 6, 6, 0]} animationDuration={550} />
           </BarChart>
         </ResponsiveContainer>

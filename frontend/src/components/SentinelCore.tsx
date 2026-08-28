@@ -34,10 +34,10 @@ function supportsWebGL(): boolean {
 }
 
 const moduleNodes = [
-  { label: "Time-Series", icon: ChartSpline },
-  { label: "Audio", icon: AudioLines },
-  { label: "Vision", icon: Eye },
-  { label: "Thermal", icon: Thermometer },
+  { label: "Time-Series", code: "SIG / 01", icon: ChartSpline },
+  { label: "Audio", code: "SIG / 02", icon: AudioLines },
+  { label: "Vision", code: "SIG / 03", icon: Eye },
+  { label: "Thermal", code: "SIG / 04", icon: Thermometer },
 ];
 
 export function SentinelCore() {
@@ -48,14 +48,16 @@ export function SentinelCore() {
 
   return (
     <section className="sentinel-core" aria-labelledby="core-title">
-      <div className="sentinel-core__heading"><span>Sentinel Core / V2</span><strong id="core-title">Available intelligence modules</strong></div>
+      <div className="sentinel-core__heading"><span>Sentinel Core / V3</span><strong id="core-title">Orbital independent intelligence</strong></div>
+      <div className="sentinel-core__coordinates" aria-hidden="true"><span>N 37.4</span><span>FIELD / 01</span><span>DEPTH 03</span></div>
       <div className="sentinel-core__viewport" aria-hidden="true">
         {webgl ? <SceneBoundary fallback={fallback}><Suspense fallback={<StaticCore loading />}><Scene motionEnabled={!reduced} compact={compact} /></Suspense></SceneBoundary> : fallback}
       </div>
       <div className="module-nodes">
-        {moduleNodes.map(({ label, icon: Icon }) => <div key={label}><Icon aria-hidden="true" /><span>{label}</span></div>)}
+        {moduleNodes.map(({ label, code, icon: Icon }) => <div key={label}><span className="module-nodes__icon"><Icon aria-hidden="true" /></span><span><small>{code}</small><strong>{label}</strong></span><i aria-hidden="true" /></div>)}
       </div>
-      <p>Independent analysis modules — no sensor fusion, live telemetry, or physical digital twin is implied.</p>
+      <div className="sentinel-core__sequence" aria-hidden="true"><span>Signals</span><i /><span>Intelligence</span><i /><span>Evidence</span></div>
+      <p>Independent analysis modules are available — no sensor fusion, live telemetry, or physical digital twin is implied.</p>
     </section>
   );
 }

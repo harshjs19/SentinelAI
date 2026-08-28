@@ -15,6 +15,7 @@ import type {
 import { humanize } from "../lib/format";
 import { motionDuration, premiumEase } from "../lib/motion";
 import { lifecycleTone } from "./badgeTone";
+import { PageScene } from "./PageScene";
 import { StatusBadge } from "./StatusBadge";
 
 const syntheticSamples: TimeseriesSample[] = [
@@ -145,6 +146,20 @@ export function AnalysisDrawer({
               <div><p className="eyebrow">New single-modality request</p><h2 id="analysis-title">Run Analysis</h2><span>{machineName}</span></div>
               <button className="icon-button" type="button" aria-label="Close" onClick={onClose} disabled={submitting}><X /></button>
             </header>
+
+            <div className={`analysis-drawer__scene analysis-drawer__scene--${modality}`}>
+              <PageScene
+                compact
+                variant="analysis"
+                kicker="Independent modality chamber"
+                title={`${humanize(modality)} analysis module`}
+                note="Procedural geometry indicates the selected module only; it does not inspect, measure, or preview the submitted signal."
+                items={[
+                  { label: capability?.model_id ?? "Capability not declared", meta: capability ? humanize(capability.status) : "no runtime model", tone: capability?.status === "validated_baseline" ? "positive" : capability?.status === "rejected_experiment" ? "danger" : "warning" },
+                  { label: humanize(intent), meta: "bounded Copilot intent", tone: "accent" },
+                ]}
+              />
+            </div>
 
             <div className="analysis-drawer__body">
               <fieldset className="modality-picker"><legend>Choose one intelligence module</legend><div>

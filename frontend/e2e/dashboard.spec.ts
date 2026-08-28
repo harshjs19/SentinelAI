@@ -75,6 +75,9 @@ test("all major dashboard views are usable and console-clean", async ({ page }, 
   await page.getByRole("link", { name: "Maintenance Reports" }).click();
   const storedReportLink = page.locator(".report-index__row").first();
   await expect(storedReportLink).toContainText(report.narrative.executive_summary);
+  await expectNoHorizontalOverflow(page);
+  await page.waitForTimeout(400);
+  await page.screenshot({ path: testInfo.outputPath("history-1440.png"), fullPage: true });
   await storedReportLink.click();
   await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
   await page.getByRole("button", { name: new RegExp(report.citations[0].title) }).click();
@@ -123,6 +126,18 @@ test("tablet, reduced-motion, empty-history, and WebGL fallback remain usable", 
   await expect(page.getByRole("dialog", { name: "Run Analysis" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("analysis-tablet.png"), fullPage: true });
+
+  const responsiveRoutes = [
+    { path: "/machines", heading: /Fleet Intelligence/i },
+    { path: "/reports", heading: /Historical Intelligence/i },
+    { path: "/models", heading: /Model Governance/i },
+    { path: `/reports/${report.report_id}`, heading: /Evidence Brief/i },
+  ];
+  for (const route of responsiveRoutes) {
+    await page.goto(route.path);
+    await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+  }
   expect(problems).toEqual([]);
 });
 
@@ -157,4 +172,27 @@ test("laptop report layout tolerates long identifiers, citations, and report tex
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("report-1280.png"), fullPage: true });
   expect(problems).toEqual([]);
+});
+
+test("loading and backend-unavailable states remain deliberate", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const problems = captureConsole(page);
+  await page.route("http://127.0.0.1:4173/api/**", async (route) => {
+    const path = new URL(route.request().url()).pathname.replace(/^\/api/, "");
+    if (path === "/health") {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Service unavailable" }) });
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Required analysis infrastructure is unavailable." }) });
+  });
+
+  await page.goto("/machines");
+  await expect(page.getByRole("status")).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("loading-1440.png"), fullPage: true });
+  await expect(page.getByRole("alert")).toContainText("Required analysis infrastructure is unavailable.");
+  await expectNoHorizontalOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath("backend-unavailable-1440.png"), fullPage: true });
+  expect(problems).toHaveLength(2);
+  for (const problem of problems) expect(problem).toMatch(/Failed to load resource:.*503/);
 });

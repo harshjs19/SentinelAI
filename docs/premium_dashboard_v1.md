@@ -80,3 +80,33 @@ Evidence Chain motion runs once as stored lineage enters view, then becomes a st
 technical diagram. Focus and hover progressively disclose stored identifiers and digests.
 All effects remain decorative: they do not describe live data, sensor synchronization,
 multimodal fusion, or a physical digital twin.
+
+## Signature Experience V3
+
+V3 establishes a SentinelAI-specific visual language around `SIGNALS -> INTELLIGENCE ->
+EVIDENCE -> DECISION SUPPORT`. Large editorial headings, numbered chapters, technical
+coordinates, orbital fields, lineage planes, and restrained ambient depth distinguish the
+product without changing any route, API contract, data interpretation, or scientific
+boundary. Manrope remains locally packaged; no network font or new frontend dependency is
+required.
+
+Overview is the only full WebGL surface. Its Sentinel Core represents independent analysis
+modules and explicitly does not imply multimodal fusion, live telemetry, synchronized
+sensors, or a physical digital twin. Machines uses a persisted-asset field, Machine Detail
+uses a single-asset intelligence halo, History uses a stored-artifact corridor, Model
+Capabilities uses a lifecycle constellation, and Run Analysis uses a lightweight selected-
+modality chamber. These page-specific scenes are CSS/SVG architecture, not measurements or
+generated operational data.
+
+The Maintenance Report is arranged as an evidence brief: executive summary, bounded model
+output, unavailable scientific claims, stored lineage, evidence and producing-model
+identity, non-directive Inspection Considerations, citations, and binding limitations. The
+Evidence Chain performs one lineage traversal when it enters view and then rests as a stable
+diagram. Every node is populated from the authoritative historical evidence endpoint; the
+client does not rebuild provenance from current defaults.
+
+Reduced-motion mode removes traversal and continuous visual movement and clears stagger
+delays so content is immediately visible. Tablet layouts preserve the information hierarchy,
+long identifiers wrap inside their own surfaces, and the deliberate CSS Sentinel Core
+fallback remains available when WebGL is missing. Decorative scenes stay pointer-light and
+state-free; the lazy-loaded Overview scene remains isolated from the other route bundles.

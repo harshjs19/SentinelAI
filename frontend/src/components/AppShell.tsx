@@ -16,17 +16,17 @@ import { useAsyncResource } from "../hooks/useAsyncResource";
 import { BrandMark } from "./BrandMark";
 
 const navigation = [
-  { to: "/", label: "Overview", icon: LayoutDashboard, exact: true },
-  { to: "/machines", label: "Machines", icon: Boxes },
-  { to: "/reports", label: "Maintenance Reports", icon: FileClock },
-  { to: "/models", label: "Model Capabilities", icon: Cpu },
+  { to: "/", label: "Overview", code: "01", icon: LayoutDashboard, exact: true },
+  { to: "/machines", label: "Machines", code: "02", icon: Boxes },
+  { to: "/reports", label: "Maintenance Reports", code: "03", icon: FileClock },
+  { to: "/models", label: "Model Capabilities", code: "04", icon: Cpu },
 ];
 
 const pageTitles: Record<string, string> = {
   "/": "Intelligence overview",
-  "/machines": "Machine intelligence",
-  "/reports": "Maintenance history",
-  "/models": "Model capabilities",
+  "/machines": "Fleet intelligence",
+  "/reports": "Historical intelligence",
+  "/models": "Model governance",
 };
 
 export function AppShell() {
@@ -75,7 +75,7 @@ export function AppShell() {
         </div>
 
         <nav aria-label="Primary navigation">
-          {navigation.map(({ to, label, icon: Icon, exact }) => (
+          {navigation.map(({ to, label, code, icon: Icon, exact }) => (
             <NavLink
               key={to}
               to={to}
@@ -90,6 +90,7 @@ export function AppShell() {
                   )}
                   <Icon aria-hidden="true" />
                   <span>{label}</span>
+                  <small aria-hidden="true">{code}</small>
                 </>
               )}
             </NavLink>
@@ -125,6 +126,7 @@ export function AppShell() {
             <span className="topbar__kicker">SentinelAI workspace</span>
             <strong>{pageTitle}</strong>
           </div>
+          <div className="topbar__sequence" aria-hidden="true"><span>Signals</span><i /><span>Intelligence</span><i /><span>Evidence</span><i /><span>Decision support</span></div>
           <div
             className={`connection-state ${health.loading ? "is-loading" : health.data?.status === "ok" ? "is-online" : "is-offline"}`}
             title={health.error?.message}
