@@ -106,3 +106,10 @@ be publicly exposed without authorization.
 The React/Vite dashboard is in [`frontend/`](frontend/). Local setup, its verified demo
 flow, scientific boundaries, and browser fallbacks are documented in
 [`docs/premium_dashboard_v1.md`](docs/premium_dashboard_v1.md).
+
+## Edge simulator
+
+The external-only HTTP edge simulator and bounded end-to-end demo runner are documented
+in [`docs/edge_simulator.md`](docs/edge_simulator.md). It provides deterministic
+single-modality simulation and explicit local-media replay without requiring physical
+hardware, an OpenAI API key, or additional dependencies.

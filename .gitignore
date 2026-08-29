@@ -43,6 +43,11 @@ models/*
 datasets/*
 !datasets/.gitkeep
 
+# Local edge-simulator replay media (never commit recorded assets)
+demo_assets/audio/
+demo_assets/vision/
+demo_assets/thermal/
+
 artifacts/
 checkpoints/
 
