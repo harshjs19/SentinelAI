@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import httpx
 import pytest
 
@@ -12,3 +14,4 @@ async def test_health_check() -> None:
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+    assert UUID(response.headers["X-Request-ID"])

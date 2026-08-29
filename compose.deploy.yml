@@ -1,0 +1,79 @@
+name: sentinelai-deploy
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${SENTINELAI_POSTGRES_DB:-sentinelai}
+      POSTGRES_USER: ${SENTINELAI_POSTGRES_USER:-sentinelai}
+      POSTGRES_PASSWORD: ${SENTINELAI_POSTGRES_PASSWORD:?Set SENTINELAI_POSTGRES_PASSWORD}
+    volumes:
+      - sentinelai_deploy_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  migrate:
+    image: sentinelai-backend:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: ["alembic", "upgrade", "head"]
+    environment: &backend-environment
+      APP_ENV: deployment
+      LOG_LEVEL: ${SENTINELAI_LOG_LEVEL:-INFO}
+      LOG_FORMAT: json
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${SENTINELAI_POSTGRES_DB:-sentinelai}
+      POSTGRES_USER: ${SENTINELAI_POSTGRES_USER:-sentinelai}
+      POSTGRES_PASSWORD: ${SENTINELAI_POSTGRES_PASSWORD:?Set SENTINELAI_POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    image: sentinelai-backend:local
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment: *backend-environment
+    volumes:
+      - type: bind
+        source: ${SENTINELAI_MODELS_DIR:-./models}
+        target: /app/models
+        read_only: true
+      - type: bind
+        source: ${SENTINELAI_CHROMA_DIR:-./knowledge/chroma}
+        target: /app/knowledge/chroma
+      - type: bind
+        source: ${SENTINELAI_EMBEDDINGS_DIR:-./knowledge/embeddings}
+        target: /app/knowledge/embeddings
+        read_only: true
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  frontend:
+    image: sentinelai-frontend:local
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:${SENTINELAI_FRONTEND_PORT:-8080}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  sentinelai_deploy_postgres_data:

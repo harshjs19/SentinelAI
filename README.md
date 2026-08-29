@@ -49,6 +49,20 @@ npm run dev
 The default values in `.env.example` match the local services in
 `docker-compose.yml`. Vite proxies `/api` to FastAPI at `127.0.0.1:8000`.
 
+## Local container deployment
+
+The separate [`compose.deploy.yml`](compose.deploy.yml) builds an unprivileged static
+frontend, a single-worker production-style FastAPI container, a one-shot migration job,
+and an internal PostgreSQL service. It is intended only for local workstations and
+controlled demonstrations; it is not public-Internet-ready. Setup, ignored model and
+retrieval asset requirements, health/logging behavior, persistence, security limits,
+and shutdown commands are documented in
+[`docs/deployment.md`](docs/deployment.md).
+
+This does not replace `scripts/dev.ps1`: local development keeps Vite hot reload and the
+existing development services. Neither path requires an OpenAI API key for ordinary
+startup.
+
 ## Time-series baseline
 
 Dataset setup, training, evaluation, and inference commands are documented in

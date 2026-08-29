@@ -12,6 +12,12 @@ coordinates local application behavior only.
   is not delivered to subscribers in another worker.
 - Redis does not carry inference events in the current architecture.
 
+The local container deployment therefore runs exactly one Uvicorn worker. Its one-shot
+migration service gates API startup, and PostgreSQL remains the durable workflow and
+idempotency store. Redis is not part of that deployment topology. This is a deliberate
+V1 constraint, not a claim that the current EventBus supports multi-process delivery;
+see [Local container deployment](deployment.md).
+
 The authoritative server-owned evidence, retrieval, and Copilot path is:
 
 ```text
