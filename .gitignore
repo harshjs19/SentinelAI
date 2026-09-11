@@ -71,6 +71,9 @@ logs/*
 
 # IDE
 .vscode/
+.idea/
+*.swp
+*.swo
 
 # OS files
 .DS_Store

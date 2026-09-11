@@ -48,7 +48,7 @@ None of these values is a validated probability of machine failure.
 | `timeseries_utk_v1` | Time-Series | `validated_baseline` | yes | UTK blocked chronological within-recording test macro F1 was 0.9418. Each fault class has only one recording, so this is not unseen-machine or unseen-session validation. |
 | `audio_mimii_v1` | Audio | `experimental` | yes | MIMII DG held-out Section 02 ROC AUC was 0.5213. This near-chance domain-shift result makes the runtime baseline experimental. |
 | `audio_mimii_ast_v2` | Audio | `rejected_experiment` | no | The frozen-AST Section 01 promotion score was 0.5158 versus 0.5802 for V1, so the predeclared promotion criterion failed. |
-| `vision_visa_pcb1_v1` | Vision | `experimental` | yes | VisA PCB1 showed strong global ranking (ROC AUC 0.9315) and coarse localization (pixel ROC AUC 0.9834), but the conservative runtime threshold recalled only 0.08 of test anomalies and evidence is limited to this dataset/camera scope. |
+| `vision_visa_pcb1_v1` | Vision | `experimental` | yes | The VisA PCB1 runtime patch nearest-neighbor model reached image ROC AUC 0.8964 and pixel ROC AUC 0.9834, but its conservative threshold recalled only 0.08 of test anomalies and evidence is limited to this dataset/camera scope. |
 | `thermal_cora_v1` | Thermal | `experimental` | yes | On the held-out F60 speed, frame macro F1 was 0.1291 and experiment-level accuracy was 1/9. This is a severe operating-speed generalization failure on the same test bench. |
 
 Detailed metrics, protocols, and artifact metadata remain in the referenced files under

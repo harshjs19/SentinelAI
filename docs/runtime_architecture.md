@@ -1,78 +1,206 @@
 # Runtime architecture
 
-SentinelAI V1 is a modular monolith. Its `EventBus` is intentionally in-process and
-coordinates local application behavior only.
+SentinelAI V1 is a modular monolith with explicit scientific and operational boundaries.
+It supports four independent analysis lanes, but one workflow execution accepts exactly
+one modality, produces one `Prediction`, and creates one `Analysis`. Nothing in the
+runtime combines Time-Series, Audio, Vision, and Thermal evidence into a fused result.
 
-- Subscribers receive only events published inside the same Python process.
-- Handlers execute sequentially in registration order.
-- Handler failures propagate to the publisher.
-- There is no event durability, retry, replay, dead-letter queue, or cross-process
-  broadcast.
-- Each Uvicorn worker has its own `EventBus` instance. An event published in one worker
-  is not delivered to subscribers in another worker.
-- Redis does not carry inference events in the current architecture.
+## System boundary
 
-The local container deployment therefore runs exactly one Uvicorn worker. Its one-shot
-migration service gates API startup, and PostgreSQL remains the durable workflow and
-idempotency store. Redis is not part of that deployment topology. This is a deliberate
-V1 constraint, not a claim that the current EventBus supports multi-process delivery;
-see [Local container deployment](deployment.md).
+```mermaid
+flowchart TB
+    subgraph Clients
+        UI[React dashboard]
+        EDGE[Edge Simulator]
+        EXT[HTTP client]
+    end
 
-The authoritative server-owned evidence, retrieval, and Copilot path is:
+    UI --> API[FastAPI]
+    EDGE --> API
+    EXT --> API
+
+    API -->|one typed request| TS[Time-Series predictor]
+    API -->|one typed request| AU[Audio predictor]
+    API -->|one typed request| VI[Vision predictor]
+    API -->|one typed request| TH[Thermal predictor]
+
+    TS --> ORCH[Inference Orchestrator]
+    AU --> ORCH
+    VI --> ORCH
+    TH --> ORCH
+    ORCH --> DEC[Decision Engine]
+    DEC --> EVP[Evidence Package service]
+    EVP --> RET[Knowledge Retriever]
+    RET --> COP[Maintenance Copilot]
+    COP --> VAL[Deterministic validation]
+    VAL --> PERSIST[Workflow persistence]
+    PERSIST --> PG[(PostgreSQL)]
+```
+
+The dashboard does not calculate condition, lifecycle, evidence identity, or provenance.
+The Edge Simulator is an external HTTP client and imports no backend workflow service.
+FastAPI is the application boundary responsible for authoritative machine lookup,
+inference selection, source derivation, workflow construction, and transaction scope.
+
+## Server-owned request path
 
 ```text
 MaintenanceWorkflowService(typed single-modality request)
     -> authoritative Machine lookup
-    -> modality inference -> InferenceResult(Prediction, ProducingModelContext)
-    -> Decision Engine(Prediction) -> Analysis
+    -> modality inference
+    -> InferenceResult(Prediction, ProducingModelContext)
+    -> Decision Engine(Prediction)
+    -> Analysis
     -> EvidencePackageService(Analysis, ProducingModelContext)
-    -> Evidence Package -> Knowledge Retriever -> Retrieval Bundle
+    -> Knowledge Retriever(EvidencePackage)
+    -> RetrievalBundle
     -> MaintenanceCopilotService
-        -> deterministic report path
-        OR
-        -> bounded LangGraph: generate -> validate -> one repair/fallback
+         -> deterministic report path
+         OR bounded generate -> validate -> one repair/fallback
     -> verified MaintenanceWorkflowResult
     -> MaintenanceWorkflowPersistenceService
-        -> Analysis + EvidencePackage + RetrievalBundle + MaintenanceReport
-        -> one request/application transaction
+    -> one request/application transaction
 ```
 
-`MaintenanceWorkflowService` is a thin application orchestrator. Clients provide only a
-machine ID, one typed modality source, a closed Copilot intent, and an optional bounded
-question. The server derives source provenance from the exact samples or bytes used for
-inference and constructs `Prediction`, `Analysis`, `EvidencePackage`, `RetrievalBundle`,
-and `MaintenanceReport` internally. Those derived objects are not workflow inputs.
+Clients provide a machine ID, one typed source, a closed Copilot intent, and an optional
+bounded question. They cannot submit derived `Prediction`, `Analysis`, `EvidencePackage`,
+`RetrievalBundle`, source digest, or producing-model claims. The server hashes the exact
+samples or bytes used for inference and keeps the model context returned by the same
+execution.
 
-One execution is deliberately one modality, one Prediction, and one Analysis. It does
-not combine Time-Series, Audio, Vision, and Thermal evidence. The Decision Engine's
-`SINGLE_MODALITY_EVIDENCE` limitation remains visible through the final report, and CORA
-multimodal fusion remains scientifically deferred.
+The Decision Engine receives only `Prediction`; model lifecycle metadata cannot alter its
+finding rules. Classifier or empirical anomaly confidence remains the model's declared
+raw evidence type. Health score and operational risk remain unavailable in V1, and the
+`SINGLE_MODALITY_EVIDENCE` limitation stays visible in the report.
 
-`InferenceOrchestrator` binds each registered predictor to immutable producing-model
-metadata and returns both in `InferenceResult`. `Prediction` and `Analysis` remain free of
-model lifecycle metadata, and `DecisionEngine` still receives only Predictions. The
-application layer retains the producing context for evidence construction in the same
-workflow execution.
-`EvidencePackageService` fails closed when an evidence-bearing Analysis lacks an exact
-context; it does not reconstruct identity from the current runtime default.
+## Events and worker constraint
 
-`PredictionProduced` remains Prediction-only. No persistence event was added: the
-verified application result is passed explicitly to the persistence service, while the
-existing request/application session remains the transaction boundary.
+The `EventBus` coordinates local application behavior only:
 
-Retriever V1 is an explicitly prepared internal component. The composition root resolves
-its local assets lazily only when a validated workflow reaches retrieval; it does not
-initialize on FastAPI startup, expose a public endpoint, or add an event/subscriber. The
-Maintenance Copilot remains a bounded, request-local internal service. The default
-application wiring supplies no generation provider, so deterministic paths work offline
-and provider-required paths use the existing safe unavailable result. There is no public
-maintenance endpoint or workflow event. Complete verified results can be stored by the
-separate durable persistence layer described in
-[Maintenance workflow persistence](maintenance_workflow_persistence.md). The Copilot
-graph has no retrieval, database access, tools, checkpointing, memory, or streaming.
-EventBus semantics are unchanged.
+```mermaid
+sequenceDiagram
+    participant S as Inference service
+    participant B as In-process EventBus
+    participant D as Decision service
+    participant C as Request caller
 
-These boundaries are suitable while events coordinate synchronous, process-local V1
-behavior. Before events trigger durable asynchronous workflows such as persisted
-analyses, report generation, notifications, or external integrations—SentinelAI must
-explicitly revisit durable event delivery and its operational guarantees.
+    S->>B: PredictionProduced(Prediction)
+    B->>D: sequential handler call
+    D->>B: AnalysisProduced(Analysis)
+    B-->>C: handler chain completes or raises
+```
+
+- handlers execute sequentially in registration order;
+- handler failures propagate to the publisher;
+- the bus has no durability, replay, retry, dead-letter queue, or cross-process delivery;
+- each Uvicorn worker owns a separate bus instance;
+- Redis does not carry inference or workflow events.
+
+The controlled deployment therefore runs one Uvicorn worker. Adding workers without a
+durable delivery design would divide event subscribers into separate delivery domains.
+Kafka or RabbitMQ would add operational cost without solving a current V1 requirement;
+durable asynchronous work would require a separate design and explicit delivery
+guarantees.
+
+## Exact provenance and evidence lineage
+
+`InferenceOrchestrator` binds each predictor to immutable producing-model metadata and
+returns `InferenceResult(Prediction, ProducingModelContext)`. Composition verifies the
+runtime model ID against the declared capability before inference. The exact context then
+travels beside the prediction until evidence construction.
+
+`Prediction` and `Analysis` remain free of lifecycle metadata. `EvidencePackageService`
+fails closed if an evidence-bearing Analysis lacks the execution-time context; it never
+looks up the current default later. This makes the distinction explicit:
+
+```text
+current runtime default != historical producing model
+```
+
+The stored lineage is:
+
+```mermaid
+flowchart LR
+    S[Source<br/>kind + digest + size] --> A[Analysis<br/>findings + boundaries]
+    A --> E[Evidence Package<br/>identity + model binding]
+    E --> R[Retrieval Bundle<br/>corpus + embedding binding]
+    R --> M[Maintenance Report<br/>validated narrative]
+```
+
+Package, retrieval, and report digests provide deterministic identity and integrity
+checks. They are not digital signatures and do not prove that a model prediction is
+physically true.
+
+The complete chain is stored atomically. Historical report and evidence endpoints load
+the verified persisted records. A historical GET performs zero inference, Decision
+Engine execution, retrieval, or LLM generation and does not reconstruct provenance from
+current defaults. Responses omit raw source data, full retrieval chunks, and local paths.
+
+## Persistence and idempotency
+
+PostgreSQL stores the machine, Analysis, EvidencePackage, RetrievalBundle,
+MaintenanceReport, and request-idempotency record. The FastAPI `get_session()` dependency
+owns the transaction and uses function scope, so commit or rollback completes after the
+path operation but before the response is sent.
+
+Idempotency is semantic, not merely an in-memory cache. A bounded key is associated with
+the machine, modality, source digest, and request intent. Exact replay returns the stored
+report across process restart. Reusing a key for a different semantic request is rejected.
+The full key is not logged.
+
+## Retrieval and Copilot
+
+Retriever V1 is a lazily initialized internal component backed by a prepared Chroma
+collection and a pinned local embedding snapshot. It does not run on application startup
+or expose arbitrary vector search. Retrieval planning is derived from the verified
+EvidencePackage; selected chunks and corpus/embedding identities are bound into the
+RetrievalBundle.
+
+The Maintenance Copilot is request-local, analysis-scoped, and closed-book over the
+provided evidence and retrieval bundle. Its graph has no database access, tools,
+checkpointing, memory, or streaming. Deterministic validation enforces citations,
+non-directive Inspection Considerations, unavailable-claim boundaries, and report shape.
+A provider-backed attempt may be repaired once; otherwise the workflow returns the safe
+fallback. The default composition supplies no provider, so deterministic workflows and
+provider-unavailable fallback work without `OPENAI_API_KEY`.
+
+## Controlled deployment
+
+```mermaid
+flowchart LR
+    B[Browser / Edge Simulator] -->|127.0.0.1:8080| N[Unprivileged Nginx]
+    N -->|/api, internal network| F[FastAPI<br/>one worker]
+    F --> P[(PostgreSQL 16<br/>named volume)]
+    P --> M[One-shot Alembic migration]
+    M -. successful completion gates .-> F
+    MODELS[(Model + encoder mounts)] --> F
+    RET[(Chroma + embedding mounts)] --> F
+```
+
+Only Nginx is published, on loopback. FastAPI and PostgreSQL remain internal. The
+migration service waits for database health, applies committed revisions, and must exit
+successfully before the API starts. `/health` checks process liveness; `/ready` performs
+only a PostgreSQL `SELECT 1`. Neither executes models, retrieval, Redis, or providers.
+
+Runtime artifacts remain deployment inputs:
+
+- `/app/models` is a read-only mount for Joblib models and AST/ResNet snapshots;
+- `/app/knowledge/embeddings` is a read-only embedding-model snapshot;
+- `/app/knowledge/chroma` is writable because embedded Chroma opens SQLite in write mode.
+
+The images build from a clean clone, but full inference/retrieval does not work until
+those ignored artifacts are supplied. Missing models retain explicit availability errors;
+the runtime does not download or fabricate replacements.
+
+## Operational and public boundaries
+
+Deployment requests receive `X-Request-ID`, and JSON request logs contain only timestamp,
+level, event, request ID, method, path, status, and duration. Raw media, samples,
+questions, idempotency keys, credentials, authorization headers, cookies, and environment
+dumps are excluded. Unhandled public errors are generic.
+
+This topology is suitable for local workstations and controlled demonstrations. Public
+operation still requires authentication and authorization, TLS termination, device
+identity, rate limiting, retention/deletion policy, secret management, backup/recovery,
+and hardened ingress. See [deployment.md](deployment.md) for exact commands and mount
+requirements.

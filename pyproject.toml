@@ -1,7 +1,7 @@
 [project]
 name = "sentinelai"
 version = "0.1.0"
-description = "A multimodal predictive maintenance platform."
+description = "An evidence-bounded industrial machine-intelligence platform."
 requires-python = ">=3.12"
 readme = "README.md"
 license = { file = "LICENSE" }
