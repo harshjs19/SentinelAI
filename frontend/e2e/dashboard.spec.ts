@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type ConsoleMessage, type Page } from "@playwright/test";
 
 import { capabilities, evidence, machine, report } from "../src/test/fixtures";
 
@@ -31,10 +31,18 @@ async function mockApi(page: Page, options: { emptyHistory?: boolean } = {}) {
   });
 }
 
+function isKnownBrowserDriverNoise(message: ConsoleMessage) {
+  const text = message.text();
+  // Headless Chromium can emit this GPU-driver diagnostic while WebGL reads pixels.
+  return message.type() === "warning" && text.includes("GL Driver Message") && text.includes("GPU stall due to ReadPixels");
+}
+
 function captureConsole(page: Page) {
   const problems: string[] = [];
   page.on("console", (message) => {
-    if (message.type() === "error" || message.type() === "warning") problems.push(`${message.type()}: ${message.text()}`);
+    if ((message.type() === "error" || message.type() === "warning") && !isKnownBrowserDriverNoise(message)) {
+      problems.push(`${message.type()}: ${message.text()}`);
+    }
   });
   page.on("pageerror", (error) => problems.push(`pageerror: ${error.message}`));
   return problems;
@@ -74,11 +82,17 @@ test("all major dashboard views are usable and console-clean", async ({ page }, 
 
   await page.getByRole("link", { name: "Maintenance Reports" }).click();
   const storedReportLink = page.locator(".report-index__row").first();
+  const reportHref = `/reports/${report.report_id}`;
+  const reportUrl = new URL(reportHref, page.url()).href;
+  await expect(storedReportLink).toBeVisible();
+  await expect(storedReportLink).toHaveAttribute("href", reportHref);
   await expect(storedReportLink).toContainText(report.narrative.executive_summary);
   await expectNoHorizontalOverflow(page);
-  await page.waitForTimeout(400);
   await page.screenshot({ path: testInfo.outputPath("history-1440.png"), fullPage: true });
-  await storedReportLink.click();
+  // Keyboard activation preserves browser navigation without depending on hover motion.
+  await storedReportLink.focus();
+  await storedReportLink.press("Enter");
+  await expect(page).toHaveURL(reportUrl);
   await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
   await page.getByRole("button", { name: new RegExp(report.citations[0].title) }).click();
   await expect(page.getByText("Evidence interpretation")).toBeVisible();
