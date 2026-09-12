@@ -2,6 +2,7 @@
 
 **Evidence-bounded machine intelligence from signal to stored maintenance record.**
 
+[![CI](https://github.com/harshjs19/SentinelAI/actions/workflows/ci.yml/badge.svg)](https://github.com/harshjs19/SentinelAI/actions/workflows/ci.yml)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
