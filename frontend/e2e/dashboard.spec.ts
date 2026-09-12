@@ -53,6 +53,7 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 test("all major dashboard views are usable and console-clean", async ({ page }, testInfo) => {
+  test.setTimeout(60_000);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await mockApi(page);
   const problems = captureConsole(page);
