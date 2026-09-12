@@ -1,6 +1,8 @@
 import { AlertTriangle, Database, LoaderCircle, RefreshCw, ShieldX } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { ApiError } from "../api/client";
+
 export function LoadingState({ label = "Loading verified intelligence…" }: { label?: string }) {
   return (
     <div className="state-panel state-panel--loading" role="status">
@@ -42,7 +44,10 @@ export function EmptyState({
 }
 
 export function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => void }) {
-  const normalized = error.message.toLowerCase();
+  const message = error instanceof ApiError
+    ? error.message
+    : "Verified data could not be loaded. Retry the request.";
+  const normalized = message.toLowerCase();
   const kind = normalized.includes("not found")
     ? "not-found"
     : normalized.includes("conflict") || normalized.includes("processing")
@@ -58,7 +63,7 @@ export function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => v
       <div className="state-glyph" aria-hidden="true"><i />{kind === "integrity" ? <ShieldX /> : <AlertTriangle />}</div>
       <p className="eyebrow">{label}</p>
       <h2>Verified data is unavailable</h2>
-      <p>{error.message}</p>
+      <p>{message}</p>
       {onRetry && (
         <button className="button button--secondary" type="button" onClick={onRetry}>
           <RefreshCw size={16} /> Retry

@@ -33,7 +33,7 @@ export function shortId(value: string, leading = 10, trailing = 6): string {
 }
 
 export function confidenceLabel(value: number): string {
-  return value.toFixed(3);
+  return `${(value * 100).toFixed(1)}%`;
 }
 
 const LIMITATION_LABELS: Record<string, string> = {

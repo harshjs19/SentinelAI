@@ -32,24 +32,24 @@ export function MachinesPage() {
       <SignatureHero
         index="CHAPTER / 02"
         eyebrow="Machines / authoritative inventory"
-        title={<>Fleet <em>Intelligence</em></>}
-        description="Navigate persisted industrial assets through a spatial inventory built from authoritative machine records—not inferred live topology."
+        title={<>Stored <em>Machines</em></>}
+        description="Browse authoritative machine identities. Condition appears only where a persisted analysis report supports it."
         variant="fleet"
         sceneKicker="Representational asset field"
         sceneTitle={machines.data ? `${machines.data.length} persisted assets` : "Authoritative asset field"}
         sceneNote="Nodes represent stored machine identities only. They are not live network, telemetry, or health indicators."
         sceneItems={assetTypes.map((label) => ({ label: `Asset class / ${label}`, meta: "persisted", tone: "accent" }))}
-        facts={
+        facts={machines.data ? (
           <>
-            <span><strong>{machines.data ? machines.data.length : "—"}</strong> persisted machine records</span>
+            <span><strong>{machines.data.length}</strong> persisted machine records</span>
             <span><strong>Stored reports only</strong> determine displayed condition</span>
           </>
-        }
+        ) : undefined}
       />
-      <div className="fleet-toolbar">
-        <div className="fleet-toolbar__count"><span>Asset index</span><strong>{filtered.length} visible / {machines.data?.length ?? 0} stored</strong></div>
+      {machines.data && <div className="fleet-toolbar">
+        <div className="fleet-toolbar__count"><span>Filtered machine records</span><strong>{filtered.length} visible / {machines.data.length} stored</strong></div>
         <label className="search-box glass-card"><Search aria-hidden="true" /><span className="sr-only">Search machines</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, asset type, or ID" /></label>
-      </div>
+      </div>}
       {machines.loading && <LoadingState label="Loading machine inventory…" />}
       {machines.error && <ErrorState error={machines.error} onRetry={machines.reload} />}
       {machines.data && machines.data.length === 0 && <EmptyState title="No machines yet" message="Create a machine through the authoritative backend API before running analysis." />}

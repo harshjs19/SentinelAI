@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { evidence, report } from "../test/fixtures";
@@ -9,20 +9,21 @@ describe("ReportView", () => {
     render(<ReportView report={report} evidence={evidence} />);
 
     expect(screen.getAllByText("Abnormal").length).toBeGreaterThan(0);
-    expect(screen.getByText("0.910")).toBeInTheDocument();
-    expect(screen.getByText("Raw model confidence — not failure probability.")).toBeInTheDocument();
+    expect(screen.getByText("91.0%")).toBeInTheDocument();
+    expect(screen.getByText("Raw / uncalibrated classifier confidence")).toBeInTheDocument();
+    expect(screen.getByText(/Not failure probability, fault severity, machine health/i)).toBeInTheDocument();
 
-    const claimGrid = screen.getByLabelText("Scientific claim availability");
-    expect(within(claimGrid).getByText("Failure probability").nextElementSibling).toHaveTextContent("Not estimated");
-    expect(within(claimGrid).getByText("Fault severity").nextElementSibling).toHaveTextContent("Not determined");
-    expect(within(claimGrid).getByText("Health").nextElementSibling).toHaveTextContent("Not determined");
-    expect(within(claimGrid).getByText("Operational risk").nextElementSibling).toHaveTextContent("Not determined");
-    expect(within(claimGrid).getByText("Remaining useful life").nextElementSibling).toHaveTextContent("Not estimated");
+    const boundaries = screen.getByLabelText("Scientific claim boundaries");
+    expect(boundaries).toHaveTextContent("Failure probability was not inferred");
+    expect(boundaries).toHaveTextContent("Fault severity was not inferred");
+    expect(boundaries).toHaveTextContent("Machine health was not inferred");
+    expect(boundaries).toHaveTextContent("Operational risk was not inferred");
+    expect(boundaries).toHaveTextContent("Remaining useful life is not produced");
 
     expect(screen.getByRole("heading", { name: "Inspection Considerations" })).toBeInTheDocument();
     expect(screen.getByText("Raw / uncalibrated confidence")).toBeInTheDocument();
     expect(screen.getByText("Single-modality evidence")).toBeInTheDocument();
-    expect(screen.getByText("timeseries_random_forest_utk_v1")).toBeInTheDocument();
+    expect(screen.getAllByText("timeseries_random_forest_utk_v1").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Evidence Chain" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Evidence Package" })).toBeInTheDocument();
     expect(screen.getByText(/semantic support remains subject to human review/i)).toBeInTheDocument();

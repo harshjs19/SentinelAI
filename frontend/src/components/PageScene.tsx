@@ -79,8 +79,8 @@ export function PageScene({
           <i className={`page-scene__node page-scene__node--${index + 1}`} key={index} />
         ))}
         <i className="page-scene__signal" />
-        <span className="page-scene__coordinate page-scene__coordinate--one">X.04 / Y.19</span>
-        <span className="page-scene__coordinate page-scene__coordinate--two">ARCH / {variant.toUpperCase()}</span>
+        <span className="page-scene__coordinate page-scene__coordinate--one">REPRESENTATIONAL</span>
+        <span className="page-scene__coordinate page-scene__coordinate--two">VIEW / {variant.toUpperCase()}</span>
       </div>
 
       <div className="page-scene__content">

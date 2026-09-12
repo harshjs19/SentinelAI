@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { listModelCapabilities } from "../api/capabilities";
+import { PUBLIC_DEMO } from "../api/demo";
 import { getMachine } from "../api/machines";
 import { getMaintenanceReport, getMaintenanceReportEvidence, listMachineReports } from "../api/reports";
 import type { MaintenanceReport, MaintenanceReportEvidence } from "../api/types";
@@ -73,10 +74,12 @@ export function MachineDetailPage() {
         facts={
           <>
             <span><strong>Machine ID</strong><code>{machine.data.id}</code></span>
-            <span><strong>Latest finding</strong>{latestFinding?.code ?? "Not available"}</span>
+            {latestFinding && <span><strong>Latest finding</strong>{latestFinding.code}</span>}
           </>
         }
-        actions={<button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}><Play size={16} /> Run Analysis</button>}
+        actions={PUBLIC_DEMO
+          ? <button className="button button--secondary" type="button" disabled title="The public demonstration is read only"><Play size={16} /> Analysis disabled in public demo</button>
+          : <button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}><Play size={16} /> Run Analysis</button>}
       />
 
       {history.loading && <LoadingState label="Loading stored report history…" />}
@@ -84,19 +87,19 @@ export function MachineDetailPage() {
       {page === 0 && latest.loading && history.data && history.data.length > 0 && <LoadingState label="Verifying latest report and evidence…" />}
       {page === 0 && latest.error && <ErrorState error={latest.error} onRetry={latest.reload} />}
       {page === 0 && latest.data && <ReportView report={latest.data.report} evidence={latest.data.evidence} />}
-      {page === 0 && history.data?.length === 0 && <EmptyState title="No reports yet" message="Run an analysis to create the first verified maintenance record." action={<button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}>Run Analysis</button>} />}
+      {page === 0 && history.data?.length === 0 && <EmptyState title="No reports yet" message={PUBLIC_DEMO ? "This exported demonstration machine has no stored reports." : "Run an analysis to create the first verified maintenance record."} action={PUBLIC_DEMO ? undefined : <button className="button button--primary" type="button" onClick={() => setDrawerOpen(true)}>Run Analysis</button>} />}
 
       {history.data && history.data.length > 0 && (
         <section className="history-section glass-panel" aria-labelledby="machine-history-title">
           <div className="section-heading"><div><p className="eyebrow">Stored authoritative records</p><h2 id="machine-history-title">Report history</h2></div><CalendarClock aria-hidden="true" /></div>
           <div className="history-list history-list--timeline">
-            {history.data.map((report, index) => <Link to={`/reports/${report.report_id}`} key={report.report_id}><span className="history-list__node" aria-hidden="true"><Activity /></span><div><small>Record {String(page * PAGE_SIZE + index + 1).padStart(2, "0")}</small><strong>{humanize(report.condition)}</strong><span>{report.executive_summary}</span></div><div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><time>{formatDate(report.generated_at)}</time><code>{shortId(report.report_id)}</code></div><ArrowRight aria-hidden="true" /></Link>)}
+            {history.data.map((report, index) => <Link to={`/reports/${report.report_id}`} key={report.report_id}><span className="history-list__node" aria-hidden="true"><Activity /></span><div><small>Record {String(page * PAGE_SIZE + index + 1).padStart(2, "0")}</small><strong>{humanize(report.condition)}</strong><span>{report.executive_summary}</span></div><div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><small>Report generated</small><time dateTime={report.generated_at} title={report.generated_at}>{formatDate(report.generated_at)}</time><code>{shortId(report.report_id)}</code></div><ArrowRight aria-hidden="true" /></Link>)}
           </div>
           <div className="pagination"><button className="button button--secondary" type="button" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page + 1}</span><button className="button button--secondary" type="button" disabled={history.data.length < PAGE_SIZE} onClick={() => setPage((value) => value + 1)}>Next</button></div>
         </section>
       )}
 
-      <AnalysisDrawer open={drawerOpen} machineId={machine.data.id} machineName={machine.data.name} capabilities={capabilities.data?.models ?? []} onClose={() => setDrawerOpen(false)} onCreated={onCreated} />
+      {!PUBLIC_DEMO && <AnalysisDrawer open={drawerOpen} machineId={machine.data.id} machineName={machine.data.name} capabilities={capabilities.data?.models ?? []} onClose={() => setDrawerOpen(false)} onCreated={onCreated} />}
     </PageTransition>
   );
 }

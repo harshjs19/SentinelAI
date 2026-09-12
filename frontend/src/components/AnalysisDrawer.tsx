@@ -18,11 +18,6 @@ import { lifecycleTone } from "./badgeTone";
 import { PageScene } from "./PageScene";
 import { StatusBadge } from "./StatusBadge";
 
-const syntheticSamples: TimeseriesSample[] = [
-  { ch1_bias: 0.12, ch1_derivedPk: 0.48, ch1_direct: 0.31, ch1_directRMS: 0.22, ch1_velocityPk: 0.61, ch1_velocityRMS: 0.37 },
-  { ch1_bias: 0.14, ch1_derivedPk: 0.51, ch1_direct: 0.33, ch1_directRMS: 0.24, ch1_velocityPk: 0.65, ch1_velocityRMS: 0.39 },
-];
-
 const modalities: { value: Modality; label: string; icon: typeof FileAudio }[] = [
   { value: "timeseries", label: "Time-Series", icon: FlaskConical },
   { value: "audio", label: "Audio", icon: FileAudio },
@@ -44,7 +39,12 @@ interface PendingRequest {
 }
 
 function parseSamples(value: string): TimeseriesSample[] {
-  const parsed: unknown = JSON.parse(value);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error("Enter samples as a valid JSON array.");
+  }
   if (!Array.isArray(parsed) || parsed.length < 2) throw new Error("Provide at least two sample rows.");
   const keys: (keyof TimeseriesSample)[] = ["ch1_bias", "ch1_derivedPk", "ch1_direct", "ch1_directRMS", "ch1_velocityPk", "ch1_velocityRMS"];
   return parsed.map((sample, index) => {
@@ -76,7 +76,7 @@ export function AnalysisDrawer({
   const [modality, setModality] = useState<Modality>("timeseries");
   const [intent, setIntent] = useState<CopilotIntent>("summarize_analysis");
   const [question, setQuestion] = useState("");
-  const [samplesText, setSamplesText] = useState(JSON.stringify(syntheticSamples, null, 2));
+  const [samplesText, setSamplesText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -120,7 +120,7 @@ export function AnalysisDrawer({
     } catch (reason) {
       if (reason instanceof ApiError && reason.transportUncertain) setPendingRetry(pending);
       else setPendingRetry(null);
-      setError(reason instanceof Error ? reason.message : "The report could not be created.");
+      setError(reason instanceof ApiError ? reason.message : "The report could not be created.");
     } finally {
       setSubmitting(false);
     }
@@ -169,7 +169,7 @@ export function AnalysisDrawer({
               {capability && <div className="selected-capability"><div><span>Runtime capability</span><code>{capability.model_id}</code></div><StatusBadge tone={lifecycleTone(capability.status)}>{humanize(capability.status)}</StatusBadge></div>}
 
               {modality === "timeseries" ? (
-                <label className="field"><span>Time-series samples</span><small>Synthetic/demo values are prefilled. Replace them with raw input rows; feature engineering remains server-owned.</small><textarea rows={12} value={samplesText} onChange={(event) => { setSamplesText(event.target.value); setPendingRetry(null); }} spellCheck={false} /></label>
+                <label className="field"><span>Time-series samples</span><small>Paste at least two raw channel-1 input rows. Feature engineering remains server-owned; no sample values are invented by the dashboard.</small><textarea rows={12} value={samplesText} onChange={(event) => { setSamplesText(event.target.value); setPendingRetry(null); }} spellCheck={false} /></label>
               ) : (
                 <label className={`file-drop ${file ? "file-drop--selected" : ""}`}><input type="file" accept={accepts} onChange={(event) => { setFile(event.target.files?.[0] ?? null); setPendingRetry(null); }} /><span className="file-drop__icon"><UploadCloud aria-hidden="true" /></span><span>{file ? file.name : `Select ${modality} source`}</span><small>{file ? `${(file.size / 1024).toFixed(1)} KB / sent directly as multipart data` : "Raw browser File only — never base64 encoded or persisted locally."}</small>{previewUrl && <img src={previewUrl} alt="Selected source preview" />}</label>
               )}

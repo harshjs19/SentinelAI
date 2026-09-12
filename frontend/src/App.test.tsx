@@ -4,6 +4,15 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import { capabilities, evidence, machine, report } from "./test/fixtures";
 
+const evaluations = capabilities.map((model, index) => ({
+  model_id: model.model_id,
+  evaluation_reference: model.evaluation_reference,
+  source_digest_sha256: String(index + 1).repeat(64),
+  metric_label: "Verified evaluation score",
+  metric_value: 0.5 + index / 10,
+  known_limitation: `Bounded test limitation ${index + 1}`,
+}));
+
 function json(value: unknown, status = 200) {
   return new Response(JSON.stringify(value), { status, headers: { "Content-Type": "application/json" } });
 }
@@ -37,6 +46,7 @@ describe("dashboard routing and API rendering", () => {
       const url = String(input);
       if (url.endsWith("/health")) return json({ status: "ok" });
       if (url.endsWith("/capabilities/models")) return json({ models: capabilities });
+      if (url.endsWith("/model-evaluations.json")) return json({ schema_version: "1", models: evaluations });
       return json({ detail: "not found" }, 404);
     }));
     render(<App />);
@@ -58,7 +68,7 @@ describe("dashboard routing and API rendering", () => {
     vi.stubGlobal("fetch", fetchMock);
     render(<App />);
     expect(await screen.findByRole("heading", { name: "Evidence Chain" })).toBeInTheDocument();
-    expect(screen.getByText("timeseries_random_forest_utk_v1")).toBeInTheDocument();
+    expect(screen.getAllByText("timeseries_random_forest_utk_v1").length).toBeGreaterThan(0);
     expect(fetchMock.mock.calls.some(([input]) => String(input).endsWith("/evidence"))).toBe(true);
     expect(fetchMock.mock.calls.some(([input]) => String(input).endsWith("/capabilities/models"))).toBe(false);
   });

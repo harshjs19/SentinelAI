@@ -7,11 +7,13 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "tsc -b && vite build",
+    "build:demo": "tsc -b && vite build --mode demo",
     "lint": "eslint .",
     "typecheck": "tsc -b --pretty false",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "npm run build && playwright test"
+    "test:e2e": "npm run build && playwright test e2e/dashboard-api.spec.ts",
+    "test:e2e:demo": "npm run build:demo && playwright test e2e/dashboard.spec.ts"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",

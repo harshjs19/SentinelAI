@@ -21,17 +21,17 @@ function safeDetail(value: unknown): string | null {
 }
 
 function statusMessage(status: number, detail: string | null): string {
-  if (status === 404) return detail ?? "The requested machine or report was not found.";
+  if (status === 404) return "The requested machine or report was not found.";
   if (status === 409) {
     if (detail?.toLowerCase().includes("processing")) {
       return "An identical maintenance request is already processing. Try again shortly.";
     }
     return "This request conflicts with an earlier idempotent request.";
   }
-  if (status === 400 || status === 422) return detail ?? "The submitted input is not valid.";
-  if (status === 503) return detail ?? "Required analysis infrastructure is unavailable.";
+  if (status === 400 || status === 422) return "The submitted input is not valid.";
+  if (status === 503) return "Required analysis infrastructure is unavailable.";
   if (status >= 500) return "The server could not safely complete this request.";
-  return detail ?? `Request failed with status ${status}.`;
+  return detail ?? "The requested data could not be loaded.";
 }
 
 export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
@@ -63,6 +63,10 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
     throw new ApiError(statusMessage(response.status, detail), response.status);
   }
 
-  return (await response.json()) as T;
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new ApiError("SentinelAI returned an invalid response. Retry the request.");
+  }
 }
 

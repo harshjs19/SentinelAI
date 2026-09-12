@@ -92,8 +92,8 @@ export function EvidencePanel({ evidence }: { evidence: MaintenanceReportEvidenc
           <dd>{evidence.evidence_package.schema_version}</dd>
         </div>
         <div>
-          <dt>Evidence created</dt>
-          <dd>{formatDate(evidence.evidence_package.created_at)}</dd>
+          <dt>Evidence Package created</dt>
+          <dd><time dateTime={evidence.evidence_package.created_at} title={evidence.evidence_package.created_at}>{formatDate(evidence.evidence_package.created_at)}</time></dd>
         </div>
         <div>
           <dt>Retrieval bundle</dt>

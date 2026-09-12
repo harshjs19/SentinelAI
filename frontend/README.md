@@ -17,6 +17,18 @@ Vite proxies `/api` to the local backend. To use an explicitly deployed API inst
 set `VITE_API_BASE_URL` to its public base URL. Frontend environment variables must not
 contain database or provider credentials.
 
+## Public demonstration build
+
+```shell
+npm run build:demo
+```
+
+Demo mode is read-only and loads the versioned records in `public/demo/snapshot.json`.
+Those records were exported from genuine SentinelAI simulation/replay workflow outputs;
+the browser performs no API writes or inference. Model evaluation summaries are derived
+from the tracked evaluation artifacts and retain each source path and SHA-256 digest.
+The ordinary `npm run build` command remains API-backed.
+
 ## Quality commands
 
 ```shell

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -20,6 +20,12 @@ describe("AnalysisDrawer", () => {
     const onCreated = vi.fn<(value: MaintenanceReport) => void>();
     render(<AnalysisDrawer open machineId={machine.id} machineName={machine.name} capabilities={capabilities} onClose={() => undefined} onCreated={onCreated} />);
 
+    fireEvent.change(screen.getByRole("textbox", { name: /Time-series samples/ }), {
+      target: { value: JSON.stringify([
+        { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+        { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+      ]) },
+    });
     await userEvent.click(screen.getByRole("button", { name: "Create verified report" }));
     expect(await screen.findByRole("button", { name: "Retry exact request" })).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Retry exact request" }));
@@ -40,6 +46,14 @@ describe("AnalysisDrawer", () => {
     expect(payload).not.toHaveProperty("evidence_package");
     expect(payload).not.toHaveProperty("retrieval_bundle");
     expect(payload).not.toHaveProperty("producing_model_context");
+  });
+
+  it("does not expose JSON parser errors", async () => {
+    render(<AnalysisDrawer open machineId={machine.id} machineName={machine.name} capabilities={capabilities} onClose={() => undefined} onCreated={() => undefined} />);
+    fireEvent.change(screen.getByRole("textbox", { name: /Time-series samples/ }), { target: { value: "[" } });
+    await userEvent.click(screen.getByRole("button", { name: "Create verified report" }));
+    expect(screen.getByRole("alert")).toHaveTextContent("Enter samples as a valid JSON array.");
+    expect(screen.getByRole("alert")).not.toHaveTextContent("Unexpected end");
   });
 
   it("uploads media as the original browser File in multipart form data", async () => {

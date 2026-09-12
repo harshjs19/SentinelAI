@@ -1,118 +1,210 @@
 import { expect, test, type ConsoleMessage, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
-import { capabilities, evidence, machine, report } from "../src/test/fixtures";
-
-const summary = {
-  report_id: report.report_id,
-  machine_id: machine.id,
-  generated_at: report.generated_at,
-  generation_status: report.generation_status,
-  condition: report.analysis.condition,
-  analysis_status: report.analysis.status,
-  executive_summary: report.narrative.executive_summary,
-};
-
-async function mockApi(page: Page, options: { emptyHistory?: boolean } = {}) {
-  await page.route("http://127.0.0.1:4173/api/**", async (route) => {
-    const url = new URL(route.request().url());
-    const path = url.pathname.replace(/^\/api/, "");
-    let payload: unknown;
-    let status = 200;
-    if (path === "/health") payload = { status: "ok" };
-    else if (path === "/machines") payload = [machine];
-    else if (path === "/capabilities/models") payload = { models: capabilities };
-    else if (path === `/machines/${machine.id}`) payload = machine;
-    else if (path === `/machines/${machine.id}/maintenance-reports` && route.request().method() === "GET") payload = options.emptyHistory ? [] : [summary];
-    else if (path === `/maintenance-reports/${report.report_id}/evidence`) payload = evidence;
-    else if (path === `/maintenance-reports/${report.report_id}`) payload = report;
-    else if (path.startsWith(`/machines/${machine.id}/maintenance-reports/`) && route.request().method() === "POST") { payload = report; status = 201; }
-    else { payload = { detail: "Not found" }; status = 404; }
-    await route.fulfill({ status, contentType: "application/json", body: JSON.stringify(payload) });
-  });
+interface DemoSnapshotData {
+  machines: { id: string; name: string; asset_type: string }[];
+  reports_by_machine: Record<string, unknown[]>;
+  reports: Record<string, {
+    report_id: string;
+    machine_id: string;
+    generated_at: string;
+    analysis: { condition: string };
+    producing_models: { model_id: string }[];
+  }>;
+  capabilities: { models: { model_id: string }[] };
 }
+
+interface EvaluationIndexData {
+  models: {
+    metric_label: string;
+    metric_value: number;
+    known_limitation: string;
+  }[];
+}
+
+const snapshot = JSON.parse(
+  readFileSync(new URL("../public/demo/snapshot.json", import.meta.url), "utf8"),
+) as DemoSnapshotData;
+const evaluations = JSON.parse(
+  readFileSync(new URL("../public/model-evaluations.json", import.meta.url), "utf8"),
+) as EvaluationIndexData;
+
+const machines = snapshot.machines;
+const reports = Object.values(snapshot.reports).sort(
+  (left, right) => Date.parse(right.generated_at) - Date.parse(left.generated_at),
+);
+const latestReport = reports[0]!;
+const latestMachine = machines.find((machine) => machine.id === latestReport.machine_id)!;
 
 function isKnownBrowserDriverNoise(message: ConsoleMessage) {
   const text = message.text();
-  // Headless Chromium can emit this GPU-driver diagnostic while WebGL reads pixels.
   return message.type() === "warning" && text.includes("GL Driver Message") && text.includes("GPU stall due to ReadPixels");
 }
 
-function captureConsole(page: Page) {
-  const problems: string[] = [];
+function monitorPage(page: Page) {
+  const consoleProblems: string[] = [];
+  const requestFailures: string[] = [];
+  const errorResponses: string[] = [];
+  const apiRequests: string[] = [];
   page.on("console", (message) => {
     if ((message.type() === "error" || message.type() === "warning") && !isKnownBrowserDriverNoise(message)) {
-      problems.push(`${message.type()}: ${message.text()}`);
+      consoleProblems.push(`${message.type()}: ${message.text()}`);
     }
   });
-  page.on("pageerror", (error) => problems.push(`pageerror: ${error.message}`));
-  return problems;
+  page.on("pageerror", (error) => consoleProblems.push(`pageerror: ${error.message}`));
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname.startsWith("/api/")) apiRequests.push(request.url());
+  });
+  page.on("requestfailed", (request) => requestFailures.push(`${request.method()} ${request.url()}`));
+  page.on("response", (response) => {
+    if (response.status() >= 400) errorResponses.push(`${response.status()} ${response.url()}`);
+  });
+  return { consoleProblems, requestFailures, errorResponses, apiRequests };
 }
 
 async function expectNoHorizontalOverflow(page: Page) {
-  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBe(true);
+  await expect.poll(() => page.evaluate(
+    () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+  )).toBe(true);
 }
 
-test("all major dashboard views are usable and console-clean", async ({ page }, testInfo) => {
-  test.setTimeout(60_000);
+async function expectSemanticIntegrity(page: Page) {
+  const text = await page.locator("body").innerText();
+  for (const marker of ["undefined", "null", "NaN", "Infinity", "[object Object]", "Coming soon", "Invalid Date"]) {
+    expect(text, `rendered marker ${marker}`).not.toContain(marker);
+  }
+  expect(text).not.toMatch(/(^|\s)N\/A($|\s)/m);
+  expect(text.split("\n").map((line) => line.trim())).not.toContain("—");
+  for (const match of text.matchAll(/(-?\d+(?:\.\d+)?)%/g)) {
+    const value = Number(match[1]);
+    expect(Number.isFinite(value)).toBe(true);
+    expect(value).toBeGreaterThanOrEqual(0);
+    expect(value).toBeLessThanOrEqual(100);
+  }
+}
+
+async function revealEvidenceNodes(page: Page) {
+  const nodes = page.locator(".evidence-node");
+  await expect(nodes).toHaveCount(5);
+  for (let index = 0; index < await nodes.count(); index += 1) {
+    await nodes.nth(index).scrollIntoViewIfNeeded();
+    await expect(nodes.nth(index)).toHaveCSS("opacity", "1");
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
+async function expectHealthyDemo(monitor: ReturnType<typeof monitorPage>) {
+  expect(monitor.consoleProblems).toEqual([]);
+  expect(monitor.requestFailures).toEqual([]);
+  expect(monitor.errorResponses).toEqual([]);
+  expect(monitor.apiRequests).toEqual([]);
+}
+
+test("public demo tells the complete stored-evidence story without invented values", async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await mockApi(page);
-  const problems = captureConsole(page);
+  const monitor = monitorPage(page);
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Industrial intelligence grounded/i })).toBeVisible();
-  await expect(page.getByText(/Independent analysis modules/)).toBeVisible();
+  await expect(page.getByText("PUBLIC DEMO · READ ONLY", { exact: true })).toBeVisible();
+  await expect(page.getByText("Demonstration records generated through SentinelAI's simulation/replay workflow.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Stored machine analyses with verifiable provenance/i })).toBeVisible();
+  await expect(page.locator(".metric-card", { hasText: "Demo machines" }).locator("strong")).toHaveText(String(machines.length));
+  await expect(page.locator(".metric-card", { hasText: "Stored reports" }).locator("strong")).toHaveText(String(reports.length));
+  const conditions = page.locator(".condition-counts").getByRole("definition");
+  await expect(conditions).toHaveCount(3);
+  await expect(page.locator(".condition-counts")).toContainText("Normal0");
+  await expect(page.locator(".condition-counts")).toContainText(`Abnormal${reports.length}`);
+  await expect(page.locator(".condition-counts")).toContainText("Indeterminate0");
+  await expect(page.locator(".recent-analysis")).toContainText(latestMachine.name);
+  await expect(page.locator(".recent-analysis")).toContainText(latestReport.producing_models[0]!.model_id);
+  await expect(page.getByRole("heading", { name: "Model lifecycle" })).toBeVisible();
+  await expectSemanticIntegrity(page);
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("overview-1440.png"), fullPage: true });
 
-  await page.getByRole("link", { name: "Machines" }).click();
-  await expect(page.getByRole("heading", { name: machine.name })).toBeVisible();
+  await page.getByRole("link", { name: "Machines", exact: true }).click();
+  for (const machine of machines) await expect(page.getByRole("heading", { name: machine.name })).toBeVisible();
+  await expect(page.locator(".machine-card")).toHaveCount(machines.length);
+  await expectSemanticIntegrity(page);
   await expectNoHorizontalOverflow(page);
   await page.screenshot({ path: testInfo.outputPath("machines-1440.png"), fullPage: true });
 
-  await page.getByRole("heading", { name: machine.name }).click();
-  await expect(page.getByText("Raw model confidence — not failure probability.")).toBeVisible();
+  await page.goto(`/machines/${latestMachine.id}`);
+  await expect(page.getByRole("heading", { name: latestMachine.name })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Analysis disabled in public demo/ })).toBeDisabled();
   await expect(page.getByRole("heading", { name: "Evidence Chain" })).toBeVisible();
+  await expect(page.getByText("Raw / uncalibrated classifier confidence")).toBeVisible();
+  await expect(page.getByText(/Not failure probability, fault severity, machine health/i)).toBeVisible();
+  await expectSemanticIntegrity(page);
   await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("machine-report-1440.png"), fullPage: true });
-
-  await page.getByRole("button", { name: /Run Analysis/i }).click();
-  await expect(page.getByRole("dialog", { name: "Run Analysis" })).toBeVisible();
-  await expect(page.getByText("Synthetic/demo values are prefilled.")).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath("analysis-drawer-1440.png"), fullPage: true });
-  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await page.screenshot({ path: testInfo.outputPath("machine-detail-1440.png"), fullPage: true });
 
   await page.getByRole("link", { name: "Maintenance Reports" }).click();
-  const storedReportLink = page.locator(".report-index__row").first();
-  const reportHref = `/reports/${report.report_id}`;
-  const reportUrl = new URL(reportHref, page.url()).href;
-  await expect(storedReportLink).toBeVisible();
-  await expect(storedReportLink).toHaveAttribute("href", reportHref);
-  await expect(storedReportLink).toContainText(report.narrative.executive_summary);
+  await expect(page.getByRole("heading", { name: /Maintenance History/i })).toBeVisible();
+  const firstMachineReports = Object.values(snapshot.reports_by_machine)[0]!;
+  await expect(page.locator(".report-index__row")).toHaveCount(firstMachineReports.length);
+  const timeline = page.getByRole("region", { name: "Stored maintenance report timeline" });
+  await timeline.scrollIntoViewIfNeeded();
+  await expect(timeline).toBeVisible();
+  await expect(page.locator(".report-index__row").first()).toBeVisible();
+  await expect(page.getByText("Report generated", { exact: true }).first()).toBeVisible();
+  await expectSemanticIntegrity(page);
   await expectNoHorizontalOverflow(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath("history-1440.png"), fullPage: true });
-  // Keyboard activation preserves browser navigation without depending on hover motion.
-  await storedReportLink.focus();
-  await storedReportLink.press("Enter");
-  await expect(page).toHaveURL(reportUrl);
+
+  await page.goto(`/reports/${latestReport.report_id}`);
+  await expect(page.getByRole("heading", { name: "Evidence Chain" })).toBeVisible();
+  await revealEvidenceNodes(page);
   await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
-  await page.getByRole("button", { name: new RegExp(report.citations[0].title) }).click();
-  await expect(page.getByText("Evidence interpretation")).toBeVisible();
-  await page.getByRole("heading", { name: "Evidence Chain" }).scrollIntoViewIfNeeded();
-  await page.waitForTimeout(350);
-  await page.screenshot({ path: testInfo.outputPath("report-evidence-1440.png") });
+  await expect(page.getByText("Analysis created", { exact: true })).toBeVisible();
+  await expect(page.getByText("Evidence Package created", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("Report generated", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(latestReport.producing_models[0]!.model_id).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Inspection Considerations" })).toBeVisible();
+  await expect(page.getByText(/they are not commands, urgency ratings, or authorization/i)).toBeVisible();
+  await expectSemanticIntegrity(page);
+  await expectNoHorizontalOverflow(page);
+  await page.screenshot({ path: testInfo.outputPath("report-evidence-1440.png"), fullPage: true });
 
   await page.getByRole("link", { name: "Model Capabilities" }).click();
+  await expect(page.getByRole("heading", { name: /Model Capabilities/i })).toBeVisible();
+  await expect(page.locator(".capability-card")).toHaveCount(snapshot.capabilities.models.length);
+  for (const evaluation of evaluations.models) {
+    await expect(page.getByText(evaluation.metric_label, { exact: true })).toBeVisible();
+    await expect(page.getByText(`${(evaluation.metric_value * 100).toFixed(1)}%`, { exact: true })).toBeVisible();
+    await expect(page.getByText(evaluation.known_limitation, { exact: true })).toBeVisible();
+  }
   await expect(page.getByText("Rejected Experiment", { exact: true })).toBeVisible();
-  await expect(page.getByText("Experimental", { exact: true })).toBeVisible();
-  await page.getByText("audio_ast_rejected_v1").click();
+  await expect(page.getByText("Experimental", { exact: true }).first()).toBeVisible();
+  await page.getByRole("button", { name: /audio_mimii_ast_v2/i }).click();
   await expect(page.getByText(/Preserved as a rejected experimental result/i)).toBeVisible();
-  await page.waitForTimeout(300);
+  await expectSemanticIntegrity(page);
+  await expectNoHorizontalOverflow(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath("models-1440.png"), fullPage: true });
 
-  expect(problems).toEqual([]);
+  await expectHealthyDemo(monitor);
 });
 
-test("tablet, reduced-motion, empty-history, and WebGL fallback remain usable", async ({ page }, testInfo) => {
+test("1280 and tablet layouts preserve meaning, reduced motion, and WebGL fallback", async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
+  const monitor = monitorPage(page);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(`/reports/${latestReport.report_id}`);
+  await expect(page.getByRole("heading", { name: "Evidence Chain" })).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  await expectSemanticIntegrity(page);
+  await page.screenshot({ path: testInfo.outputPath("report-1280.png"), fullPage: true });
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto(`/reports/${latestReport.report_id}`);
+  await revealEvidenceNodes(page);
+  await expectNoHorizontalOverflow(page);
+  await expectSemanticIntegrity(page);
+  await page.screenshot({ path: testInfo.outputPath("report-evidence-1024.png"), fullPage: true });
+
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
@@ -122,92 +214,62 @@ test("tablet, reduced-motion, empty-history, and WebGL fallback remain usable", 
       return original.call(this, contextId as never, ...(args as []));
     } as typeof HTMLCanvasElement.prototype.getContext;
   });
-  await mockApi(page, { emptyHistory: true });
-  const problems = captureConsole(page);
   await page.goto("/");
   await expect(page.locator(".static-core:not(.static-core--loading)")).toBeVisible();
-  const reducedDurationMs = await page.locator(".ambient-canvas__glow").first().evaluate((element) => {
-    const value = getComputedStyle(element).animationDuration;
-    return value.endsWith("ms") ? Number.parseFloat(value) : Number.parseFloat(value) * 1000;
-  });
-  expect(reducedDurationMs).toBeLessThanOrEqual(0.001);
+  const animationDuration = await page.locator(".ambient-canvas__glow").first().evaluate((element) => getComputedStyle(element).animationDuration);
+  const durationMs = animationDuration.endsWith("ms") ? Number.parseFloat(animationDuration) : Number.parseFloat(animationDuration) * 1000;
+  expect(durationMs).toBeLessThanOrEqual(0.001);
   await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("overview-tablet-webgl-fallback.png"), fullPage: true });
+  await expectSemanticIntegrity(page);
+  await page.screenshot({ path: testInfo.outputPath("overview-tablet-fallback.png"), fullPage: true });
 
-  await page.goto(`/machines/${machine.id}`);
-  await expect(page.getByRole("heading", { name: "No reports yet" })).toBeVisible();
-  await expectNoHorizontalOverflow(page);
-  await page.getByRole("button", { name: /Run Analysis/i }).first().click();
-  await expect(page.getByRole("dialog", { name: "Run Analysis" })).toBeVisible();
-  await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("analysis-tablet.png"), fullPage: true });
-
-  const responsiveRoutes = [
-    { path: "/machines", heading: /Fleet Intelligence/i },
-    { path: "/reports", heading: /Historical Intelligence/i },
-    { path: "/models", heading: /Model Governance/i },
-    { path: `/reports/${report.report_id}`, heading: /Evidence Brief/i },
-  ];
-  for (const route of responsiveRoutes) {
-    await page.goto(route.path);
-    await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible();
+  for (const route of ["/machines", `/machines/${latestMachine.id}`, "/reports", `/reports/${latestReport.report_id}`, "/models"]) {
+    await page.goto(route);
+    await expect(page.getByText("PUBLIC DEMO · READ ONLY", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
+    await expectSemanticIntegrity(page);
   }
-  expect(problems).toEqual([]);
-});
+  await expect(page.getByText("Rejected Experiment", { exact: true })).toBeVisible();
 
-test("1024 workspace preserves premium hierarchy and evidence legibility", async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: 1024, height: 900 });
-  await mockApi(page);
-  const problems = captureConsole(page);
-
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Industrial intelligence grounded/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Stored machine analyses with verifiable provenance/i })).toBeVisible();
   await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("overview-1024.png"), fullPage: true });
+  await expectSemanticIntegrity(page);
+  await page.screenshot({ path: testInfo.outputPath("overview-mobile-390.png"), fullPage: true });
 
-  await page.goto(`/reports/${report.report_id}`);
-  const chain = page.getByRole("heading", { name: "Evidence Chain" });
-  await chain.scrollIntoViewIfNeeded();
-  await expect(chain).toBeVisible();
-  await page.waitForTimeout(800);
+  await page.goto(`/reports/${latestReport.report_id}`);
+  await revealEvidenceNodes(page);
   await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("report-evidence-1024.png") });
-
-  expect(problems).toEqual([]);
+  await expectSemanticIntegrity(page);
+  await page.screenshot({ path: testInfo.outputPath("report-mobile-390.png"), fullPage: true });
+  await expectHealthyDemo(monitor);
 });
 
-test("laptop report layout tolerates long identifiers, citations, and report text", async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await mockApi(page);
-  const problems = captureConsole(page);
-  await page.goto(`/reports/${report.report_id}`);
-  await expect(page.getByText(report.citations[0].title)).toBeVisible();
-  await expect(page.getByText("sentence-transformers/all-MiniLM-L6-v2").first()).toBeVisible();
-  await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("report-1280.png"), fullPage: true });
-  expect(problems).toEqual([]);
+test("malformed public snapshot fails safely without exposing parser details", async ({ page }) => {
+  await page.route("**/demo/snapshot.json", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: "{\"schema_version\":",
+  }));
+  const monitor = monitorPage(page);
+  await page.goto("/");
+  await expect(page.getByRole("alert")).toContainText("Public demonstration records could not be loaded.");
+  await expect(page.getByRole("alert")).not.toContainText(/JSON|snapshot\.json|Unexpected end|SyntaxError/i);
+  expect(monitor.apiRequests).toEqual([]);
+  expect(monitor.consoleProblems).toEqual([]);
 });
 
-test("loading and backend-unavailable states remain deliberate", async ({ page }, testInfo) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const problems = captureConsole(page);
-  await page.route("http://127.0.0.1:4173/api/**", async (route) => {
-    const path = new URL(route.request().url()).pathname.replace(/^\/api/, "");
-    if (path === "/health") {
-      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Service unavailable" }) });
-      return;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Required analysis infrastructure is unavailable." }) });
-  });
-
-  await page.goto("/machines");
-  await expect(page.getByRole("status")).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath("loading-1440.png"), fullPage: true });
-  await expect(page.getByRole("alert")).toContainText("Required analysis infrastructure is unavailable.");
-  await expectNoHorizontalOverflow(page);
-  await page.screenshot({ path: testInfo.outputPath("backend-unavailable-1440.png"), fullPage: true });
-  expect(problems).toHaveLength(2);
-  for (const problem of problems) expect(problem).toMatch(/Failed to load resource:.*503/);
+test("malformed model evaluation index fails safely", async ({ page }) => {
+  await page.route("**/model-evaluations.json", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: "{\"schema_version\":\"invalid\"}",
+  }));
+  const monitor = monitorPage(page);
+  await page.goto("/models");
+  await expect(page.getByRole("alert")).toContainText("Verified model evaluation summaries could not be loaded.");
+  await expect(page.getByRole("alert")).not.toContainText(/schema|model-evaluations\.json|parse/i);
+  expect(monitor.apiRequests).toEqual([]);
+  expect(monitor.consoleProblems).toEqual([]);
 });

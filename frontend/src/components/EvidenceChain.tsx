@@ -16,21 +16,25 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
   const nodes = [
     {
       label: "Source",
-      value: source ? `${source.modality} · ${source.source_kind}` : "Stored provenance",
-      detail: source ? shortId(source.sha256) : "No source metadata",
-      fullDetail: source?.sha256 ?? "No source digest returned",
+      value: source ? `${source.modality} · ${source.source_kind}` : "Source metadata was not returned",
+      detail: source ? shortId(source.sha256) : "Digest unavailable from stored evidence",
+      fullDetail: source?.sha256,
     },
     {
       label: "Analysis",
       value: evidence.analysis.condition,
       detail: shortId(evidence.analysis.analysis_id),
       fullDetail: evidence.analysis.analysis_id,
+      timestampLabel: "Analysis created",
+      timestampValue: evidence.analysis.created_at,
     },
     {
       label: "Evidence Package",
       value: `Schema ${evidence.evidence_package.schema_version}`,
       detail: shortId(evidence.evidence_package.package_id),
       fullDetail: evidence.evidence_package.package_digest_sha256,
+      timestampLabel: "Evidence Package created",
+      timestampValue: evidence.evidence_package.created_at,
     },
     {
       label: "Retrieval Bundle",
@@ -41,8 +45,10 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
     {
       label: "Maintenance Report",
       value: evidence.report.generation_status,
-      detail: formatDate(evidence.report.generated_at),
+      detail: shortId(evidence.report.report_id),
       fullDetail: evidence.report.report_digest_sha256,
+      timestampLabel: "Report generated",
+      timestampValue: evidence.report.generated_at,
     },
   ];
 
@@ -102,7 +108,8 @@ export function EvidenceChain({ evidence }: { evidence: MaintenanceReportEvidenc
               <small>{node.label}</small>
               <strong>{humanize(node.value)}</strong>
               <code>{node.detail}</code>
-              <span className="evidence-node__detail"><code>{node.fullDetail}</code></span>
+              {node.timestampValue && <span className="evidence-node__timestamp"><small>{node.timestampLabel}</small><time dateTime={node.timestampValue} title={node.timestampValue}>{formatDate(node.timestampValue)}</time></span>}
+              {node.fullDetail && <span className="evidence-node__detail"><code>{node.fullDetail}</code></span>}
             </motion.article>
           );
         })}

@@ -1,0 +1,45 @@
+{
+    "schema_version":  "1",
+    "models":  [
+                   {
+                       "model_id":  "timeseries_utk_v1",
+                       "evaluation_reference":  "evaluation/timeseries_baseline_results.json",
+                       "source_digest_sha256":  "e1b2e763300dc3459eefd83116ed83d645e01e529a9f6f1447505770542f3638",
+                       "metric_label":  "Held-out test macro F1",
+                       "metric_value":  0.94182781856325537,
+                       "known_limitation":  "Five fault classes have only one recording each, so unseen-session evaluation is not currently possible."
+                   },
+                   {
+                       "model_id":  "audio_mimii_v1",
+                       "evaluation_reference":  "evaluation/audio_baseline_results.json",
+                       "source_digest_sha256":  "89bdfac93d579b79f8f0618f810779422848505109ee45589b278824849a7060",
+                       "metric_label":  "Held-out Section 02 ROC AUC",
+                       "metric_value":  0.5213000000000001,
+                       "known_limitation":  "held-out section evaluation is not an official DCASE score"
+                   },
+                   {
+                       "model_id":  "audio_mimii_ast_v2",
+                       "evaluation_reference":  "evaluation/audio_v2_results.json",
+                       "source_digest_sha256":  "3ecbc0d3526b53613d0ccfe648e120ca81993a4b000374a113ae9cf96f8463b4",
+                       "metric_label":  "Validation selection score",
+                       "metric_value":  0.51576829250293865,
+                       "known_limitation":  "Section 02 is post-baseline and not a pristine Audio V2 holdout"
+                   },
+                   {
+                       "model_id":  "vision_visa_pcb1_v1",
+                       "evaluation_reference":  "evaluation/vision_baseline_results.json",
+                       "source_digest_sha256":  "0e1bf9251f6a40ea8ef3575a53d8527f913b82bff2d31b21029bed4061da32a2",
+                       "metric_label":  "Held-out image ROC AUC",
+                       "metric_value":  0.8964,
+                       "known_limitation":  "ImageNet features can shift under new cameras, lighting, views, or PCB variants"
+                   },
+                   {
+                       "model_id":  "thermal_cora_v1",
+                       "evaluation_reference":  "evaluation/thermal_baseline_results.json",
+                       "source_digest_sha256":  "e83a5ebe728dfc045260845c535ea711c629186022fe7d21c40300faadad9a03",
+                       "metric_label":  "Held-out F60 macro F1",
+                       "metric_value":  0.12911806558707228,
+                       "known_limitation":  "No unseen-machine, unseen-camera, unseen-installation, or plant generalization is proven"
+                   }
+               ]
+}

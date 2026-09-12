@@ -43,7 +43,7 @@ export function CapabilityChart({ models }: { models: ModelCapability[] }) {
           ))}
         </ul>
       </div>
-      <p className="chart-card__note">Counts are derived only from GET /capabilities/models.</p>
+      <p className="chart-card__note">Counts are derived only from the authoritative model capability registry.</p>
     </section>
   );
 }

@@ -1,0 +1,1378 @@
+{
+  "schema_version": "1",
+  "exported_at": "2026-09-12T14:42:15.636573Z",
+  "environment": "PUBLIC DEMO",
+  "read_only": true,
+  "provenance": "Demonstration records generated through SentinelAI simulation/replay workflow and exported from authoritative read endpoints.",
+  "machines": [
+    {
+      "id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+      "name": "Baseline Profile Simulator",
+      "asset_type": "rotating_electromechanical_system"
+    },
+    {
+      "id": "517c76eb-5e62-4548-8228-a139e44803bc",
+      "name": "Deployment Edge Demo",
+      "asset_type": "rotating_electromechanical_system"
+    },
+    {
+      "id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+      "name": "Elevated Signal Simulator",
+      "asset_type": "rotating_electromechanical_system"
+    },
+    {
+      "id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+      "name": "Safety Boundary Simulator",
+      "asset_type": "rotating_electromechanical_system"
+    }
+  ],
+  "capabilities": {
+    "models": [
+      {
+        "model_id": "timeseries_utk_v1",
+        "modality": "timeseries",
+        "status": "validated_baseline",
+        "runtime_default": true,
+        "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+        "evaluation_reference": "evaluation/timeseries_baseline_results.json",
+        "confidence_semantics": "raw_selected_class_predict_proba"
+      },
+      {
+        "model_id": "audio_mimii_v1",
+        "modality": "audio",
+        "status": "experimental",
+        "runtime_default": true,
+        "validated_scope": "MIMII DG bearing held-out Section 02 domain-shift evaluation",
+        "evaluation_reference": "evaluation/audio_baseline_results.json",
+        "confidence_semantics": "bounded_empirical_anomaly_evidence_from_normal_calibration"
+      },
+      {
+        "model_id": "audio_mimii_ast_v2",
+        "modality": "audio",
+        "status": "rejected_experiment",
+        "runtime_default": false,
+        "validated_scope": "MIMII DG frozen-AST Section 01 promotion experiment",
+        "evaluation_reference": "evaluation/audio_v2_results.json",
+        "confidence_semantics": "bounded_empirical_anomaly_evidence_from_normal_calibration"
+      },
+      {
+        "model_id": "vision_visa_pcb1_v1",
+        "modality": "vision",
+        "status": "experimental",
+        "runtime_default": true,
+        "validated_scope": "VisA PCB1 official one-class split evaluation",
+        "evaluation_reference": "evaluation/vision_baseline_results.json",
+        "confidence_semantics": "bounded_empirical_visual_anomaly_evidence_from_normal_calibration"
+      },
+      {
+        "model_id": "thermal_cora_v1",
+        "modality": "thermal",
+        "status": "experimental",
+        "runtime_default": true,
+        "validated_scope": "CORA same-test-bench operating-speed-held-out evaluation",
+        "evaluation_reference": "evaluation/thermal_baseline_results.json",
+        "confidence_semantics": "raw_selected_class_predict_proba"
+      }
+    ]
+  },
+  "reports_by_machine": {
+    "d5a2ae48-f8cf-406d-9911-1fff51ae209b": [
+      {
+        "report_id": "3243d67d-1fdf-4b24-b558-2a644215269a",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "generated_at": "2026-09-12T14:41:58.057151Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      },
+      {
+        "report_id": "3bd69f57-7200-4e0d-a916-5e09085a5b6b",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "generated_at": "2026-09-12T11:03:54.745579Z",
+        "generation_status": "deterministic",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "This value is the classifier's selected-class score and is not a validated machine failure probability."
+      },
+      {
+        "report_id": "266a4842-6f18-4075-8f1e-36a85219b73a",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "generated_at": "2026-09-12T11:03:36.984206Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      }
+    ],
+    "517c76eb-5e62-4548-8228-a139e44803bc": [
+      {
+        "report_id": "43980b2f-52b0-43fe-ae57-ea6f8575b144",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "generated_at": "2026-08-29T18:20:30.572388Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      },
+      {
+        "report_id": "58d66bf3-c51e-4cd3-b8f5-15a3800db0e8",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "generated_at": "2026-08-29T18:17:56.118433Z",
+        "generation_status": "deterministic",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "This value is the classifier's selected-class score and is not a validated machine failure probability."
+      },
+      {
+        "report_id": "120aa6ca-40f9-4885-a742-5645ee255f87",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "generated_at": "2026-08-29T18:17:20.891411Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      }
+    ],
+    "86199182-84d8-4fc3-a22b-5bbef4941590": [
+      {
+        "report_id": "138ed247-cbf2-4859-8235-274f2786ec7b",
+        "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+        "generated_at": "2026-09-12T11:03:56.762194Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      },
+      {
+        "report_id": "74b8b333-8cd5-4d9f-b8de-116df25f4acc",
+        "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+        "generated_at": "2026-09-12T11:03:55.809163Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      }
+    ],
+    "24fdc117-1e36-417d-96ae-bf4fa369b6e4": [
+      {
+        "report_id": "ace28f57-9ff8-4c96-a2fa-d08b5836313c",
+        "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+        "generated_at": "2026-09-12T11:03:58.573285Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      },
+      {
+        "report_id": "511b248d-5d67-4548-af13-985f93e5a579",
+        "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+        "generated_at": "2026-09-12T11:03:57.677349Z",
+        "generation_status": "fallback",
+        "condition": "abnormal",
+        "analysis_status": "provisional",
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request."
+      }
+    ]
+  },
+  "reports": {
+    "3243d67d-1fdf-4b24-b558-2a644215269a": {
+      "report_id": "3243d67d-1fdf-4b24-b558-2a644215269a",
+      "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+      "generated_at": "2026-09-12T14:41:58.057151Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "summarize_analysis",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "3bd69f57-7200-4e0d-a916-5e09085a5b6b": {
+      "report_id": "3bd69f57-7200-4e0d-a916-5e09085a5b6b",
+      "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+      "generated_at": "2026-09-12T11:03:54.745579Z",
+      "generation_status": "deterministic",
+      "fallback_reason": null,
+      "request_disposition": "answered",
+      "request_intent": "explain_confidence",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "This value is the classifier's selected-class score and is not a validated machine failure probability.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": null
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": []
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "266a4842-6f18-4075-8f1e-36a85219b73a": {
+      "report_id": "266a4842-6f18-4075-8f1e-36a85219b73a",
+      "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+      "generated_at": "2026-09-12T11:03:36.984206Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "summarize_analysis",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "43980b2f-52b0-43fe-ae57-ea6f8575b144": {
+      "report_id": "43980b2f-52b0-43fe-ae57-ea6f8575b144",
+      "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+      "generated_at": "2026-08-29T18:20:30.572388Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "summarize_analysis",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "58d66bf3-c51e-4cd3-b8f5-15a3800db0e8": {
+      "report_id": "58d66bf3-c51e-4cd3-b8f5-15a3800db0e8",
+      "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+      "generated_at": "2026-08-29T18:17:56.118433Z",
+      "generation_status": "deterministic",
+      "fallback_reason": null,
+      "request_disposition": "answered",
+      "request_intent": "explain_confidence",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "This value is the classifier's selected-class score and is not a validated machine failure probability.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": null
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": []
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "120aa6ca-40f9-4885-a742-5645ee255f87": {
+      "report_id": "120aa6ca-40f9-4885-a742-5645ee255f87",
+      "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+      "generated_at": "2026-08-29T18:17:20.891411Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "summarize_analysis",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "138ed247-cbf2-4859-8235-274f2786ec7b": {
+      "report_id": "138ed247-cbf2-4859-8235-274f2786ec7b",
+      "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+      "generated_at": "2026-09-12T11:03:56.762194Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "summarize_analysis",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "74b8b333-8cd5-4d9f-b8de-116df25f4acc": {
+      "report_id": "74b8b333-8cd5-4d9f-b8de-116df25f4acc",
+      "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+      "generated_at": "2026-09-12T11:03:55.809163Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "explain_finding",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "eccentric_rotor",
+            "condition": "abnormal",
+            "confidence": 1.0,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "ace28f57-9ff8-4c96-a2fa-d08b5836313c": {
+      "report_id": "ace28f57-9ff8-4c96-a2fa-d08b5836313c",
+      "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+      "generated_at": "2026-09-12T11:03:58.573285Z",
+      "generation_status": "fallback",
+      "fallback_reason": "generation_unavailable",
+      "request_disposition": "partially_answered",
+      "request_intent": "explain_finding",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "eccentric_rotor",
+            "condition": "abnormal",
+            "confidence": 1.0,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    },
+    "511b248d-5d67-4548-af13-985f93e5a579": {
+      "report_id": "511b248d-5d67-4548-af13-985f93e5a579",
+      "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+      "generated_at": "2026-09-12T11:03:57.677349Z",
+      "generation_status": "fallback",
+      "fallback_reason": "unsupported_request",
+      "request_disposition": "not_supported_by_current_evidence",
+      "request_intent": "explain_finding",
+      "analysis": {
+        "condition": "abnormal",
+        "status": "provisional",
+        "findings": [
+          {
+            "finding_id": "F1",
+            "modality": "timeseries",
+            "code": "coupling_fault",
+            "condition": "abnormal",
+            "confidence": 0.998473257224657,
+            "confidence_kind": "raw"
+          }
+        ],
+        "health_score": null,
+        "risk_level": null,
+        "claim_support": {
+          "condition_available": true,
+          "failure_probability_available": false,
+          "fault_severity_available": false,
+          "health_score_available": false,
+          "operational_risk_available": false
+        }
+      },
+      "narrative": {
+        "executive_summary": "The analysis results are available below. A grounded maintenance explanation could not be generated for this request.",
+        "finding_explanations": [],
+        "inspection_considerations": [],
+        "knowledge_gap_statement": "No additional maintenance interpretation is provided."
+      },
+      "limitations": {
+        "analysis_limitations": [
+          "uncalibrated_confidence",
+          "fault_severity_unavailable",
+          "risk_context_unavailable",
+          "single_modality_evidence"
+        ],
+        "model_scope_limitations": [
+          "timeseries: validated_baseline; validated scope: UTK blocked chronological within-recording multiclass evaluation"
+        ],
+        "unavailable_claims": [
+          "Machine failure probability is unavailable.",
+          "Fault severity is unavailable.",
+          "Health score is unavailable.",
+          "Operational risk is unavailable."
+        ],
+        "generation_limitations": [
+          "Grounded maintenance narrative was not generated."
+        ]
+      },
+      "citations": [],
+      "producing_models": [
+        {
+          "model_id": "timeseries_utk_v1",
+          "modality": "timeseries",
+          "status": "validated_baseline",
+          "runtime_default_at_execution": true,
+          "validated_scope": "UTK blocked chronological within-recording multiclass evaluation",
+          "confidence_semantics": "raw_selected_class_predict_proba"
+        }
+      ],
+      "safety_validation": {
+        "valid": true,
+        "violation_codes": [],
+        "validator_policy_version": "maintenance_safety_v1",
+        "repair_attempted": false
+      },
+      "disclaimer": "This report provides evidence interpretation and source-backed inspection context. It does not authorize equipment shutdown, continued operation, isolation, repair, or return to service."
+    }
+  },
+  "evidence": {
+    "3243d67d-1fdf-4b24-b558-2a644215269a": {
+      "report": {
+        "report_id": "3243d67d-1fdf-4b24-b558-2a644215269a",
+        "report_digest_sha256": "516c03902b5496cc50a7f56b73a8c6fbe9017a90fd7802b3233274b6519a9b31",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T14:41:58.057151Z",
+        "evidence_package_id": "evp1_a331a46e1c4b19264f0cf7e2eb22a37f",
+        "evidence_package_digest_sha256": "a331a46e1c4b19264f0cf7e2eb22a37fab3c4e2864805ee592cf1057d9e3b159",
+        "retrieval_bundle_digest_sha256": "25e77c2a9e831688f3a5ce95721f68942cbb6eb287925e64178da8438a56c187"
+      },
+      "analysis": {
+        "analysis_id": "fc2f1400-975c-4a3f-8257-6b9abebe09a2",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T14:41:57.512997Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_a331a46e1c4b19264f0cf7e2eb22a37f",
+        "package_digest_sha256": "a331a46e1c4b19264f0cf7e2eb22a37fab3c4e2864805ee592cf1057d9e3b159",
+        "schema_version": "1",
+        "created_at": "2026-09-12T14:41:57.512997Z",
+        "analysis_id": "fc2f1400-975c-4a3f-8257-6b9abebe09a2"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "25e77c2a9e831688f3a5ce95721f68942cbb6eb287925e64178da8438a56c187",
+        "evidence_package_id": "evp1_a331a46e1c4b19264f0cf7e2eb22a37f",
+        "evidence_package_digest_sha256": "a331a46e1c4b19264f0cf7e2eb22a37fab3c4e2864805ee592cf1057d9e3b159",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "3bd69f57-7200-4e0d-a916-5e09085a5b6b": {
+      "report": {
+        "report_id": "3bd69f57-7200-4e0d-a916-5e09085a5b6b",
+        "report_digest_sha256": "1737836a50cada654413bef6c4e7f373a0eb27bab97cb70f41096ab071555716",
+        "schema_version": "1",
+        "generation_status": "deterministic",
+        "generated_at": "2026-09-12T11:03:54.745579Z",
+        "evidence_package_id": "evp1_ba6b536c3087bafb69f284ebd16cc861",
+        "evidence_package_digest_sha256": "ba6b536c3087bafb69f284ebd16cc8614c93f1b8ac5fcaf8476e84baf801babe",
+        "retrieval_bundle_digest_sha256": "5a963eeab19071d0932c648a201fae1bcfd5fc8964f51ed85b87e0405b6325f8"
+      },
+      "analysis": {
+        "analysis_id": "0450b549-3759-44d2-aaaa-2ab7e86103a1",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:54.617153Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_ba6b536c3087bafb69f284ebd16cc861",
+        "package_digest_sha256": "ba6b536c3087bafb69f284ebd16cc8614c93f1b8ac5fcaf8476e84baf801babe",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:54.617153Z",
+        "analysis_id": "0450b549-3759-44d2-aaaa-2ab7e86103a1"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "5a963eeab19071d0932c648a201fae1bcfd5fc8964f51ed85b87e0405b6325f8",
+        "evidence_package_id": "evp1_ba6b536c3087bafb69f284ebd16cc861",
+        "evidence_package_digest_sha256": "ba6b536c3087bafb69f284ebd16cc8614c93f1b8ac5fcaf8476e84baf801babe",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "266a4842-6f18-4075-8f1e-36a85219b73a": {
+      "report": {
+        "report_id": "266a4842-6f18-4075-8f1e-36a85219b73a",
+        "report_digest_sha256": "6390c67d5ce532ef03bf5a25fe4de5fedb064159476f13dad1c5f69dc9521093",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T11:03:36.984206Z",
+        "evidence_package_id": "evp1_a69c5ee1006906968c443d5e094bbdfc",
+        "evidence_package_digest_sha256": "a69c5ee1006906968c443d5e094bbdfcff0db81de0a9a2da8c9d18e009a73f1b",
+        "retrieval_bundle_digest_sha256": "9af720f56a70e179b2e2397d7195c3000260822d7f1961969ffcd5b7396b1c1a"
+      },
+      "analysis": {
+        "analysis_id": "04b142e8-6b51-4d4e-9f3a-9697c4aa1410",
+        "machine_id": "d5a2ae48-f8cf-406d-9911-1fff51ae209b",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:23.216507Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_a69c5ee1006906968c443d5e094bbdfc",
+        "package_digest_sha256": "a69c5ee1006906968c443d5e094bbdfcff0db81de0a9a2da8c9d18e009a73f1b",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:23.216507Z",
+        "analysis_id": "04b142e8-6b51-4d4e-9f3a-9697c4aa1410"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "9af720f56a70e179b2e2397d7195c3000260822d7f1961969ffcd5b7396b1c1a",
+        "evidence_package_id": "evp1_a69c5ee1006906968c443d5e094bbdfc",
+        "evidence_package_digest_sha256": "a69c5ee1006906968c443d5e094bbdfcff0db81de0a9a2da8c9d18e009a73f1b",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "43980b2f-52b0-43fe-ae57-ea6f8575b144": {
+      "report": {
+        "report_id": "43980b2f-52b0-43fe-ae57-ea6f8575b144",
+        "report_digest_sha256": "6f455ba1082066de9bd324a491abb80656748916a3a09b7e7dc329df93e0c235",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-08-29T18:20:30.572388Z",
+        "evidence_package_id": "evp1_4c5653a6eaf0ceed15cc97b6775a865b",
+        "evidence_package_digest_sha256": "4c5653a6eaf0ceed15cc97b6775a865b65f66da2db584736d0f0c778d63453d4",
+        "retrieval_bundle_digest_sha256": "b6f193e17ad9e8aa2cff0358a921011208de3bebb4058390986100fd9e3b10e2"
+      },
+      "analysis": {
+        "analysis_id": "eb0390cd-5330-48ac-81ff-86ca21909cff",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-08-29T18:20:16.506704Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_4c5653a6eaf0ceed15cc97b6775a865b",
+        "package_digest_sha256": "4c5653a6eaf0ceed15cc97b6775a865b65f66da2db584736d0f0c778d63453d4",
+        "schema_version": "1",
+        "created_at": "2026-08-29T18:20:16.506704Z",
+        "analysis_id": "eb0390cd-5330-48ac-81ff-86ca21909cff"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "b6f193e17ad9e8aa2cff0358a921011208de3bebb4058390986100fd9e3b10e2",
+        "evidence_package_id": "evp1_4c5653a6eaf0ceed15cc97b6775a865b",
+        "evidence_package_digest_sha256": "4c5653a6eaf0ceed15cc97b6775a865b65f66da2db584736d0f0c778d63453d4",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "58d66bf3-c51e-4cd3-b8f5-15a3800db0e8": {
+      "report": {
+        "report_id": "58d66bf3-c51e-4cd3-b8f5-15a3800db0e8",
+        "report_digest_sha256": "b4be63c0810ff05ac4c7df038814de8b98830aa9a2b4ff254659dd7377b253d1",
+        "schema_version": "1",
+        "generation_status": "deterministic",
+        "generated_at": "2026-08-29T18:17:56.118433Z",
+        "evidence_package_id": "evp1_a1a5dfac7e8a7c767adb59a30e17a4d4",
+        "evidence_package_digest_sha256": "a1a5dfac7e8a7c767adb59a30e17a4d4b9c8c308ef46ae589193ee464908a5f9",
+        "retrieval_bundle_digest_sha256": "904c5f787bce4876eb27060643a7ece9dc6676612fc5a5c7e033a8960ec6fc19"
+      },
+      "analysis": {
+        "analysis_id": "6b14ffb7-e3ba-470f-afe7-8fa7f45cc89d",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-08-29T18:17:55.486438Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_a1a5dfac7e8a7c767adb59a30e17a4d4",
+        "package_digest_sha256": "a1a5dfac7e8a7c767adb59a30e17a4d4b9c8c308ef46ae589193ee464908a5f9",
+        "schema_version": "1",
+        "created_at": "2026-08-29T18:17:55.486438Z",
+        "analysis_id": "6b14ffb7-e3ba-470f-afe7-8fa7f45cc89d"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "904c5f787bce4876eb27060643a7ece9dc6676612fc5a5c7e033a8960ec6fc19",
+        "evidence_package_id": "evp1_a1a5dfac7e8a7c767adb59a30e17a4d4",
+        "evidence_package_digest_sha256": "a1a5dfac7e8a7c767adb59a30e17a4d4b9c8c308ef46ae589193ee464908a5f9",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "120aa6ca-40f9-4885-a742-5645ee255f87": {
+      "report": {
+        "report_id": "120aa6ca-40f9-4885-a742-5645ee255f87",
+        "report_digest_sha256": "48fde825532f9456199a5933ddfaee782f6068cafe7993c02d94eee1db016b67",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-08-29T18:17:20.891411Z",
+        "evidence_package_id": "evp1_ddc0d163dcf0cf6fb61798f63de36b51",
+        "evidence_package_digest_sha256": "ddc0d163dcf0cf6fb61798f63de36b514e05aedbc879d29f933ec7628842c01d",
+        "retrieval_bundle_digest_sha256": "2831e4ffdd58611dc9a5cb4b08efc7526ddf0ea87c9d20f3348abc0ebc21a2ae"
+      },
+      "analysis": {
+        "analysis_id": "d2115a6e-f037-4cd3-914e-58ef2a445616",
+        "machine_id": "517c76eb-5e62-4548-8228-a139e44803bc",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-08-29T18:16:42.580707Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_ddc0d163dcf0cf6fb61798f63de36b51",
+        "package_digest_sha256": "ddc0d163dcf0cf6fb61798f63de36b514e05aedbc879d29f933ec7628842c01d",
+        "schema_version": "1",
+        "created_at": "2026-08-29T18:16:42.580707Z",
+        "analysis_id": "d2115a6e-f037-4cd3-914e-58ef2a445616"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "2831e4ffdd58611dc9a5cb4b08efc7526ddf0ea87c9d20f3348abc0ebc21a2ae",
+        "evidence_package_id": "evp1_ddc0d163dcf0cf6fb61798f63de36b51",
+        "evidence_package_digest_sha256": "ddc0d163dcf0cf6fb61798f63de36b514e05aedbc879d29f933ec7628842c01d",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "138ed247-cbf2-4859-8235-274f2786ec7b": {
+      "report": {
+        "report_id": "138ed247-cbf2-4859-8235-274f2786ec7b",
+        "report_digest_sha256": "1111470a2cfcb81369383b32c7fc04f5ae6f13ad34c51e76e91ec660f82c85c7",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T11:03:56.762194Z",
+        "evidence_package_id": "evp1_06b5422759d5f32ac2682362a019ab7c",
+        "evidence_package_digest_sha256": "06b5422759d5f32ac2682362a019ab7c47fd7187772f044c7bafa792a11deae6",
+        "retrieval_bundle_digest_sha256": "f530344be50edfe9672f976a2e48e9eec33066d6f3d21e494f2eef95a9e7215d"
+      },
+      "analysis": {
+        "analysis_id": "b69eae94-faed-4d75-ad6e-c9c1326b392f",
+        "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:56.642774Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_06b5422759d5f32ac2682362a019ab7c",
+        "package_digest_sha256": "06b5422759d5f32ac2682362a019ab7c47fd7187772f044c7bafa792a11deae6",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:56.642774Z",
+        "analysis_id": "b69eae94-faed-4d75-ad6e-c9c1326b392f"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "f530344be50edfe9672f976a2e48e9eec33066d6f3d21e494f2eef95a9e7215d",
+        "evidence_package_id": "evp1_06b5422759d5f32ac2682362a019ab7c",
+        "evidence_package_digest_sha256": "06b5422759d5f32ac2682362a019ab7c47fd7187772f044c7bafa792a11deae6",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "74b8b333-8cd5-4d9f-b8de-116df25f4acc": {
+      "report": {
+        "report_id": "74b8b333-8cd5-4d9f-b8de-116df25f4acc",
+        "report_digest_sha256": "09d1ab63a64270a067b80fcc27a7fbc46c7596efbb3ee7d7c21af3de5344be94",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T11:03:55.809163Z",
+        "evidence_package_id": "evp1_53da1047943555941f095fad5e707664",
+        "evidence_package_digest_sha256": "53da1047943555941f095fad5e707664b9828ddf9e097b607c032677cf53c6c2",
+        "retrieval_bundle_digest_sha256": "dbc962d4f091e82a5b9ec4ab5eae2c2084d65e72081005c5fd7ac3593fe036d7"
+      },
+      "analysis": {
+        "analysis_id": "82372c40-b896-44dc-be3f-83e4718efcfd",
+        "machine_id": "86199182-84d8-4fc3-a22b-5bbef4941590",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:55.683474Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_53da1047943555941f095fad5e707664",
+        "package_digest_sha256": "53da1047943555941f095fad5e707664b9828ddf9e097b607c032677cf53c6c2",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:55.683474Z",
+        "analysis_id": "82372c40-b896-44dc-be3f-83e4718efcfd"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "dbc962d4f091e82a5b9ec4ab5eae2c2084d65e72081005c5fd7ac3593fe036d7",
+        "evidence_package_id": "evp1_53da1047943555941f095fad5e707664",
+        "evidence_package_digest_sha256": "53da1047943555941f095fad5e707664b9828ddf9e097b607c032677cf53c6c2",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "f71bc35e1eeb4e8f751692635081b2a2528137641a0a5cd8db7bc14b0b0357df",
+          "size_bytes": 3487,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "ace28f57-9ff8-4c96-a2fa-d08b5836313c": {
+      "report": {
+        "report_id": "ace28f57-9ff8-4c96-a2fa-d08b5836313c",
+        "report_digest_sha256": "e411dfa57e3f94a3cf14735b48ce5ccee2e2c8475c92ad1fc2f5b6999d045ce0",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T11:03:58.573285Z",
+        "evidence_package_id": "evp1_ac5fe815ae5e1bd2f6e8337f49c49739",
+        "evidence_package_digest_sha256": "ac5fe815ae5e1bd2f6e8337f49c49739f1e2bd4ef0a58cc802ddc3c1438b9299",
+        "retrieval_bundle_digest_sha256": "1c0acecb4ad554aa0126e4b66af863163a645423a272f5cbc1889710114f2ee1"
+      },
+      "analysis": {
+        "analysis_id": "e19ab152-f2ea-49db-8a31-6a668985626f",
+        "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:58.453299Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_ac5fe815ae5e1bd2f6e8337f49c49739",
+        "package_digest_sha256": "ac5fe815ae5e1bd2f6e8337f49c49739f1e2bd4ef0a58cc802ddc3c1438b9299",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:58.453299Z",
+        "analysis_id": "e19ab152-f2ea-49db-8a31-6a668985626f"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "1c0acecb4ad554aa0126e4b66af863163a645423a272f5cbc1889710114f2ee1",
+        "evidence_package_id": "evp1_ac5fe815ae5e1bd2f6e8337f49c49739",
+        "evidence_package_digest_sha256": "ac5fe815ae5e1bd2f6e8337f49c49739f1e2bd4ef0a58cc802ddc3c1438b9299",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "f71bc35e1eeb4e8f751692635081b2a2528137641a0a5cd8db7bc14b0b0357df",
+          "size_bytes": 3487,
+          "content_type": "application/json"
+        }
+      ]
+    },
+    "511b248d-5d67-4548-af13-985f93e5a579": {
+      "report": {
+        "report_id": "511b248d-5d67-4548-af13-985f93e5a579",
+        "report_digest_sha256": "bbccb421dbb55879c4518c830d44fbeab93506f8cf2ef962530d274ff35972fb",
+        "schema_version": "1",
+        "generation_status": "fallback",
+        "generated_at": "2026-09-12T11:03:57.677349Z",
+        "evidence_package_id": "evp1_fbe5a53b7af040c4741d115b94357d30",
+        "evidence_package_digest_sha256": "fbe5a53b7af040c4741d115b94357d3005c877141f1a4f16873231d58c699dc8",
+        "retrieval_bundle_digest_sha256": "6680c90752df1ac6a62b3a276ba202a6be430210c7aa1cf4be9cafe67b57fb4b"
+      },
+      "analysis": {
+        "analysis_id": "e499e63c-5852-4bbb-bd68-234cf67a4edb",
+        "machine_id": "24fdc117-1e36-417d-96ae-bf4fa369b6e4",
+        "condition": "abnormal",
+        "status": "provisional",
+        "created_at": "2026-09-12T11:03:57.553777Z"
+      },
+      "evidence_package": {
+        "package_id": "evp1_fbe5a53b7af040c4741d115b94357d30",
+        "package_digest_sha256": "fbe5a53b7af040c4741d115b94357d3005c877141f1a4f16873231d58c699dc8",
+        "schema_version": "1",
+        "created_at": "2026-09-12T11:03:57.553777Z",
+        "analysis_id": "e499e63c-5852-4bbb-bd68-234cf67a4edb"
+      },
+      "retrieval_bundle": {
+        "retrieval_bundle_digest_sha256": "6680c90752df1ac6a62b3a276ba202a6be430210c7aa1cf4be9cafe67b57fb4b",
+        "evidence_package_id": "evp1_fbe5a53b7af040c4741d115b94357d30",
+        "evidence_package_digest_sha256": "fbe5a53b7af040c4741d115b94357d3005c877141f1a4f16873231d58c699dc8",
+        "corpus_digest_sha256": "e39bf83004c75b71fd09e0221941823d989b1661668a37cade519431a14c59fb",
+        "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+        "embedding_model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "schema_version": "1"
+      },
+      "sources": [
+        {
+          "modality": "timeseries",
+          "source_kind": "structured",
+          "sha256": "3ce0aef59df98a0db3361c217dca26d77c5101ce3bc3a542c276e859b63f674e",
+          "size_bytes": 3521,
+          "content_type": "application/json"
+        }
+      ]
+    }
+  }
+}

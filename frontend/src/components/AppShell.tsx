@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { PUBLIC_DEMO } from "../api/demo";
 import { getBackendHealth } from "../api/health";
 import { useAsyncResource } from "../hooks/useAsyncResource";
 import { BrandMark } from "./BrandMark";
@@ -24,9 +25,9 @@ const navigation = [
 
 const pageTitles: Record<string, string> = {
   "/": "Intelligence overview",
-  "/machines": "Fleet intelligence",
-  "/reports": "Historical intelligence",
-  "/models": "Model governance",
+  "/machines": "Stored machines",
+  "/reports": "Maintenance history",
+  "/models": "Model capabilities",
 };
 
 export function AppShell() {
@@ -106,8 +107,8 @@ export function AppShell() {
         </div>
 
         <footer className="sidebar__footer">
-          <span>Internal / demo</span>
-          <small>Authorization required before public use</small>
+          <span>{PUBLIC_DEMO ? "Public demo / read only" : "Local / controlled"}</span>
+          <small>{PUBLIC_DEMO ? "Stored demonstration records" : "Authorization required before public use"}</small>
         </footer>
       </aside>
 
@@ -128,18 +129,27 @@ export function AppShell() {
           </div>
           <div className="topbar__sequence" aria-hidden="true"><span>Signals</span><i /><span>Intelligence</span><i /><span>Evidence</span><i /><span>Decision support</span></div>
           <div
-            className={`connection-state ${health.loading ? "is-loading" : health.data?.status === "ok" ? "is-online" : "is-offline"}`}
+            className={`connection-state ${PUBLIC_DEMO ? "is-demo" : health.loading ? "is-loading" : health.data?.status === "ok" ? "is-online" : "is-offline"}`}
             title={health.error?.message}
           >
             <span aria-hidden="true" />
             <Activity aria-hidden="true" />
-            {health.loading
+            {PUBLIC_DEMO
+              ? "Public demo · read only"
+              : health.loading
               ? "Checking backend"
               : health.data?.status === "ok"
                 ? "Backend connected"
                 : "Backend unavailable"}
           </div>
         </header>
+
+        {PUBLIC_DEMO && (
+          <aside className="public-demo-banner" aria-label="Public demonstration environment">
+            <strong>PUBLIC DEMO · READ ONLY</strong>
+            <span>Demonstration records generated through SentinelAI's simulation/replay workflow.</span>
+          </aside>
+        )}
 
         <main className="workspace__content">
           <Outlet />

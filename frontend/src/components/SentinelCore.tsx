@@ -49,7 +49,7 @@ export function SentinelCore() {
   return (
     <section className="sentinel-core" aria-labelledby="core-title">
       <div className="sentinel-core__heading"><span>Sentinel Core / V3</span><strong id="core-title">Orbital independent intelligence</strong></div>
-      <div className="sentinel-core__coordinates" aria-hidden="true"><span>N 37.4</span><span>FIELD / 01</span><span>DEPTH 03</span></div>
+      <div className="sentinel-core__coordinates" aria-hidden="true"><span>REPRESENTATIONAL</span><span>INDEPENDENT MODULES</span><span>NO TELEMETRY</span></div>
       <div className="sentinel-core__viewport" aria-hidden="true">
         {webgl ? <SceneBoundary fallback={fallback}><Suspense fallback={<StaticCore loading />}><Scene motionEnabled={!reduced} compact={compact} /></Suspense></SceneBoundary> : fallback}
       </div>
