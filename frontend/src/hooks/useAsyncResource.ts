@@ -7,35 +7,57 @@ export interface AsyncResource<T> {
   reload: () => void;
 }
 
+interface ResourceState<T> {
+  loader: (signal: AbortSignal) => Promise<T>;
+  revision: number;
+  data: T | null;
+  error: Error | null;
+  loading: boolean;
+}
+
 export function useAsyncResource<T>(
   loader: (signal: AbortSignal) => Promise<T>,
 ): AsyncResource<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-  const [loading, setLoading] = useState(true);
   const [revision, setRevision] = useState(0);
+  const [state, setState] = useState<ResourceState<T>>({
+    loader,
+    revision,
+    data: null,
+    error: null,
+    loading: true,
+  });
 
   const reload = useCallback(() => setRevision((value) => value + 1), []);
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
+    setState({ loader, revision, data: null, error: null, loading: true });
     void loader(controller.signal)
       .then((value) => {
-        if (!controller.signal.aborted) setData(value);
+        if (!controller.signal.aborted) {
+          setState({ loader, revision, data: value, error: null, loading: false });
+        }
       })
       .catch((reason: unknown) => {
         if (!controller.signal.aborted) {
-          setError(reason instanceof Error ? reason : new Error("Request failed"));
+          setState({
+            loader,
+            revision,
+            data: null,
+            error: reason instanceof Error ? reason : new Error("Request failed"),
+            loading: false,
+          });
         }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
   }, [loader, revision]);
 
-  return { data, error, loading, reload };
+  const isCurrent = state.loader === loader && state.revision === revision;
+  return {
+    data: isCurrent ? state.data : null,
+    error: isCurrent ? state.error : null,
+    loading: !isCurrent || state.loading,
+    reload,
+  };
 }
 

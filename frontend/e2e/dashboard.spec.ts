@@ -188,6 +188,28 @@ test("public demo tells the complete stored-evidence story without invented valu
   await expectHealthyDemo(monitor);
 });
 
+test("public demo history selection preserves report and evidence navigation without API calls", async ({ page }) => {
+  const monitor = monitorPage(page);
+  const first = machines[0]!;
+  const second = machines[1]!;
+  const firstReports = snapshot.reports_by_machine[first.id]!;
+  const secondReports = snapshot.reports_by_machine[second.id]!;
+  const secondReportId = (secondReports[0] as { report_id: string }).report_id;
+
+  await page.goto("/reports");
+  await expect(page.getByText("PUBLIC DEMO · READ ONLY", { exact: true })).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(firstReports.length);
+  await page.getByLabel("Machine history").selectOption(second.id);
+  await expect(page.locator(".report-index__row")).toHaveCount(secondReports.length);
+  await expect(page.locator(".report-index__row").first()).toHaveAttribute("href", `/reports/${secondReportId}`);
+  await page.locator(".report-index__row").first().click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${secondReportId}$`));
+  await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
+  await page.getByRole("link", { name: "Model Capabilities" }).click();
+  await expect(page.locator(".capability-card")).toHaveCount(snapshot.capabilities.models.length);
+  await expectHealthyDemo(monitor);
+});
+
 test("1280 and tablet layouts preserve meaning, reduced motion, and WebGL fallback", async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   const monitor = monitorPage(page);

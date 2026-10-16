@@ -43,11 +43,12 @@ export function EmptyState({
   );
 }
 
-export function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => void }) {
-  const message = error instanceof ApiError
+export function ErrorState({ error, onRetry, message: messageOverride, label: labelOverride }: { error: Error; onRetry?: () => void; message?: string; label?: string }) {
+  const defaultMessage = error instanceof ApiError
     ? error.message
     : "Verified data could not be loaded. Retry the request.";
-  const normalized = message.toLowerCase();
+  const message = messageOverride ?? defaultMessage;
+  const normalized = defaultMessage.toLowerCase();
   const kind = normalized.includes("not found")
     ? "not-found"
     : normalized.includes("conflict") || normalized.includes("processing")
@@ -57,7 +58,7 @@ export function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => v
         : normalized.includes("integrity")
           ? "integrity"
           : "connection";
-  const label = kind === "not-found" ? "Record not found" : kind === "conflict" ? "Request conflict" : kind === "integrity" ? "Integrity check" : kind === "unavailable" ? "Capability unavailable" : "Connection issue";
+  const label = labelOverride ?? (kind === "not-found" ? "Record not found" : kind === "conflict" ? "Request conflict" : kind === "integrity" ? "Integrity check" : kind === "unavailable" ? "Capability unavailable" : "Connection issue");
   return (
     <div className={`state-panel state-panel--error state-panel--${kind}`} role="alert">
       <div className="state-glyph" aria-hidden="true"><i />{kind === "integrity" ? <ShieldX /> : <AlertTriangle />}</div>
