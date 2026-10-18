@@ -270,16 +270,20 @@ This topology is **local / controlled deployment ready**, not public-Internet re
 
 ## Testing, CI, and operations
 
-The final local verification baseline is **682 passing backend tests** with **2 optional
-real-encoder skips**, **16 frontend unit tests**, and **5 Playwright browser scenarios**,
-plus Ruff, formatting, dependency, Alembic, Compose, Docker build, and browser checks.
+The current verification baseline is **682 passing backend tests** with **2 optional
+real-encoder skips**, **52 frontend unit tests**, **22 normal-dashboard Playwright scenarios**,
+and **6 public-demo Playwright scenarios**, plus Ruff, formatting, dependency, Alembic,
+Compose, Docker build, and browser checks.
 No test-count claim implies complete coverage.
 
 The [GitHub Actions workflow](.github/workflows/ci.yml) is configured for pull requests
 and pushes to `main`. It validates Python 3.12 with PostgreSQL 16, migrations, Ruff,
 pytest, Node 24 lint/type/tests/build, Playwright Chrome, both Docker image builds, and
 deployment Compose configuration. It does not call a model provider, use paid
-credentials, publish images, or deploy to a cloud. Remote CI success is not claimed here.
+credentials, publish images, or deploy to a cloud. The
+[exact-head CI run](https://github.com/harshjs19/SentinelAI/actions/runs/39130248115)
+passed for commit `d2eda855bc3dcf0408e96c32a0c8ef44ce43e55a`; CI success does not
+verify a public Vercel deployment.
 
 Operational boundaries are deliberately small:
 

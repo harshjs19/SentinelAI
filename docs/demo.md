@@ -117,8 +117,9 @@ generation, and the exact producing-model context remains attached.”
 
 **1:10–1:30 — Proof and limits.** Open Model Capabilities. “The UI distinguishes one
 validated baseline, three experimental lines, and one rejected experiment. The stack has
-682 passing backend tests with two optional real-encoder skips, 16 frontend tests, five
-browser scenarios, and a validated local container deployment. It is not claimed to be
+682 passing backend tests with two optional real-encoder skips, 52 frontend unit tests,
+22 normal-dashboard and six public-demo browser scenarios, and a validated local
+container deployment. It is not claimed to be
 public-Internet ready.”
 
 ## Useful alternate demonstrations
