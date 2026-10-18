@@ -660,7 +660,7 @@ test("late successful creation stays with Machine A without redirecting Machine 
   await expect(page.getByRole("alert")).toContainText("complete");
   await expect(page).toHaveURL(new RegExp(`/machines/${machineB.id}$`));
   await page.getByRole("link", { name: "Return to originating machine" }).click();
-  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.locator(".signature-hero__actions").getByRole("button", { name: "Run Analysis", exact: true }).click();
   await expect(page.getByRole("button", { name: "Open created report" })).toBeVisible();
   await page.getByRole("button", { name: "Open created report" }).click();
   await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
@@ -701,7 +701,7 @@ test("late malformed creation retains the exact request after Machine A to B to 
   await expect(page.getByRole("alert")).toContainText("unresolved");
   await expect(page.getByRole("button", { name: "Create verified report" })).toHaveCount(0);
   await page.getByRole("link", { name: "Return to originating machine" }).click();
-  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.locator(".signature-hero__actions").getByRole("button", { name: "Run Analysis", exact: true }).click();
   await page.getByRole("button", { name: "Retry exact request" }).click();
   await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
   expect(requests).toHaveLength(2);
