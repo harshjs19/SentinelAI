@@ -9,6 +9,12 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-controlled_deployment-2496ED?logo=docker&logoColor=white)
 
+[Live Demo](https://sentinelai-zeta.vercel.app) · [Source Code](https://github.com/harshjs19/SentinelAI)
+
+Explore the read-only public dashboard using sanitized records generated through
+SentinelAI's real simulation/replay workflow. Full ML inference runs separately in the
+local/controlled deployment.
+
 SentinelAI is an industrial machine-intelligence platform that connects independent
 Time-Series, Audio, Vision, and Thermal analysis modules to deterministic decision
 semantics, provenance-aware evidence, retrieval-bounded maintenance interpretation, and
