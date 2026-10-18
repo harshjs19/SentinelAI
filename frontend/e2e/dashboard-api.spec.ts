@@ -111,6 +111,30 @@ test("normal API-backed dashboard keeps its read and analysis workflows", async 
   expect(problems).toEqual([]);
 });
 
+test("normal API Evidence Chain remains readable on a narrow phone and desktop", async ({ page }, testInfo) => {
+  await mockApi(page);
+  const problems = captureConsole(page);
+  for (const width of [320, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`/reports/${report.report_id}`);
+    const chain = page.locator(".evidence-chain");
+    const nodes = chain.locator(".evidence-node");
+    await expect(nodes).toHaveCount(5);
+    await expect(chain.getByRole("heading", { name: "Evidence Chain" })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+    if (width === 320) {
+      await expect.poll(() => nodes.locator("strong").first().evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThan(120);
+      await expect(chain.locator(".evidence-chain__architecture")).toHaveCSS("display", "none");
+    }
+    for (let index = 0; index < 5; index += 1) {
+      await nodes.nth(index).scrollIntoViewIfNeeded();
+      await expect(nodes.nth(index)).toHaveCSS("opacity", "1");
+    }
+    await chain.screenshot({ path: testInfo.outputPath(`normal-evidence-chain-${width}.png`), animations: "disabled" });
+  }
+  expect(problems).toEqual([]);
+});
+
 test("normal API errors remain calm and omit backend details", async ({ page }) => {
   await page.route("http://127.0.0.1:4173/api/**", async (route) => {
     await route.fulfill({

@@ -4,6 +4,13 @@ import { readFileSync } from "node:fs";
 interface DemoSnapshotData {
   machines: { id: string; name: string; asset_type: string }[];
   reports_by_machine: Record<string, unknown[]>;
+  evidence: Record<string, {
+    sources: { sha256: string }[];
+    analysis: { analysis_id: string };
+    evidence_package: { package_digest_sha256: string };
+    retrieval_bundle: { corpus_digest_sha256: string };
+    report: { report_digest_sha256: string };
+  }>;
   reports: Record<string, {
     report_id: string;
     machine_id: string;
@@ -99,6 +106,71 @@ async function expectHealthyDemo(monitor: ReturnType<typeof monitorPage>) {
   expect(monitor.errorResponses).toEqual([]);
   expect(monitor.apiRequests).toEqual([]);
 }
+
+test("Evidence Chain keeps all five stored stages readable from 320px through desktop", async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+  const monitor = monitorPage(page);
+  const expectedLabels = ["Source", "Analysis", "Evidence Package", "Retrieval Bundle", "Maintenance Report"];
+  const storedEvidence = snapshot.evidence[latestReport.report_id]!;
+
+  for (const width of [320, 375, 390, 430, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(`/reports/${latestReport.report_id}`);
+    await revealEvidenceNodes(page);
+    const chain = page.locator(".evidence-chain");
+    const nodes = chain.locator(".evidence-node");
+    expect(await nodes.locator(":scope > small").allTextContents()).toEqual(expectedLabels);
+    await expectNoHorizontalOverflow(page);
+    const layout = await chain.evaluate((element) => {
+      const cards = Array.from(element.querySelectorAll<HTMLElement>(".evidence-node"));
+      const heading = element.querySelector(".section-heading")!.getBoundingClientRect();
+      const track = element.querySelector(".evidence-chain__track")!.getBoundingClientRect();
+      return {
+        headingClear: heading.bottom <= track.top + 1,
+        cardOverlap: cards.slice(0, -1).some((card, index) => card.getBoundingClientRect().bottom > cards[index + 1]!.getBoundingClientRect().top + 1),
+        clippedLabels: cards.some((card) => {
+          const label = card.querySelector<HTMLElement>(":scope > small")!;
+          return label.scrollWidth > label.clientWidth + 1 || label.scrollHeight > label.clientHeight + 1;
+        }),
+        minValueWidth: Math.min(...cards.map((card) => card.querySelector("strong")!.getBoundingClientRect().width)),
+        architectureVisible: getComputedStyle(element.querySelector(".evidence-chain__architecture")!).display !== "none",
+      };
+    });
+    expect(layout.headingClear).toBe(true);
+    if (width <= 900) expect(layout.cardOverlap).toBe(false);
+    expect(layout.clippedLabels).toBe(false);
+    if (width <= 900) {
+      expect(layout.minValueWidth).toBeGreaterThan(120);
+      expect(layout.architectureVisible).toBe(false);
+    }
+    await chain.screenshot({ path: testInfo.outputPath(`evidence-chain-${width}.png`), animations: "disabled" });
+  }
+
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto(`/reports/${latestReport.report_id}`);
+  const nodes = page.locator(".evidence-chain .evidence-node");
+  const fullDetails = [
+    storedEvidence.sources[0]!.sha256,
+    storedEvidence.analysis.analysis_id,
+    storedEvidence.evidence_package.package_digest_sha256,
+    storedEvidence.retrieval_bundle.corpus_digest_sha256,
+    storedEvidence.report.report_digest_sha256,
+  ];
+  for (let index = 0; index < fullDetails.length; index += 1) {
+    await expect(nodes.nth(index).locator(".evidence-node__detail code")).toHaveText(fullDetails[index]!);
+  }
+  await nodes.first().focus();
+  await page.keyboard.press("Tab");
+  await expect(nodes.nth(1)).toBeFocused();
+  await expect(nodes.nth(1).locator(".evidence-node__detail")).toHaveCSS("opacity", "1");
+  await expect(page.getByText(latestReport.producing_models[0]!.model_id).first()).toBeVisible();
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(`/reports/${latestReport.report_id}`);
+  await expect(page.locator(".evidence-chain__signal--vertical")).toHaveCSS("display", "none");
+  await revealEvidenceNodes(page);
+  await expectHealthyDemo(monitor);
+});
 
 test("public demo tells the complete stored-evidence story without invented values", async ({ page }, testInfo) => {
   test.setTimeout(90_000);

@@ -1187,5 +1187,26 @@ code { font-size: .8125rem; line-height: 1.55; }
   .recent-analysis div { grid-template-columns: 1fr; gap: 3px; }
   .claim-boundary-list { margin-left: 0; }
   .model-evaluation { margin-left: 24px; }
-  .evidence-node__timestamp { min-width: 0; margin-left: 0; text-align: left; }
+  .evidence-chain { padding: 22px 16px; }
+}
+
+@media (max-width: 900px) {
+  .evidence-chain > .section-heading { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 6px 12px; justify-content: start; }
+  .evidence-chain > .section-heading > span:last-child { grid-column: 1 / -1; line-height: 1.5; }
+  .evidence-chain__architecture { display: none; }
+  .evidence-chain__track { gap: 12px; margin-top: 18px; }
+  .evidence-chain__flow { left: 58px; }
+  .evidence-chain__signal--vertical { left: 55px; }
+  .evidence-node { display: grid; grid-template-columns: 24px 42px minmax(0,1fr); gap: 5px 10px; align-items: start; justify-content: start; min-height: 0; padding: 15px 10px; text-align: left; }
+  .evidence-node__stage { grid-column: 1; grid-row: 1; align-self: center; }
+  .evidence-node__icon { grid-column: 2; grid-row: 1; width: 42px; height: 42px; }
+  .evidence-node > small { grid-column: 3; grid-row: 1; align-self: center; width: auto; font-size: .72rem; line-height: 1.4; }
+  .evidence-node > strong, .evidence-node > code, .evidence-node__timestamp, .evidence-node__detail { grid-column: 2 / -1; min-width: 0; }
+  .evidence-node > strong { font-size: .88rem; line-height: 1.4; }
+  .evidence-node > code { overflow-wrap: anywhere; font-size: .76rem; line-height: 1.45; }
+  .evidence-node__timestamp { display: grid; gap: 3px; margin: 6px 0 0; text-align: left; }
+  .evidence-node__timestamp small { font-size: .68rem; }
+  .evidence-node__timestamp time { font-size: .76rem; }
+  .evidence-node__detail code { overflow-wrap: anywhere; word-break: break-all; font-size: .72rem; line-height: 1.5; }
+  .evidence-node:hover .evidence-node__detail, .evidence-node:focus-visible .evidence-node__detail { max-height: 12rem; }
 }
