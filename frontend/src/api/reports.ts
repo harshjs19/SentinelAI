@@ -4,6 +4,10 @@ import {
   getDemoReport,
   listDemoReports,
   PUBLIC_DEMO,
+  array,
+  validateEvidence,
+  validateReport,
+  validateSummary,
 } from "./demo";
 import type {
   MaintenanceReport,
@@ -39,7 +43,7 @@ export async function createMaintenanceReport(
         intent: submission.intent,
         question: submission.question?.trim() || null,
       }),
-    });
+    }, (payload) => validateReport(payload, "report"));
   }
 
   const form = new FormData();
@@ -50,7 +54,7 @@ export async function createMaintenanceReport(
     method: "POST",
     headers,
     body: form,
-  });
+  }, (payload) => validateReport(payload, "report"));
 }
 
 export function getMaintenanceReport(
@@ -61,6 +65,7 @@ export function getMaintenanceReport(
   return apiRequest<MaintenanceReport>(
     `/maintenance-reports/${encodeURIComponent(reportId)}`,
     { signal },
+    (payload) => validateReport(payload, "report"),
   );
 }
 
@@ -72,6 +77,7 @@ export function getMaintenanceReportEvidence(
   return apiRequest<MaintenanceReportEvidence>(
     `/maintenance-reports/${encodeURIComponent(reportId)}/evidence`,
     { signal },
+    (payload) => validateEvidence(payload, "evidence"),
   );
 }
 
@@ -86,6 +92,7 @@ export function listMachineReports(
   return apiRequest<MaintenanceReportSummary[]>(
     `/machines/${encodeURIComponent(machineId)}/maintenance-reports?${params}`,
     { signal },
+    (payload) => array(payload, "reports").forEach((value, index) => validateSummary(value, `reports[${index}]`)),
   );
 }
 

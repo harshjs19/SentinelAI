@@ -25,19 +25,19 @@ interface DemoSnapshot {
 
 type JsonRecord = Record<string, unknown>;
 
-function record(value: unknown, path: string): JsonRecord {
+export function record(value: unknown, path: string): JsonRecord {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new Error(`${path} must be an object`);
   }
   return value as JsonRecord;
 }
 
-function array(value: unknown, path: string): unknown[] {
+export function array(value: unknown, path: string): unknown[] {
   if (!Array.isArray(value)) throw new Error(`${path} must be an array`);
   return value;
 }
 
-function text(value: unknown, path: string): string {
+export function text(value: unknown, path: string): string {
   if (typeof value !== "string" || value.trim().length === 0) {
     throw new Error(`${path} must be a non-empty string`);
   }
@@ -66,14 +66,14 @@ function stringArray(value: unknown, path: string): string[] {
   return array(value, path).map((item, index) => text(item, `${path}[${index}]`));
 }
 
-function validateMachine(value: unknown, path: string): void {
+export function validateMachine(value: unknown, path: string): void {
   const item = record(value, path);
   text(item.id, `${path}.id`);
   text(item.name, `${path}.name`);
   text(item.asset_type, `${path}.asset_type`);
 }
 
-function validateCapability(value: unknown, path: string): void {
+export function validateCapability(value: unknown, path: string): void {
   const item = record(value, path);
   text(item.model_id, `${path}.model_id`);
   text(item.modality, `${path}.modality`);
@@ -84,7 +84,7 @@ function validateCapability(value: unknown, path: string): void {
   text(item.confidence_semantics, `${path}.confidence_semantics`);
 }
 
-function validateSummary(value: unknown, path: string): void {
+export function validateSummary(value: unknown, path: string): void {
   const item = record(value, path);
   text(item.report_id, `${path}.report_id`);
   text(item.machine_id, `${path}.machine_id`);
@@ -102,12 +102,13 @@ function validateNarrativeItem(value: unknown, path: string): void {
   stringArray(item.citation_ids, `${path}.citation_ids`);
 }
 
-function validateReport(value: unknown, path: string): void {
+export function validateReport(value: unknown, path: string): void {
   const item = record(value, path);
   text(item.report_id, `${path}.report_id`);
   text(item.machine_id, `${path}.machine_id`);
   timestamp(item.generated_at, `${path}.generated_at`);
   text(item.generation_status, `${path}.generation_status`);
+  if (item.fallback_reason !== null) text(item.fallback_reason, `${path}.fallback_reason`);
   text(item.request_disposition, `${path}.request_disposition`);
   text(item.request_intent, `${path}.request_intent`);
   text(item.disclaimer, `${path}.disclaimer`);
@@ -115,8 +116,9 @@ function validateReport(value: unknown, path: string): void {
   const analysis = record(item.analysis, `${path}.analysis`);
   text(analysis.condition, `${path}.analysis.condition`);
   text(analysis.status, `${path}.analysis.status`);
+  if (analysis.health_score !== null) number(analysis.health_score, `${path}.analysis.health_score`);
+  if (analysis.risk_level !== null) text(analysis.risk_level, `${path}.analysis.risk_level`);
   const findings = array(analysis.findings, `${path}.analysis.findings`);
-  if (findings.length === 0) throw new Error(`${path}.analysis.findings cannot be empty`);
   findings.forEach((value, index) => {
     const finding = record(value, `${path}.analysis.findings[${index}]`);
     text(finding.finding_id, `${path}.analysis.findings[${index}].finding_id`);
@@ -175,7 +177,6 @@ function validateReport(value: unknown, path: string): void {
   });
 
   const models = array(item.producing_models, `${path}.producing_models`);
-  if (models.length === 0) throw new Error(`${path}.producing_models cannot be empty`);
   models.forEach((value, index) => {
     const model = record(value, `${path}.producing_models[${index}]`);
     ["model_id", "modality", "status", "validated_scope", "confidence_semantics"].forEach(
@@ -194,7 +195,7 @@ function validateReport(value: unknown, path: string): void {
   stringArray(safety.violation_codes, `${path}.safety_validation.violation_codes`);
 }
 
-function validateEvidence(value: unknown, path: string): void {
+export function validateEvidence(value: unknown, path: string): void {
   const item = record(value, path);
   const report = record(item.report, `${path}.report`);
   [
@@ -232,7 +233,6 @@ function validateEvidence(value: unknown, path: string): void {
   ].forEach((key) => text(retrieval[key], `${path}.retrieval_bundle.${key}`));
 
   const sources = array(item.sources, `${path}.sources`);
-  if (sources.length === 0) throw new Error(`${path}.sources cannot be empty`);
   sources.forEach((value, index) => {
     const source = record(value, `${path}.sources[${index}]`);
     ["modality", "source_kind", "sha256", "content_type"].forEach((key) =>

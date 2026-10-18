@@ -7,8 +7,8 @@ export class ApiError extends Error {
   readonly status: number;
   readonly transportUncertain: boolean;
 
-  constructor(message: string, status = 0, transportUncertain = false) {
-    super(message);
+  constructor(message: string, status = 0, transportUncertain = false, cause?: unknown) {
+    super(message, { cause });
     this.name = "ApiError";
     this.status = status;
     this.transportUncertain = transportUncertain;
@@ -34,7 +34,7 @@ function statusMessage(status: number, detail: string | null): string {
   return detail ?? "The requested data could not be loaded.";
 }
 
-export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T> {
+export async function apiRequest<T>(path: string, init?: RequestInit, validate?: (payload: unknown) => void): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
@@ -64,9 +64,11 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
   }
 
   try {
-    return (await response.json()) as T;
-  } catch {
-    throw new ApiError("SentinelAI returned an invalid response. Retry the request.");
+    const payload: unknown = await response.json();
+    validate?.(payload);
+    return payload as T;
+  } catch (cause) {
+    throw new ApiError("SentinelAI returned an invalid response. Retry the request.", response.status, false, cause);
   }
 }
 

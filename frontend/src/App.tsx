@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "./components/AppShell";
+import { MaintenanceSubmissionProvider } from "./components/MaintenanceSubmissionProvider";
 import { LoadingState } from "./components/States";
 
 const OverviewPage = lazy(() => import("./pages/OverviewPage").then((module) => ({ default: module.OverviewPage })));
@@ -15,19 +16,21 @@ const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then((module) => 
 export function App() {
   return (
     <BrowserRouter>
-      <Suspense fallback={<LoadingState label="Opening SentinelAI workspace…" />}>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route index element={<OverviewPage />} />
-            <Route path="machines" element={<MachinesPage />} />
-            <Route path="machines/:machineId" element={<MachineDetailPage />} />
-            <Route path="reports" element={<ReportsPage />} />
-            <Route path="reports/:reportId" element={<ReportDetailPage />} />
-            <Route path="models" element={<ModelsPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </Suspense>
+      <MaintenanceSubmissionProvider>
+        <Suspense fallback={<LoadingState label="Opening SentinelAI workspace…" />}>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route index element={<OverviewPage />} />
+              <Route path="machines" element={<MachinesPage />} />
+              <Route path="machines/:machineId" element={<MachineDetailPage />} />
+              <Route path="reports" element={<ReportsPage />} />
+              <Route path="reports/:reportId" element={<ReportDetailPage />} />
+              <Route path="models" element={<ModelsPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </MaintenanceSubmissionProvider>
     </BrowserRouter>
   );
 }

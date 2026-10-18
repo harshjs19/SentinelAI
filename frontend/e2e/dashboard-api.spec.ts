@@ -263,3 +263,462 @@ test("history ignores late superseded responses and keeps report navigation boun
   await expect(page.getByText("Machine B stored report")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
 });
+
+test("history does not offer a terminal empty page when exactly ten reports exist", async ({ page }) => {
+  const summaries = Array.from({ length: 10 }, (_, index) => ({
+    ...summary,
+    report_id: `report-${index + 1}`,
+    executive_summary: `Stored report ${index + 1}`,
+  }));
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { detail: "Not found" };
+    let status = 404;
+    if (path === "/health") { payload = { status: "ok" }; status = 200; }
+    if (path === "/machines") { payload = [machine]; status = 200; }
+    if (path === `/machines/${machine.id}/maintenance-reports`) {
+      const offset = Number(url.searchParams.get("offset"));
+      const limit = Number(url.searchParams.get("limit"));
+      payload = summaries.slice(offset, offset + limit);
+      status = 200;
+    }
+    await route.fulfill({ status, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+
+  await page.goto("/reports");
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+  await expect(page.getByRole("heading", { name: "No reports yet" })).toHaveCount(0);
+});
+
+test("history stops on its second page when exactly twenty reports exist", async ({ page }) => {
+  const summaries = Array.from({ length: 20 }, (_, index) => ({ ...summary, report_id: `report-${index + 1}` }));
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { status: "ok" };
+    if (path === "/machines") payload = [machine];
+    if (path.endsWith("/maintenance-reports")) {
+      const offset = Number(url.searchParams.get("offset"));
+      payload = summaries.slice(offset, offset + Number(url.searchParams.get("limit")));
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/reports");
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByText("Page 2")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Previous" })).toBeEnabled();
+});
+
+test("quick Next and Previous navigation keeps the visible report window aligned", async ({ page }) => {
+  const summaries = Array.from({ length: 12 }, (_, index) => ({ ...summary, report_id: `report-${index + 1}`, executive_summary: `Stored report ${index + 1}` }));
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { status: "ok" };
+    if (path === "/machines") payload = [machine];
+    if (path.endsWith("/maintenance-reports")) {
+      const offset = Number(url.searchParams.get("offset"));
+      payload = summaries.slice(offset, offset + Number(url.searchParams.get("limit")));
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/reports");
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.locator(".report-index__row")).toHaveCount(2);
+  await expect(page.locator(".report-index__row").first()).toContainText("Stored report 11");
+  await page.getByRole("button", { name: "Previous" }).click();
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await expect(page.locator(".report-index__row").first()).toContainText("Stored report 1");
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.locator(".report-index__row").first()).toContainText("Stored report 11");
+});
+
+test("history advances to a real last page and resets for a machine with fewer reports", async ({ page }) => {
+  const machineB = { id: "33333333-3333-4333-8333-333333333333", name: "Compressor South", asset_type: "rotating_equipment" };
+  const summaries = Array.from({ length: 21 }, (_, index) => ({ ...summary, report_id: `report-${index + 1}`, executive_summary: `Stored report ${index + 1}` }));
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { status: "ok" };
+    if (path === "/machines") payload = [machine, machineB];
+    if (path.endsWith("/maintenance-reports")) {
+      const records = path.includes(machineB.id) ? [
+        { ...summary, machine_id: machineB.id, executive_summary: "Machine B only report" },
+      ] : summaries;
+      payload = records.slice(Number(url.searchParams.get("offset")), Number(url.searchParams.get("offset")) + Number(url.searchParams.get("limit")));
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/reports");
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByText("Page 2")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByText("Page 3")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+  await page.getByLabel("Machine history").selectOption(machineB.id);
+  await expect(page.getByText("Page 1")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toContainText("Machine B only report");
+  await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+});
+
+test("history retains Previous when reports disappear from a later page", async ({ page }) => {
+  let count = 11;
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { status: "ok" };
+    if (path === "/machines") payload = [machine];
+    if (path.endsWith("/maintenance-reports")) {
+      const records = Array.from({ length: count }, (_, index) => ({ ...summary, report_id: `report-${index + 1}` }));
+      const offset = Number(url.searchParams.get("offset"));
+      payload = records.slice(offset, offset + Number(url.searchParams.get("limit")));
+    }
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/reports");
+  await expect(page.getByRole("button", { name: "Next" })).toBeEnabled();
+  count = 9;
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByRole("heading", { name: "No reports on this page" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No reports yet" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Previous" }).click();
+  await expect(page.locator(".report-index__row")).toHaveCount(9);
+});
+
+test("history retries a failed later page without changing machine or offset", async ({ page }) => {
+  const summaries = Array.from({ length: 11 }, (_, index) => ({ ...summary, report_id: `report-${index + 1}` }));
+  let failLaterPage = true;
+  const requestedOffsets: number[] = [];
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    let payload: unknown = { status: "ok" };
+    let status = 200;
+    if (path === "/machines") payload = [machine];
+    if (path === `/machines/${machine.id}/maintenance-reports`) {
+      const offset = Number(url.searchParams.get("offset"));
+      requestedOffsets.push(offset);
+      if (offset === 10 && failLaterPage) {
+        status = 503;
+        payload = { detail: "Database unavailable at C:\\private\\database" };
+      } else payload = summaries.slice(offset, offset + Number(url.searchParams.get("limit")));
+    }
+    await route.fulfill({ status, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/reports");
+  await expect(page.locator(".report-index__row")).toHaveCount(10);
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(0);
+  await expect(page.getByText("Page 2")).toHaveCount(0);
+  failLaterPage = false;
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.getByText("Page 2")).toBeVisible();
+  await expect(page.locator(".report-index__row")).toHaveCount(1);
+  expect(requestedOffsets).toEqual([0, 10, 10]);
+});
+
+for (const reportCount of [6, 12]) test(`Machine Detail bounds an exact ${reportCount}-report history`, async ({ page }) => {
+  await mockApi(page);
+  const summaries = Array.from({ length: reportCount }, (_, index) => ({ ...summary, report_id: index === 0 ? report.report_id : `report-${index + 1}` }));
+  await page.route(`**/api/machines/${machine.id}/maintenance-reports?**`, async (route) => {
+    const url = new URL(route.request().url());
+    const offset = Number(url.searchParams.get("offset"));
+    const payload = summaries.slice(offset, offset + Number(url.searchParams.get("limit")));
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto(`/machines/${machine.id}`);
+  await expect(page.locator(".history-list--timeline > a")).toHaveCount(6);
+  if (reportCount === 12) {
+    await page.getByRole("button", { name: "Next" }).click();
+    await expect(page.getByText("Page 2")).toBeVisible();
+    await expect(page.locator(".history-list--timeline > a")).toHaveCount(6);
+  }
+  await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+});
+
+test("Machine Detail resets its page when the route switches to a machine with no history", async ({ page }) => {
+  await mockApi(page);
+  const machineB = { id: "33333333-3333-4333-8333-333333333333", name: "Compressor South", asset_type: "rotating_equipment" };
+  const summaries = Array.from({ length: 7 }, (_, index) => ({ ...summary, report_id: index === 0 ? report.report_id : `report-${index + 1}` }));
+  await page.route("**/api/**", async (route) => {
+    const url = new URL(route.request().url());
+    const path = url.pathname.replace(/^\/api/, "");
+    if (path === `/machines/${machineB.id}`) {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(machineB) });
+      return;
+    }
+    if (path === `/machines/${machine.id}/maintenance-reports` || path === `/machines/${machineB.id}/maintenance-reports`) {
+      const offset = Number(url.searchParams.get("offset"));
+      const records = path.includes(machineB.id) ? [] : summaries;
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(records.slice(offset, offset + Number(url.searchParams.get("limit")))) });
+      return;
+    }
+    await route.fallback();
+  });
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByText("Page 2")).toBeVisible();
+  await page.evaluate((id) => {
+    window.history.pushState({}, "", `/machines/${id}`);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, machineB.id);
+  await expect(page.getByRole("heading", { name: machineB.name })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "No reports yet" })).toBeVisible();
+  await expect(page.getByText("Page 2")).toHaveCount(0);
+});
+
+test("malformed successful machine response shows a safe retry state instead of a blank page", async ({ page }) => {
+  let malformed = true;
+  const problems = captureConsole(page);
+  await page.route("**/api/**", async (route) => {
+    const path = new URL(route.request().url()).pathname.replace(/^\/api/, "");
+    const payload = path === "/machines" ? (malformed ? { machines: [machine] } : [machine]) : { status: "ok" };
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
+  });
+  await page.goto("/machines");
+  await expect(page.getByRole("alert")).toContainText("SentinelAI returned an invalid response. Retry the request.");
+  await expect(page.getByRole("heading", { name: "Stored Machines" })).toBeVisible();
+  expect(problems.filter((item) => item.startsWith("pageerror:"))).toEqual([]);
+  malformed = false;
+  await page.getByRole("button", { name: "Retry" }).click();
+  await expect(page.getByRole("heading", { name: machine.name })).toBeVisible();
+});
+
+test("Run Analysis keeps keyboard focus inside the dialog and restores its trigger", async ({ page }) => {
+  await mockApi(page);
+  await page.goto(`/machines/${machine.id}`);
+  const trigger = page.getByRole("button", { name: "Run Analysis" });
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  const dialog = page.getByRole("dialog", { name: "Run Analysis" });
+  await expect(dialog).toBeVisible();
+  await expect(page.locator("#root")).toHaveJSProperty("inert", true);
+  await expect(page.getByRole("button", { name: "Close", exact: true })).toBeFocused();
+  await page.locator("#root a").first().evaluate((element) => (element as HTMLElement).focus());
+  await expect(page.getByRole("button", { name: "Close", exact: true })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(dialog.getByRole("button", { name: "Create verified report" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Close", exact: true })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await expect(page.locator("#root")).toHaveJSProperty("inert", false);
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
+  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test("Run Analysis restores a sensible focus target when submission navigates away", async ({ page }) => {
+  await mockApi(page);
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.getByRole("textbox", { name: /Time-series samples/ }).fill(JSON.stringify([
+    { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+    { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+  ]));
+  await page.getByRole("button", { name: "Create verified report" }).click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
+  await expect(page.locator('.nav-link[aria-current="page"]')).toBeFocused();
+});
+
+test("malformed successful creation replays the exact request before navigating", async ({ page }) => {
+  await mockApi(page);
+  const problems = captureConsole(page);
+  const requests: { key: string | null; payload: string | null }[] = [];
+  await page.route(`**/api/machines/${machine.id}/maintenance-reports/timeseries`, async (route) => {
+    const request = route.request();
+    requests.push({ key: request.headers()["idempotency-key"] ?? null, payload: request.postData() });
+    await route.fulfill({
+      status: requests.length === 1 ? 201 : 200,
+      contentType: "application/json",
+      body: JSON.stringify(requests.length === 1 ? { report_id: report.report_id } : report),
+    });
+  });
+
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  const samples = page.getByRole("textbox", { name: /Time-series samples/ });
+  await samples.fill(JSON.stringify([
+    { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+    { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+  ]));
+  await page.getByRole("button", { name: "Create verified report" }).click();
+  await expect(page.getByRole("alert")).toContainText("outcome could not be confirmed");
+  await expect(samples).toBeDisabled();
+  await page.getByRole("button", { name: "Retry exact request" }).click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
+  await expect(page.getByRole("heading", { name: "Evidence Package" })).toBeVisible();
+  await expect(page.locator('.nav-link[aria-current="page"]')).toBeFocused();
+  expect(requests).toHaveLength(2);
+  expect(requests[0]?.key).toBeTruthy();
+  expect(requests[1]).toEqual(requests[0]);
+  expect(problems).toEqual([]);
+});
+
+test("valid insufficient-evidence history and creation responses render without an uncertain-write warning", async ({ page }) => {
+  await mockApi(page);
+  const problems = captureConsole(page);
+  const insufficientReport = {
+    ...report,
+    analysis: { ...report.analysis, condition: "indeterminate", status: "insufficient_evidence", findings: [], health_score: null, risk_level: null,
+      claim_support: { condition_available: false, failure_probability_available: false, fault_severity_available: false,
+        health_score_available: false, operational_risk_available: false } },
+    producing_models: [],
+    narrative: { ...report.narrative, finding_explanations: [], inspection_considerations: [] },
+  };
+  const insufficientEvidence = { ...evidence, sources: [] };
+  await page.route(`**/api/maintenance-reports/${report.report_id}`, (route) => route.fulfill({
+    status: 200, contentType: "application/json", body: JSON.stringify(insufficientReport),
+  }));
+  await page.route(`**/api/maintenance-reports/${report.report_id}/evidence`, (route) => route.fulfill({
+    status: 200, contentType: "application/json", body: JSON.stringify(insufficientEvidence),
+  }));
+  await page.route(`**/api/machines/${machine.id}/maintenance-reports/timeseries`, (route) => route.fulfill({
+    status: 201, contentType: "application/json", body: JSON.stringify(insufficientReport),
+  }));
+
+  await page.goto(`/reports/${report.report_id}`);
+  await expect(page.getByRole("heading", { name: "Evidence Chain" })).toBeVisible();
+  await expect(page.getByText("Source metadata was not returned")).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.getByRole("textbox", { name: /Time-series samples/ }).fill(JSON.stringify([
+    { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+    { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+  ]));
+  await page.getByRole("button", { name: "Create verified report" }).click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
+  await expect(page.getByText("outcome could not be confirmed")).toHaveCount(0);
+  expect(problems).toEqual([]);
+});
+
+test("late successful creation stays with Machine A without redirecting Machine B", async ({ page }) => {
+  await mockApi(page);
+  const problems = captureConsole(page);
+  const machineB = { id: "33333333-3333-4333-8333-333333333333", name: "Compressor South", asset_type: "rotating_equipment" };
+  await page.route(`**/api/machines/${machineB.id}**`, (route) => route.fulfill({
+    status: 200, contentType: "application/json",
+    body: JSON.stringify(new URL(route.request().url()).pathname.endsWith(machineB.id) ? machineB : []),
+  }));
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => { release = resolve; });
+  await page.route(`**/api/machines/${machine.id}/maintenance-reports/timeseries`, async (route) => {
+    await held;
+    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(report) });
+  });
+
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.getByRole("textbox", { name: /Time-series samples/ }).fill(JSON.stringify([
+    { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+    { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+  ]));
+  const request = page.waitForRequest((item) => item.method() === "POST" && item.url().includes("/maintenance-reports/timeseries"));
+  await page.getByRole("button", { name: "Create verified report" }).click();
+  await request;
+  await page.evaluate((id) => { window.history.pushState({}, "", `/machines/${id}`); window.dispatchEvent(new PopStateEvent("popstate")); }, machineB.id);
+  await expect(page.getByRole("heading", { name: machineB.name })).toBeVisible();
+  release();
+  await page.getByRole("button", { name: "Run Analysis" }).first().click();
+  await expect(page.getByRole("alert")).toContainText("complete");
+  await expect(page).toHaveURL(new RegExp(`/machines/${machineB.id}$`));
+  await page.getByRole("link", { name: "Return to originating machine" }).click();
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await expect(page.getByRole("button", { name: "Open created report" })).toBeVisible();
+  await page.getByRole("button", { name: "Open created report" }).click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
+  expect(problems).toEqual([]);
+});
+
+test("late malformed creation retains the exact request after Machine A to B to A navigation", async ({ page }) => {
+  await mockApi(page);
+  const problems = captureConsole(page);
+  const machineB = { id: "33333333-3333-4333-8333-333333333333", name: "Compressor South", asset_type: "rotating_equipment" };
+  await page.route(`**/api/machines/${machineB.id}**`, (route) => route.fulfill({
+    status: 200, contentType: "application/json",
+    body: JSON.stringify(new URL(route.request().url()).pathname.endsWith(machineB.id) ? machineB : []),
+  }));
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => { release = resolve; });
+  const requests: { key: string | null; payload: string | null }[] = [];
+  await page.route(`**/api/machines/${machine.id}/maintenance-reports/timeseries`, async (route) => {
+    requests.push({ key: route.request().headers()["idempotency-key"] ?? null, payload: route.request().postData() });
+    if (requests.length === 1) await held;
+    await route.fulfill({ status: requests.length === 1 ? 201 : 200, contentType: "application/json",
+      body: JSON.stringify(requests.length === 1 ? { report_id: report.report_id } : report) });
+  });
+
+  await page.goto(`/machines/${machine.id}`);
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.getByRole("textbox", { name: /Time-series samples/ }).fill(JSON.stringify([
+    { ch1_bias: 1, ch1_derivedPk: 2, ch1_direct: 3, ch1_directRMS: 4, ch1_velocityPk: 5, ch1_velocityRMS: 6 },
+    { ch1_bias: 7, ch1_derivedPk: 8, ch1_direct: 9, ch1_directRMS: 10, ch1_velocityPk: 11, ch1_velocityRMS: 12 },
+  ]));
+  const request = page.waitForRequest((item) => item.method() === "POST" && item.url().includes("/maintenance-reports/timeseries"));
+  await page.getByRole("button", { name: "Create verified report" }).click();
+  await request;
+  await page.evaluate((id) => { window.history.pushState({}, "", `/machines/${id}`); window.dispatchEvent(new PopStateEvent("popstate")); }, machineB.id);
+  await expect(page.getByRole("heading", { name: machineB.name })).toBeVisible();
+  release();
+  await page.getByRole("button", { name: "Run Analysis" }).first().click();
+  await expect(page.getByRole("alert")).toContainText("unresolved");
+  await expect(page.getByRole("button", { name: "Create verified report" })).toHaveCount(0);
+  await page.getByRole("link", { name: "Return to originating machine" }).click();
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await page.getByRole("button", { name: "Retry exact request" }).click();
+  await expect(page).toHaveURL(new RegExp(`/reports/${report.report_id}$`));
+  expect(requests).toHaveLength(2);
+  expect(requests[0]?.key).toBeTruthy();
+  expect(requests[1]).toEqual(requests[0]);
+  expect(problems).toEqual([]);
+});
+
+test("affected history and dialog surfaces remain usable across review widths", async ({ page }, testInfo) => {
+  await mockApi(page);
+  let malformedMachines = false;
+  await page.route("**/api/machines", async (route) => {
+    if (!malformedMachines) return route.fallback();
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ machines: [machine] }) });
+  });
+  const problems = captureConsole(page);
+  for (const width of [1440, 1024, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/reports");
+    await expect(page.locator(".report-index__row")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Next" })).toBeDisabled();
+    await expectNoHorizontalOverflow(page);
+    await page.screenshot({ path: testInfo.outputPath(`history-${width}.png`), fullPage: true, animations: "disabled" });
+
+    await page.goto(`/machines/${machine.id}`);
+    await page.getByRole("button", { name: "Run Analysis" }).click();
+    await page.getByRole("button", { name: "Audio" }).click();
+    await expect(page.getByText("WAV audio file only; no live audio acquisition.")).toBeVisible();
+    await expect.poll(() => page.getByRole("dialog").evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= window.innerWidth + 1;
+    })).toBe(true);
+    await page.screenshot({ path: testInfo.outputPath(`analysis-dialog-${width}.png`), animations: "disabled" });
+    await page.keyboard.press("Escape");
+
+    malformedMachines = true;
+    await page.goto("/machines");
+    await expect(page.getByRole("alert")).toContainText("SentinelAI returned an invalid response.");
+    await expectNoHorizontalOverflow(page);
+    await page.screenshot({ path: testInfo.outputPath(`invalid-response-${width}.png`), fullPage: true, animations: "disabled" });
+    malformedMachines = false;
+  }
+  expect(problems.filter((item) => item.startsWith("pageerror:"))).toEqual([]);
+});

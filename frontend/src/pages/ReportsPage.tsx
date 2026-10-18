@@ -20,11 +20,13 @@ export function ReportsPage() {
   const machinesLoader = useCallback((signal: AbortSignal) => listMachines(signal), []);
   const machines = useAsyncResource(machinesLoader);
   const machineId = chosenMachine || machines.data?.[0]?.id || "";
-  const reportsLoader = useCallback((signal: AbortSignal) => machineId ? listMachineReports(machineId, PAGE_SIZE, page * PAGE_SIZE, signal) : Promise.resolve([]), [machineId, page]);
+  const reportsLoader = useCallback((signal: AbortSignal) => machineId ? listMachineReports(machineId, PAGE_SIZE + 1, page * PAGE_SIZE, signal) : Promise.resolve([]), [machineId, page]);
   const reports = useAsyncResource(reportsLoader);
+  const visibleReports = reports.data?.slice(0, PAGE_SIZE);
+  const hasNextPage = (reports.data?.length ?? 0) > PAGE_SIZE;
   const names = new Map((machines.data ?? []).map((machine) => [machine.id, machine.name]));
   const selectedMachine = (machines.data ?? []).find((machine) => machine.id === machineId);
-  const reportSceneItems = (reports.data ?? []).map((report) => ({
+  const reportSceneItems = (visibleReports ?? []).map((report) => ({
     label: humanize(report.condition),
     meta: formatDate(report.generated_at),
     tone: report.condition === "normal" ? "positive" as const : report.condition === "abnormal" ? "warning" as const : "neutral" as const,
@@ -40,7 +42,7 @@ export function ReportsPage() {
         variant="history"
         sceneKicker="Stored artifact corridor"
         sceneTitle={selectedMachine ? selectedMachine.name : "Historical report index"}
-        sceneNote={reports.error ? `Stored report history for ${selectedMachine?.name ?? "this machine"} is unavailable.` : reports.data ? `${reports.data.length} stored report${reports.data.length === 1 ? "" : "s"} on this page for the selected machine.` : "Waiting for the authoritative report index."}
+        sceneNote={reports.error ? `Stored report history for ${selectedMachine?.name ?? "this machine"} is unavailable.` : visibleReports ? `${visibleReports.length} stored report${visibleReports.length === 1 ? "" : "s"} on this page for the selected machine.` : "Waiting for the authoritative report index."}
         sceneItems={reportSceneItems}
         facts={machines.data &&
           <>
@@ -57,9 +59,11 @@ export function ReportsPage() {
           <label className="machine-select glass-card"><span>Machine history</span><select value={machineId} onChange={(event) => { setChosenMachine(event.target.value); setPage(0); }}>{machines.data.map((machine) => <option key={machine.id} value={machine.id}>{machine.name} / {machine.asset_type}</option>)}</select></label>
           {reports.loading && <LoadingState label="Loading stored maintenance reports…" />}
           {reports.error && <ErrorState error={reports.error} onRetry={reports.reload} label="History unavailable" message={`Stored reports for ${selectedMachine?.name ?? "the selected machine"} could not be loaded. Retry this machine's history.`} />}
-          {reports.data?.length === 0 && <EmptyState title="No reports yet" message={PUBLIC_DEMO ? "This exported demonstration machine has no stored reports." : "Run an analysis from this machine's workspace to create its first verified record."} action={PUBLIC_DEMO ? undefined : <Link className="button button--primary" to={`/machines/${machineId}`}>Open machine</Link>} />}
-          {reports.data && reports.data.length > 0 && <section className="report-index history-corridor glass-panel" aria-label="Stored maintenance report timeline"><div className="history-corridor__head"><div><p className="eyebrow">Chronological stored artifacts</p><h2>Report timeline</h2></div><span>Newest first / authoritative records</span></div><div className="history-corridor__axis" aria-hidden="true" />{reports.data.map((report, index) => <Link to={`/reports/${report.report_id}`} className="report-index__row" key={report.report_id}><span className="history-corridor__node" aria-hidden="true"><FileClock /></span><div><small>Artifact {String(page * PAGE_SIZE + index + 1).padStart(2, "0")}</small><strong>{humanize(report.condition)}</strong><p>{report.executive_summary}</p><code>{shortId(report.report_id)}</code></div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><div><small>Report generated</small><time dateTime={report.generated_at} title={report.generated_at}>{formatDate(report.generated_at)}</time><small>{names.get(report.machine_id) ?? shortId(report.machine_id)}</small></div><ArrowRight aria-hidden="true" /></Link>)}</section>}
-          {reports.data && reports.data.length > 0 && <div className="pagination"><button className="button button--secondary" type="button" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page + 1}</span><button className="button button--secondary" type="button" disabled={reports.data.length < PAGE_SIZE} onClick={() => setPage((value) => value + 1)}>Next</button></div>}
+          {visibleReports?.length === 0 && (page === 0
+            ? <EmptyState title="No reports yet" message={PUBLIC_DEMO ? "This exported demonstration machine has no stored reports." : "Run an analysis from this machine's workspace to create its first verified record."} action={PUBLIC_DEMO ? undefined : <Link className="button button--primary" to={`/machines/${machineId}`}>Open machine</Link>} />
+            : <EmptyState title="No reports on this page" message="Earlier pages may still contain stored reports." />)}
+          {visibleReports && visibleReports.length > 0 && <section className="report-index history-corridor glass-panel" aria-label="Stored maintenance report timeline"><div className="history-corridor__head"><div><p className="eyebrow">Chronological stored artifacts</p><h2>Report timeline</h2></div><span>Newest first / authoritative records</span></div><div className="history-corridor__axis" aria-hidden="true" />{visibleReports.map((report, index) => <Link to={`/reports/${report.report_id}`} className="report-index__row" key={report.report_id}><span className="history-corridor__node" aria-hidden="true"><FileClock /></span><div><small>Artifact {String(page * PAGE_SIZE + index + 1).padStart(2, "0")}</small><strong>{humanize(report.condition)}</strong><p>{report.executive_summary}</p><code>{shortId(report.report_id)}</code></div><StatusBadge tone={report.generation_status === "fallback" ? "warning" : "accent"}>{humanize(report.generation_status)}</StatusBadge><div><small>Report generated</small><time dateTime={report.generated_at} title={report.generated_at}>{formatDate(report.generated_at)}</time><small>{names.get(report.machine_id) ?? shortId(report.machine_id)}</small></div><ArrowRight aria-hidden="true" /></Link>)}</section>}
+          {visibleReports && (visibleReports.length > 0 || page > 0) && <div className="pagination"><button className="button button--secondary" type="button" disabled={page === 0} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page + 1}</span><button className="button button--secondary" type="button" disabled={!hasNextPage} onClick={() => setPage((value) => value + 1)}>Next</button></div>}
         </>
       )}
     </PageTransition>
